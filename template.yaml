@@ -1,31 +1,26 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
-Description: >
-    lambda-functions
-
-    Sample SAM Template for lambda-functions
-
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
-Globals:
-    Function:
-        Timeout: 3
-
+Description: "Functions for the elastic project management application."
 Resources:
-    SignUpFunction:
-        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    ProdPubliclyAccessibleApi:
+        Type: AWS::Serverless::Api
+    Properties:
+        Cors: "'localhost:3000'"
+        StageName: Prod
+        Name: Prod Publicly Accessible Api
+    SignUpNewUserFunction:
+        Type: AWS::Serverless::Function
         Properties:
-            CodeUri: code/built
-            Handler: app.signUpNewUserHandler
-            Runtime: nodejs14.x
-            Cors:
-                AllowOrigin: "localhost:3000"
             Events:
-                SignUpNewUser:
-                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-                    Properties:
-                        Path: /sign-up-new-user
-                        Method: post
-
+                ApiEvent:
+                    Type: Api
+                Properties:
+                    Path: /sign-up-new-user
+                    Method: post
+                    RestApiId:
+                        Ref: ProdPubliclyAccessibleApi
+            Runtime: nodejs14.x
+            Handler: app.signUpNewUserHandler
 Outputs:
     # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
     # Find out more about other implicit resources you can reference within SAM
