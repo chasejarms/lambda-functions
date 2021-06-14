@@ -17,6 +17,8 @@ Resources:
             CodeUri: code/built
             Handler: app.signUpNewUserHandler
             Runtime: nodejs14.x
+            Cors:
+                AllowOrigin: "localhost:3000"
             Events:
                 SignUpNewUser:
                     Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
