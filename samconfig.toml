@@ -7,3 +7,4 @@ s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-19d2d4iq3p1nh"
 s3_prefix = "elastic-project-management"
 region = "us-east-1"
 capabilities = "CAPABILITY_IAM"
+confirm_changeset = true
