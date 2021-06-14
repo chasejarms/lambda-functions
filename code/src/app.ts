@@ -3,8 +3,8 @@ import { HttpStatusCode } from "./models/httpStatusCode";
 import * as AWSCognitoIdentity from "amazon-cognito-identity-js";
 
 const poolData = {
-    UserPoolId: "us-east-1_rh9H8whcD", // Your user pool id here
-    ClientId: "6gc6tovbdh8k56o4svgec2kdih", // Your client id here
+    UserPoolId: "us-east-1_etBRMChzv", // Your user pool id here
+    ClientId: "espsfilvarkr44put09u8e17l", // Your client id here
 };
 const userPool = new AWSCognitoIdentity.CognitoUserPool(poolData);
 
@@ -63,6 +63,7 @@ export const signUpNewUserHandler = async (
     );
 
     let userSignUpResponse: null | APIGatewayProxyResult = null;
+    let signUpResultFromCallback: AWSCognitoIdentity.ISignUpResult;
     let callbackComplete = false;
 
     const callback: AWSCognitoIdentity.NodeCallback<
@@ -78,6 +79,7 @@ export const signUpNewUserHandler = async (
             };
         }
 
+        signUpResultFromCallback = signUpResult;
         callbackComplete = true;
     };
 
