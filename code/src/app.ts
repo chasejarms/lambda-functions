@@ -86,7 +86,7 @@ export const signUpNewUserHandler = async (
     userPool.signUp(email, password, attributeList, [], callback);
 
     while (!callbackComplete) {
-        await new Promise((resolve) => {
+        await new Promise<void>((resolve) => {
             setTimeout(() => {
                 resolve();
             }, 20);
