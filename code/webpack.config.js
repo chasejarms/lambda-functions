@@ -1,7 +1,8 @@
 const path = require("path");
+const glob = require("glob");
 
 module.exports = {
-    entry: "./src/app.ts",
+    entry: "./src/functions/index.ts",
     output: {
         filename: "app.js",
         path: path.resolve(__dirname, "built"),

@@ -1,5 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import { HttpStatusCode } from "./models/httpStatusCode";
+import { HttpStatusCode } from "../../models/httpStatusCode";
 import {
     CognitoUserPool,
     CognitoUserAttribute,
@@ -18,7 +18,7 @@ const userPool = new CognitoUserPool(poolData);
  * a user would like to create another company and already exists on a company, the user will need to
  * be authenticated so that we don't have to verify the passwords match.
  */
-export const signUpNewUserHandler = async (
+export const signUpNewUser = async (
     event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
     if (!event.body) {
