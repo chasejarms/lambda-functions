@@ -5,7 +5,8 @@
         "noImplicitAny": true,
         "preserveConstEnums": true,
         "outDir": "./built",
-        "sourceMap": false
+        "sourceMap": false,
+        "moduleResolution": "node"
     },
     "include": ["src/**/*"],
     "exclude": ["node_modules", "**/*.spec.ts"]

@@ -2,12 +2,11 @@ const path = require("path");
 
 module.exports = {
     entry: "./src/app.ts",
-    mode: "production",
-    target: "node",
     output: {
         filename: "app.js",
         path: path.resolve(__dirname, "built"),
         clean: true,
+        libraryTarget: "umd",
     },
     module: {
         rules: [
@@ -21,4 +20,7 @@ module.exports = {
     resolve: {
         extensions: [".ts", ".js"],
     },
+    target: "node",
+    mode: "production",
+    optimization: { minimize: false },
 };

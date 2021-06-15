@@ -1,2 +1,8312 @@
-/*! For license information please see app.js.LICENSE.txt */
-(()=>{var e={4:(e,t,n)=>{"use strict";n.r(t),n.d(t,{AuthenticationDetails:()=>r,AuthenticationHelper:()=>k,CognitoAccessToken:()=>F,CognitoIdToken:()=>B,CognitoRefreshToken:()=>O,CognitoUser:()=>J,CognitoUserAttribute:()=>j,CognitoUserPool:()=>le,CognitoUserSession:()=>N,CookieStorage:()=>fe,DateHelper:()=>q,WordArray:()=>d,appendToCognitoUserAgent:()=>G});var r=function(){function e(e){var t=e||{},n=t.ValidationData,r=t.Username,s=t.Password,i=t.AuthParameters,o=t.ClientMetadata;this.validationData=n||{},this.authParameters=i||{},this.clientMetadata=o||{},this.username=r,this.password=s}var t=e.prototype;return t.getUsername=function(){return this.username},t.getPassword=function(){return this.password},t.getValidationData=function(){return this.validationData},t.getAuthParameters=function(){return this.authParameters},t.getClientMetadata=function(){return this.clientMetadata},e}();const s=require("buffer");var i,o=n(249),a=n.n(o),u=(n(433),n(153)),c=n.n(u),l=n(10),h=n.n(l);if("undefined"!=typeof window&&window.crypto&&(i=window.crypto),!i&&"undefined"!=typeof window&&window.msCrypto&&(i=window.msCrypto),!i&&"undefined"!=typeof global&&global.crypto&&(i=global.crypto),!i)try{i=n(417)}catch(e){}function f(){if(i){if("function"==typeof i.getRandomValues)try{return i.getRandomValues(new Uint32Array(1))[0]}catch(e){}if("function"==typeof i.randomBytes)try{return i.randomBytes(4).readInt32LE()}catch(e){}}throw new Error("Native crypto module could not be used to get secure random number.")}var d=function(){function e(e,t){e=this.words=e||[],this.sigBytes=null!=t?t:4*e.length}var t=e.prototype;return t.random=function(t){for(var n=[],r=0;r<t;r+=4)n.push(f());return new e(n,t)},t.toString=function(){return function(e){for(var t=e.words,n=e.sigBytes,r=[],s=0;s<n;s++){var i=t[s>>>2]>>>24-s%4*8&255;r.push((i>>>4).toString(16)),r.push((15&i).toString(16))}return r.join("")}(this)},e}();const p=g;function g(e,t){null!=e&&this.fromString(e,t)}function m(){return new g(null)}var y,v="undefined"!=typeof navigator;v&&"Microsoft Internet Explorer"==navigator.appName?(g.prototype.am=function(e,t,n,r,s,i){for(var o=32767&t,a=t>>15;--i>=0;){var u=32767&this[e],c=this[e++]>>15,l=a*u+c*o;s=((u=o*u+((32767&l)<<15)+n[r]+(1073741823&s))>>>30)+(l>>>15)+a*c+(s>>>30),n[r++]=1073741823&u}return s},y=30):v&&"Netscape"!=navigator.appName?(g.prototype.am=function(e,t,n,r,s,i){for(;--i>=0;){var o=t*this[e++]+n[r]+s;s=Math.floor(o/67108864),n[r++]=67108863&o}return s},y=26):(g.prototype.am=function(e,t,n,r,s,i){for(var o=16383&t,a=t>>14;--i>=0;){var u=16383&this[e],c=this[e++]>>14,l=a*u+c*o;s=((u=o*u+((16383&l)<<14)+n[r]+s)>>28)+(l>>14)+a*c,n[r++]=268435455&u}return s},y=28),g.prototype.DB=y,g.prototype.DM=(1<<y)-1,g.prototype.DV=1<<y,g.prototype.FV=Math.pow(2,52),g.prototype.F1=52-y,g.prototype.F2=2*y-52;var S,C,w=new Array;for(S="0".charCodeAt(0),C=0;C<=9;++C)w[S++]=C;for(S="a".charCodeAt(0),C=10;C<36;++C)w[S++]=C;for(S="A".charCodeAt(0),C=10;C<36;++C)w[S++]=C;function A(e){return"0123456789abcdefghijklmnopqrstuvwxyz".charAt(e)}function b(e,t){var n=w[e.charCodeAt(t)];return null==n?-1:n}function U(e){var t=m();return t.fromInt(e),t}function T(e){var t,n=1;return 0!=(t=e>>>16)&&(e=t,n+=16),0!=(t=e>>8)&&(e=t,n+=8),0!=(t=e>>4)&&(e=t,n+=4),0!=(t=e>>2)&&(e=t,n+=2),0!=(t=e>>1)&&(e=t,n+=1),n}function D(e){this.m=e,this.mp=e.invDigit(),this.mpl=32767&this.mp,this.mph=this.mp>>15,this.um=(1<<e.DB-15)-1,this.mt2=2*e.t}function E(e){return s.Buffer.from((new d).random(e).toString(),"hex")}D.prototype.convert=function(e){var t=m();return e.abs().dlShiftTo(this.m.t,t),t.divRemTo(this.m,null,t),e.s<0&&t.compareTo(g.ZERO)>0&&this.m.subTo(t,t),t},D.prototype.revert=function(e){var t=m();return e.copyTo(t),this.reduce(t),t},D.prototype.reduce=function(e){for(;e.t<=this.mt2;)e[e.t++]=0;for(var t=0;t<this.m.t;++t){var n=32767&e[t],r=n*this.mpl+((n*this.mph+(e[t]>>15)*this.mpl&this.um)<<15)&e.DM;for(e[n=t+this.m.t]+=this.m.am(0,r,e,t,0,this.m.t);e[n]>=e.DV;)e[n]-=e.DV,e[++n]++}e.clamp(),e.drShiftTo(this.m.t,e),e.compareTo(this.m)>=0&&e.subTo(this.m,e)},D.prototype.mulTo=function(e,t,n){e.multiplyTo(t,n),this.reduce(n)},D.prototype.sqrTo=function(e,t){e.squareTo(t),this.reduce(t)},g.prototype.copyTo=function(e){for(var t=this.t-1;t>=0;--t)e[t]=this[t];e.t=this.t,e.s=this.s},g.prototype.fromInt=function(e){this.t=1,this.s=e<0?-1:0,e>0?this[0]=e:e<-1?this[0]=e+this.DV:this.t=0},g.prototype.fromString=function(e,t){var n;if(16==t)n=4;else if(8==t)n=3;else if(2==t)n=1;else if(32==t)n=5;else{if(4!=t)throw new Error("Only radix 2, 4, 8, 16, 32 are supported");n=2}this.t=0,this.s=0;for(var r=e.length,s=!1,i=0;--r>=0;){var o=b(e,r);o<0?"-"==e.charAt(r)&&(s=!0):(s=!1,0==i?this[this.t++]=o:i+n>this.DB?(this[this.t-1]|=(o&(1<<this.DB-i)-1)<<i,this[this.t++]=o>>this.DB-i):this[this.t-1]|=o<<i,(i+=n)>=this.DB&&(i-=this.DB))}this.clamp(),s&&g.ZERO.subTo(this,this)},g.prototype.clamp=function(){for(var e=this.s&this.DM;this.t>0&&this[this.t-1]==e;)--this.t},g.prototype.dlShiftTo=function(e,t){var n;for(n=this.t-1;n>=0;--n)t[n+e]=this[n];for(n=e-1;n>=0;--n)t[n]=0;t.t=this.t+e,t.s=this.s},g.prototype.drShiftTo=function(e,t){for(var n=e;n<this.t;++n)t[n-e]=this[n];t.t=Math.max(this.t-e,0),t.s=this.s},g.prototype.lShiftTo=function(e,t){var n,r=e%this.DB,s=this.DB-r,i=(1<<s)-1,o=Math.floor(e/this.DB),a=this.s<<r&this.DM;for(n=this.t-1;n>=0;--n)t[n+o+1]=this[n]>>s|a,a=(this[n]&i)<<r;for(n=o-1;n>=0;--n)t[n]=0;t[o]=a,t.t=this.t+o+1,t.s=this.s,t.clamp()},g.prototype.rShiftTo=function(e,t){t.s=this.s;var n=Math.floor(e/this.DB);if(n>=this.t)t.t=0;else{var r=e%this.DB,s=this.DB-r,i=(1<<r)-1;t[0]=this[n]>>r;for(var o=n+1;o<this.t;++o)t[o-n-1]|=(this[o]&i)<<s,t[o-n]=this[o]>>r;r>0&&(t[this.t-n-1]|=(this.s&i)<<s),t.t=this.t-n,t.clamp()}},g.prototype.subTo=function(e,t){for(var n=0,r=0,s=Math.min(e.t,this.t);n<s;)r+=this[n]-e[n],t[n++]=r&this.DM,r>>=this.DB;if(e.t<this.t){for(r-=e.s;n<this.t;)r+=this[n],t[n++]=r&this.DM,r>>=this.DB;r+=this.s}else{for(r+=this.s;n<e.t;)r-=e[n],t[n++]=r&this.DM,r>>=this.DB;r-=e.s}t.s=r<0?-1:0,r<-1?t[n++]=this.DV+r:r>0&&(t[n++]=r),t.t=n,t.clamp()},g.prototype.multiplyTo=function(e,t){var n=this.abs(),r=e.abs(),s=n.t;for(t.t=s+r.t;--s>=0;)t[s]=0;for(s=0;s<r.t;++s)t[s+n.t]=n.am(0,r[s],t,s,0,n.t);t.s=0,t.clamp(),this.s!=e.s&&g.ZERO.subTo(t,t)},g.prototype.squareTo=function(e){for(var t=this.abs(),n=e.t=2*t.t;--n>=0;)e[n]=0;for(n=0;n<t.t-1;++n){var r=t.am(n,t[n],e,2*n,0,1);(e[n+t.t]+=t.am(n+1,2*t[n],e,2*n+1,r,t.t-n-1))>=t.DV&&(e[n+t.t]-=t.DV,e[n+t.t+1]=1)}e.t>0&&(e[e.t-1]+=t.am(n,t[n],e,2*n,0,1)),e.s=0,e.clamp()},g.prototype.divRemTo=function(e,t,n){var r=e.abs();if(!(r.t<=0)){var s=this.abs();if(s.t<r.t)return null!=t&&t.fromInt(0),void(null!=n&&this.copyTo(n));null==n&&(n=m());var i=m(),o=this.s,a=e.s,u=this.DB-T(r[r.t-1]);u>0?(r.lShiftTo(u,i),s.lShiftTo(u,n)):(r.copyTo(i),s.copyTo(n));var c=i.t,l=i[c-1];if(0!=l){var h=l*(1<<this.F1)+(c>1?i[c-2]>>this.F2:0),f=this.FV/h,d=(1<<this.F1)/h,p=1<<this.F2,y=n.t,v=y-c,S=null==t?m():t;for(i.dlShiftTo(v,S),n.compareTo(S)>=0&&(n[n.t++]=1,n.subTo(S,n)),g.ONE.dlShiftTo(c,S),S.subTo(i,i);i.t<c;)i[i.t++]=0;for(;--v>=0;){var C=n[--y]==l?this.DM:Math.floor(n[y]*f+(n[y-1]+p)*d);if((n[y]+=i.am(0,C,n,v,0,c))<C)for(i.dlShiftTo(v,S),n.subTo(S,n);n[y]<--C;)n.subTo(S,n)}null!=t&&(n.drShiftTo(c,t),o!=a&&g.ZERO.subTo(t,t)),n.t=c,n.clamp(),u>0&&n.rShiftTo(u,n),o<0&&g.ZERO.subTo(n,n)}}},g.prototype.invDigit=function(){if(this.t<1)return 0;var e=this[0];if(0==(1&e))return 0;var t=3&e;return(t=(t=(t=(t=t*(2-(15&e)*t)&15)*(2-(255&e)*t)&255)*(2-((65535&e)*t&65535))&65535)*(2-e*t%this.DV)%this.DV)>0?this.DV-t:-t},g.prototype.addTo=function(e,t){for(var n=0,r=0,s=Math.min(e.t,this.t);n<s;)r+=this[n]+e[n],t[n++]=r&this.DM,r>>=this.DB;if(e.t<this.t){for(r+=e.s;n<this.t;)r+=this[n],t[n++]=r&this.DM,r>>=this.DB;r+=this.s}else{for(r+=this.s;n<e.t;)r+=e[n],t[n++]=r&this.DM,r>>=this.DB;r+=e.s}t.s=r<0?-1:0,r>0?t[n++]=r:r<-1&&(t[n++]=this.DV+r),t.t=n,t.clamp()},g.prototype.toString=function(e){if(this.s<0)return"-"+this.negate().toString(e);var t;if(16==e)t=4;else if(8==e)t=3;else if(2==e)t=1;else if(32==e)t=5;else{if(4!=e)throw new Error("Only radix 2, 4, 8, 16, 32 are supported");t=2}var n,r=(1<<t)-1,s=!1,i="",o=this.t,a=this.DB-o*this.DB%t;if(o-- >0)for(a<this.DB&&(n=this[o]>>a)>0&&(s=!0,i=A(n));o>=0;)a<t?(n=(this[o]&(1<<a)-1)<<t-a,n|=this[--o]>>(a+=this.DB-t)):(n=this[o]>>(a-=t)&r,a<=0&&(a+=this.DB,--o)),n>0&&(s=!0),s&&(i+=A(n));return s?i:"0"},g.prototype.negate=function(){var e=m();return g.ZERO.subTo(this,e),e},g.prototype.abs=function(){return this.s<0?this.negate():this},g.prototype.compareTo=function(e){var t=this.s-e.s;if(0!=t)return t;var n=this.t;if(0!=(t=n-e.t))return this.s<0?-t:t;for(;--n>=0;)if(0!=(t=this[n]-e[n]))return t;return 0},g.prototype.bitLength=function(){return this.t<=0?0:this.DB*(this.t-1)+T(this[this.t-1]^this.s&this.DM)},g.prototype.mod=function(e){var t=m();return this.abs().divRemTo(e,null,t),this.s<0&&t.compareTo(g.ZERO)>0&&e.subTo(t,t),t},g.prototype.equals=function(e){return 0==this.compareTo(e)},g.prototype.add=function(e){var t=m();return this.addTo(e,t),t},g.prototype.subtract=function(e){var t=m();return this.subTo(e,t),t},g.prototype.multiply=function(e){var t=m();return this.multiplyTo(e,t),t},g.prototype.divide=function(e){var t=m();return this.divRemTo(e,t,null),t},g.prototype.modPow=function(e,t,n){var r,s=e.bitLength(),i=U(1),o=new D(t);if(s<=0)return i;r=s<18?1:s<48?3:s<144?4:s<768?5:6;var a=new Array,u=3,c=r-1,l=(1<<r)-1;if(a[1]=o.convert(this),r>1){var h=m();for(o.sqrTo(a[1],h);u<=l;)a[u]=m(),o.mulTo(h,a[u-2],a[u]),u+=2}var f,d,p=e.t-1,g=!0,y=m();for(s=T(e[p])-1;p>=0;){for(s>=c?f=e[p]>>s-c&l:(f=(e[p]&(1<<s+1)-1)<<c-s,p>0&&(f|=e[p-1]>>this.DB+s-c)),u=r;0==(1&f);)f>>=1,--u;if((s-=u)<0&&(s+=this.DB,--p),g)a[f].copyTo(i),g=!1;else{for(;u>1;)o.sqrTo(i,y),o.sqrTo(y,i),u-=2;u>0?o.sqrTo(i,y):(d=i,i=y,y=d),o.mulTo(y,a[f],i)}for(;p>=0&&0==(e[p]&1<<s);)o.sqrTo(i,y),d=i,i=y,y=d,--s<0&&(s=this.DB-1,--p)}var v=o.revert(i);return n(null,v),v},g.ZERO=U(0),g.ONE=U(1);var I=/^[89a-f]/i,k=function(){function e(e){this.N=new p("FFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD129024E088A67CC74020BBEA63B139B22514A08798E3404DDEF9519B3CD3A431B302B0A6DF25F14374FE1356D6D51C245E485B576625E7EC6F44C42E9A637ED6B0BFF5CB6F406B7EDEE386BFB5A899FA5AE9F24117C4B1FE649286651ECE45B3DC2007CB8A163BF0598DA48361C55D39A69163FA8FD24CF5F83655D23DCA3AD961C62F356208552BB9ED529077096966D670C354E4ABC9804F1746C08CA18217C32905E462E36CE3BE39E772C180E86039B2783A2EC07A28FB5C55DF06F4C52C9DE2BCBF6955817183995497CEA956AE515D2261898FA051015728E5A8AAAC42DAD33170D04507A33A85521ABDF1CBA64ECFB850458DBEF0A8AEA71575D060C7DB3970F85A6E1E4C7ABF5AE8CDB0933D71E8C94E04A25619DCEE3D2261AD2EE6BF12FFA06D98A0864D87602733EC86A64521F2B18177B200CBBE117577A615D6C770988C0BAD946E208E24FA074E5AB3143DB5BFCE0FD108E4B82D120A93AD2CAFFFFFFFFFFFFFFFF",16),this.g=new p("2",16),this.k=new p(this.hexHash(""+this.padHex(this.N)+this.padHex(this.g)),16),this.smallAValue=this.generateRandomSmallA(),this.getLargeAValue((function(){})),this.infoBits=s.Buffer.from("Caldera Derived Key","utf8"),this.poolName=e}var t=e.prototype;return t.getSmallAValue=function(){return this.smallAValue},t.getLargeAValue=function(e){var t=this;this.largeAValue?e(null,this.largeAValue):this.calculateA(this.smallAValue,(function(n,r){n&&e(n,null),t.largeAValue=r,e(null,t.largeAValue)}))},t.generateRandomSmallA=function(){var e=E(128).toString("hex");return new p(e,16)},t.generateRandomString=function(){return E(40).toString("base64")},t.getRandomPassword=function(){return this.randomPassword},t.getSaltDevices=function(){return this.SaltToHashDevices},t.getVerifierDevices=function(){return this.verifierDevices},t.generateHashDevice=function(e,t,n){var r=this;this.randomPassword=this.generateRandomString();var s=""+e+t+":"+this.randomPassword,i=this.hash(s),o=E(16).toString("hex");this.SaltToHashDevices=this.padHex(new p(o,16)),this.g.modPow(new p(this.hexHash(this.SaltToHashDevices+i),16),this.N,(function(e,t){e&&n(e,null),r.verifierDevices=r.padHex(t),n(null,null)}))},t.calculateA=function(e,t){var n=this;this.g.modPow(e,this.N,(function(e,r){e&&t(e,null),r.mod(n.N).equals(p.ZERO)&&t(new Error("Illegal paramater. A mod N cannot be 0."),null),t(null,r)}))},t.calculateU=function(e,t){return this.UHexHash=this.hexHash(this.padHex(e)+this.padHex(t)),new p(this.UHexHash,16)},t.hash=function(e){var t=e instanceof s.Buffer?a().lib.WordArray.create(e):e,n=c()(t).toString();return new Array(64-n.length).join("0")+n},t.hexHash=function(e){return this.hash(s.Buffer.from(e,"hex"))},t.computehkdf=function(e,t){var n=a().lib.WordArray.create(s.Buffer.concat([this.infoBits,s.Buffer.from(String.fromCharCode(1),"utf8")])),r=e instanceof s.Buffer?a().lib.WordArray.create(e):e,i=t instanceof s.Buffer?a().lib.WordArray.create(t):t,o=h()(r,i),u=h()(n,o);return s.Buffer.from(u.toString(),"hex").slice(0,16)},t.getPasswordAuthenticationKey=function(e,t,n,r,i){var o=this;if(n.mod(this.N).equals(p.ZERO))throw new Error("B cannot be zero.");if(this.UValue=this.calculateU(this.largeAValue,n),this.UValue.equals(p.ZERO))throw new Error("U cannot be zero.");var a=""+this.poolName+e+":"+t,u=this.hash(a),c=new p(this.hexHash(this.padHex(r)+u),16);this.calculateS(c,n,(function(e,t){e&&i(e,null);var n=o.computehkdf(s.Buffer.from(o.padHex(t),"hex"),s.Buffer.from(o.padHex(o.UValue),"hex"));i(null,n)}))},t.calculateS=function(e,t,n){var r=this;this.g.modPow(e,this.N,(function(s,i){s&&n(s,null),t.subtract(r.k.multiply(i)).modPow(r.smallAValue.add(r.UValue.multiply(e)),r.N,(function(e,t){e&&n(e,null),n(null,t.mod(r.N))}))}))},t.getNewPasswordRequiredChallengeUserAttributePrefix=function(){return"userAttributes."},t.padHex=function(e){if(!(e instanceof p))throw new Error("Not a BigInteger");var t=e.compareTo(p.ZERO)<0,n=e.abs().toString(16);if(n=n.length%2!=0?"0"+n:n,n=I.test(n)?"00"+n:n,t){var r=n.split("").map((function(e){var t=15&~parseInt(e,16);return"0123456789ABCDEF".charAt(t)})).join("");(n=new p(r,16).add(p.ONE).toString(16)).toUpperCase().startsWith("FF8")&&(n=n.substring(2))}return n},e}(),P=function(){function e(e){this.jwtToken=e||"",this.payload=this.decodePayload()}var t=e.prototype;return t.getJwtToken=function(){return this.jwtToken},t.getExpiration=function(){return this.payload.exp},t.getIssuedAt=function(){return this.payload.iat},t.decodePayload=function(){var e=this.jwtToken.split(".")[1];try{return JSON.parse(s.Buffer.from(e,"base64").toString("utf8"))}catch(e){return{}}},e}();function R(e,t){return(R=Object.setPrototypeOf||function(e,t){return e.__proto__=t,e})(e,t)}var F=function(e){var t,n;function r(t){var n=(void 0===t?{}:t).AccessToken;return e.call(this,n||"")||this}return n=e,(t=r).prototype=Object.create(n.prototype),t.prototype.constructor=t,R(t,n),r}(P);function x(e,t){return(x=Object.setPrototypeOf||function(e,t){return e.__proto__=t,e})(e,t)}var B=function(e){var t,n;function r(t){var n=(void 0===t?{}:t).IdToken;return e.call(this,n||"")||this}return n=e,(t=r).prototype=Object.create(n.prototype),t.prototype.constructor=t,x(t,n),r}(P),O=function(){function e(e){var t=(void 0===e?{}:e).RefreshToken;this.token=t||""}return e.prototype.getToken=function(){return this.token},e}(),_=n(269),M=n.n(_),N=function(){function e(e){var t=void 0===e?{}:e,n=t.IdToken,r=t.RefreshToken,s=t.AccessToken,i=t.ClockDrift;if(null==s||null==n)throw new Error("Id token and Access Token must be present.");this.idToken=n,this.refreshToken=r,this.accessToken=s,this.clockDrift=void 0===i?this.calculateClockDrift():i}var t=e.prototype;return t.getIdToken=function(){return this.idToken},t.getRefreshToken=function(){return this.refreshToken},t.getAccessToken=function(){return this.accessToken},t.getClockDrift=function(){return this.clockDrift},t.calculateClockDrift=function(){return Math.floor(new Date/1e3)-Math.min(this.accessToken.getIssuedAt(),this.idToken.getIssuedAt())},t.isValid=function(){var e=Math.floor(new Date/1e3)-this.clockDrift;return e<this.accessToken.getExpiration()&&e<this.idToken.getExpiration()},e}(),V=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],K=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],q=function(){function e(){}return e.prototype.getNowString=function(){var e=new Date,t=K[e.getUTCDay()],n=V[e.getUTCMonth()],r=e.getUTCDate(),s=e.getUTCHours();s<10&&(s="0"+s);var i=e.getUTCMinutes();i<10&&(i="0"+i);var o=e.getUTCSeconds();return o<10&&(o="0"+o),t+" "+n+" "+r+" "+s+":"+i+":"+o+" UTC "+e.getUTCFullYear()},e}(),j=function(){function e(e){var t=void 0===e?{}:e,n=t.Name,r=t.Value;this.Name=n||"",this.Value=r||""}var t=e.prototype;return t.getValue=function(){return this.Value},t.setValue=function(e){return this.Value=e,this},t.getName=function(){return this.Name},t.setName=function(e){return this.Name=e,this},t.toString=function(){return JSON.stringify(this)},t.toJSON=function(){return{Name:this.Name,Value:this.Value}},e}(),H={},L=function(){function e(){}return e.setItem=function(e,t){return H[e]=t,H[e]},e.getItem=function(e){return Object.prototype.hasOwnProperty.call(H,e)?H[e]:void 0},e.removeItem=function(e){return delete H[e]},e.clear=function(){return H={}},e}(),z=function(){function e(){try{this.storageWindow=window.localStorage,this.storageWindow.setItem("aws.cognito.test-ls",1),this.storageWindow.removeItem("aws.cognito.test-ls")}catch(e){this.storageWindow=L}}return e.prototype.getStorage=function(){return this.storageWindow},e}(),W="undefined"!=typeof navigator?navigator.userAgent:"nodejs",J=function(){function e(e){if(null==e||null==e.Username||null==e.Pool)throw new Error("Username and Pool information are required.");this.username=e.Username||"",this.pool=e.Pool,this.Session=null,this.client=e.Pool.client,this.signInUserSession=null,this.authenticationFlowType="USER_SRP_AUTH",this.storage=e.Storage||(new z).getStorage(),this.keyPrefix="CognitoIdentityServiceProvider."+this.pool.getClientId(),this.userDataKey=this.keyPrefix+"."+this.username+".userData"}var t=e.prototype;return t.setSignInUserSession=function(e){this.clearCachedUserData(),this.signInUserSession=e,this.cacheTokens()},t.getSignInUserSession=function(){return this.signInUserSession},t.getUsername=function(){return this.username},t.getAuthenticationFlowType=function(){return this.authenticationFlowType},t.setAuthenticationFlowType=function(e){this.authenticationFlowType=e},t.initiateAuth=function(e,t){var n=this,r=e.getAuthParameters();r.USERNAME=this.username;var s=0!==Object.keys(e.getValidationData()).length?e.getValidationData():e.getClientMetadata(),i={AuthFlow:"CUSTOM_AUTH",ClientId:this.pool.getClientId(),AuthParameters:r,ClientMetadata:s};this.getUserContextData()&&(i.UserContextData=this.getUserContextData()),this.client.request("InitiateAuth",i,(function(e,r){if(e)return t.onFailure(e);var s=r.ChallengeName,i=r.ChallengeParameters;return"CUSTOM_CHALLENGE"===s?(n.Session=r.Session,t.customChallenge(i)):(n.signInUserSession=n.getCognitoUserSession(r.AuthenticationResult),n.cacheTokens(),t.onSuccess(n.signInUserSession))}))},t.authenticateUser=function(e,t){return"USER_PASSWORD_AUTH"===this.authenticationFlowType?this.authenticateUserPlainUsernamePassword(e,t):"USER_SRP_AUTH"===this.authenticationFlowType||"CUSTOM_AUTH"===this.authenticationFlowType?this.authenticateUserDefaultAuth(e,t):t.onFailure(new Error("Authentication flow type is invalid."))},t.authenticateUserDefaultAuth=function(e,t){var n,r,i=this,o=new k(this.pool.getUserPoolId().split("_")[1]),u=new q,c={};null!=this.deviceKey&&(c.DEVICE_KEY=this.deviceKey),c.USERNAME=this.username,o.getLargeAValue((function(l,f){l&&t.onFailure(l),c.SRP_A=f.toString(16),"CUSTOM_AUTH"===i.authenticationFlowType&&(c.CHALLENGE_NAME="SRP_A");var d=0!==Object.keys(e.getValidationData()).length?e.getValidationData():e.getClientMetadata(),g={AuthFlow:i.authenticationFlowType,ClientId:i.pool.getClientId(),AuthParameters:c,ClientMetadata:d};i.getUserContextData(i.username)&&(g.UserContextData=i.getUserContextData(i.username)),i.client.request("InitiateAuth",g,(function(c,l){if(c)return t.onFailure(c);var f=l.ChallengeParameters;i.username=f.USER_ID_FOR_SRP,i.userDataKey=i.keyPrefix+"."+i.username+".userData",n=new p(f.SRP_B,16),r=new p(f.SALT,16),i.getCachedDeviceKeyAndPassword(),o.getPasswordAuthenticationKey(i.username,e.getPassword(),n,r,(function(e,n){e&&t.onFailure(e);var r=u.getNowString(),c=a().lib.WordArray.create(s.Buffer.concat([s.Buffer.from(i.pool.getUserPoolId().split("_")[1],"utf8"),s.Buffer.from(i.username,"utf8"),s.Buffer.from(f.SECRET_BLOCK,"base64"),s.Buffer.from(r,"utf8")])),p=a().lib.WordArray.create(n),g=M().stringify(h()(c,p)),m={};m.USERNAME=i.username,m.PASSWORD_CLAIM_SECRET_BLOCK=f.SECRET_BLOCK,m.TIMESTAMP=r,m.PASSWORD_CLAIM_SIGNATURE=g,null!=i.deviceKey&&(m.DEVICE_KEY=i.deviceKey);var y={ChallengeName:"PASSWORD_VERIFIER",ClientId:i.pool.getClientId(),ChallengeResponses:m,Session:l.Session,ClientMetadata:d};i.getUserContextData()&&(y.UserContextData=i.getUserContextData()),function e(t,n){return i.client.request("RespondToAuthChallenge",t,(function(r,s){return r&&"ResourceNotFoundException"===r.code&&-1!==r.message.toLowerCase().indexOf("device")?(m.DEVICE_KEY=null,i.deviceKey=null,i.randomPassword=null,i.deviceGroupKey=null,i.clearCachedDeviceKeyAndPassword(),e(t,n)):n(r,s)}))}(y,(function(e,n){return e?t.onFailure(e):i.authenticateUserInternal(n,o,t)}))}))}))}))},t.authenticateUserPlainUsernamePassword=function(e,t){var n=this,r={};if(r.USERNAME=this.username,r.PASSWORD=e.getPassword(),r.PASSWORD){var s=new k(this.pool.getUserPoolId().split("_")[1]);this.getCachedDeviceKeyAndPassword(),null!=this.deviceKey&&(r.DEVICE_KEY=this.deviceKey);var i=0!==Object.keys(e.getValidationData()).length?e.getValidationData():e.getClientMetadata(),o={AuthFlow:"USER_PASSWORD_AUTH",ClientId:this.pool.getClientId(),AuthParameters:r,ClientMetadata:i};this.getUserContextData(this.username)&&(o.UserContextData=this.getUserContextData(this.username)),this.client.request("InitiateAuth",o,(function(e,r){return e?t.onFailure(e):n.authenticateUserInternal(r,s,t)}))}else t.onFailure(new Error("PASSWORD parameter is required"))},t.authenticateUserInternal=function(e,t,n){var r=this,i=e.ChallengeName,o=e.ChallengeParameters;if("SMS_MFA"===i)return this.Session=e.Session,n.mfaRequired(i,o);if("SELECT_MFA_TYPE"===i)return this.Session=e.Session,n.selectMFAType(i,o);if("MFA_SETUP"===i)return this.Session=e.Session,n.mfaSetup(i,o);if("SOFTWARE_TOKEN_MFA"===i)return this.Session=e.Session,n.totpRequired(i,o);if("CUSTOM_CHALLENGE"===i)return this.Session=e.Session,n.customChallenge(o);if("NEW_PASSWORD_REQUIRED"===i){this.Session=e.Session;var a=null,u=null,c=[],l=t.getNewPasswordRequiredChallengeUserAttributePrefix();if(o&&(a=JSON.parse(e.ChallengeParameters.userAttributes),u=JSON.parse(e.ChallengeParameters.requiredAttributes)),u)for(var h=0;h<u.length;h++)c[h]=u[h].substr(l.length);return n.newPasswordRequired(a,c)}if("DEVICE_SRP_AUTH"!==i){this.signInUserSession=this.getCognitoUserSession(e.AuthenticationResult),this.challengeName=i,this.cacheTokens();var f=e.AuthenticationResult.NewDeviceMetadata;if(null==f)return n.onSuccess(this.signInUserSession);t.generateHashDevice(e.AuthenticationResult.NewDeviceMetadata.DeviceGroupKey,e.AuthenticationResult.NewDeviceMetadata.DeviceKey,(function(i){if(i)return n.onFailure(i);var o={Salt:s.Buffer.from(t.getSaltDevices(),"hex").toString("base64"),PasswordVerifier:s.Buffer.from(t.getVerifierDevices(),"hex").toString("base64")};r.verifierDevices=o.PasswordVerifier,r.deviceGroupKey=f.DeviceGroupKey,r.randomPassword=t.getRandomPassword(),r.client.request("ConfirmDevice",{DeviceKey:f.DeviceKey,AccessToken:r.signInUserSession.getAccessToken().getJwtToken(),DeviceSecretVerifierConfig:o,DeviceName:W},(function(t,s){return t?n.onFailure(t):(r.deviceKey=e.AuthenticationResult.NewDeviceMetadata.DeviceKey,r.cacheDeviceKeyAndPassword(),!0===s.UserConfirmationNecessary?n.onSuccess(r.signInUserSession,s.UserConfirmationNecessary):n.onSuccess(r.signInUserSession))}))}))}else this.getDeviceResponse(n)},t.completeNewPasswordChallenge=function(e,t,n,r){var s=this;if(!e)return n.onFailure(new Error("New password is required."));var i=new k(this.pool.getUserPoolId().split("_")[1]),o=i.getNewPasswordRequiredChallengeUserAttributePrefix(),a={};t&&Object.keys(t).forEach((function(e){a[o+e]=t[e]})),a.NEW_PASSWORD=e,a.USERNAME=this.username;var u={ChallengeName:"NEW_PASSWORD_REQUIRED",ClientId:this.pool.getClientId(),ChallengeResponses:a,Session:this.Session,ClientMetadata:r};this.getUserContextData()&&(u.UserContextData=this.getUserContextData()),this.client.request("RespondToAuthChallenge",u,(function(e,t){return e?n.onFailure(e):s.authenticateUserInternal(t,i,n)}))},t.getDeviceResponse=function(e,t){var n=this,r=new k(this.deviceGroupKey),i=new q,o={};o.USERNAME=this.username,o.DEVICE_KEY=this.deviceKey,r.getLargeAValue((function(u,c){u&&e.onFailure(u),o.SRP_A=c.toString(16);var l={ChallengeName:"DEVICE_SRP_AUTH",ClientId:n.pool.getClientId(),ChallengeResponses:o,ClientMetadata:t};n.getUserContextData()&&(l.UserContextData=n.getUserContextData()),n.client.request("RespondToAuthChallenge",l,(function(t,o){if(t)return e.onFailure(t);var u=o.ChallengeParameters,c=new p(u.SRP_B,16),l=new p(u.SALT,16);r.getPasswordAuthenticationKey(n.deviceKey,n.randomPassword,c,l,(function(t,r){if(t)return e.onFailure(t);var c=i.getNowString(),l=a().lib.WordArray.create(s.Buffer.concat([s.Buffer.from(n.deviceGroupKey,"utf8"),s.Buffer.from(n.deviceKey,"utf8"),s.Buffer.from(u.SECRET_BLOCK,"base64"),s.Buffer.from(c,"utf8")])),f=a().lib.WordArray.create(r),d=M().stringify(h()(l,f)),p={};p.USERNAME=n.username,p.PASSWORD_CLAIM_SECRET_BLOCK=u.SECRET_BLOCK,p.TIMESTAMP=c,p.PASSWORD_CLAIM_SIGNATURE=d,p.DEVICE_KEY=n.deviceKey;var g={ChallengeName:"DEVICE_PASSWORD_VERIFIER",ClientId:n.pool.getClientId(),ChallengeResponses:p,Session:o.Session};n.getUserContextData()&&(g.UserContextData=n.getUserContextData()),n.client.request("RespondToAuthChallenge",g,(function(t,r){return t?e.onFailure(t):(n.signInUserSession=n.getCognitoUserSession(r.AuthenticationResult),n.cacheTokens(),e.onSuccess(n.signInUserSession))}))}))}))}))},t.confirmRegistration=function(e,t,n,r){var s={ClientId:this.pool.getClientId(),ConfirmationCode:e,Username:this.username,ForceAliasCreation:t,ClientMetadata:r};this.getUserContextData()&&(s.UserContextData=this.getUserContextData()),this.client.request("ConfirmSignUp",s,(function(e){return e?n(e,null):n(null,"SUCCESS")}))},t.sendCustomChallengeAnswer=function(e,t,n){var r=this,s={};s.USERNAME=this.username,s.ANSWER=e;var i=new k(this.pool.getUserPoolId().split("_")[1]);this.getCachedDeviceKeyAndPassword(),null!=this.deviceKey&&(s.DEVICE_KEY=this.deviceKey);var o={ChallengeName:"CUSTOM_CHALLENGE",ChallengeResponses:s,ClientId:this.pool.getClientId(),Session:this.Session,ClientMetadata:n};this.getUserContextData()&&(o.UserContextData=this.getUserContextData()),this.client.request("RespondToAuthChallenge",o,(function(e,n){return e?t.onFailure(e):r.authenticateUserInternal(n,i,t)}))},t.sendMFACode=function(e,t,n,r){var i=this,o={};o.USERNAME=this.username,o.SMS_MFA_CODE=e;var a=n||"SMS_MFA";"SOFTWARE_TOKEN_MFA"===a&&(o.SOFTWARE_TOKEN_MFA_CODE=e),null!=this.deviceKey&&(o.DEVICE_KEY=this.deviceKey);var u={ChallengeName:a,ChallengeResponses:o,ClientId:this.pool.getClientId(),Session:this.Session,ClientMetadata:r};this.getUserContextData()&&(u.UserContextData=this.getUserContextData()),this.client.request("RespondToAuthChallenge",u,(function(e,n){if(e)return t.onFailure(e);if("DEVICE_SRP_AUTH"!==n.ChallengeName){if(i.signInUserSession=i.getCognitoUserSession(n.AuthenticationResult),i.cacheTokens(),null==n.AuthenticationResult.NewDeviceMetadata)return t.onSuccess(i.signInUserSession);var r=new k(i.pool.getUserPoolId().split("_")[1]);r.generateHashDevice(n.AuthenticationResult.NewDeviceMetadata.DeviceGroupKey,n.AuthenticationResult.NewDeviceMetadata.DeviceKey,(function(e){if(e)return t.onFailure(e);var o={Salt:s.Buffer.from(r.getSaltDevices(),"hex").toString("base64"),PasswordVerifier:s.Buffer.from(r.getVerifierDevices(),"hex").toString("base64")};i.verifierDevices=o.PasswordVerifier,i.deviceGroupKey=n.AuthenticationResult.NewDeviceMetadata.DeviceGroupKey,i.randomPassword=r.getRandomPassword(),i.client.request("ConfirmDevice",{DeviceKey:n.AuthenticationResult.NewDeviceMetadata.DeviceKey,AccessToken:i.signInUserSession.getAccessToken().getJwtToken(),DeviceSecretVerifierConfig:o,DeviceName:W},(function(e,r){return e?t.onFailure(e):(i.deviceKey=n.AuthenticationResult.NewDeviceMetadata.DeviceKey,i.cacheDeviceKeyAndPassword(),!0===r.UserConfirmationNecessary?t.onSuccess(i.signInUserSession,r.UserConfirmationNecessary):t.onSuccess(i.signInUserSession))}))}))}else i.getDeviceResponse(t)}))},t.changePassword=function(e,t,n,r){if(null==this.signInUserSession||!this.signInUserSession.isValid())return n(new Error("User is not authenticated"),null);this.client.request("ChangePassword",{PreviousPassword:e,ProposedPassword:t,AccessToken:this.signInUserSession.getAccessToken().getJwtToken(),ClientMetadata:r},(function(e){return e?n(e,null):n(null,"SUCCESS")}))},t.enableMFA=function(e){if(null==this.signInUserSession||!this.signInUserSession.isValid())return e(new Error("User is not authenticated"),null);var t=[];t.push({DeliveryMedium:"SMS",AttributeName:"phone_number"}),this.client.request("SetUserSettings",{MFAOptions:t,AccessToken:this.signInUserSession.getAccessToken().getJwtToken()},(function(t){return t?e(t,null):e(null,"SUCCESS")}))},t.setUserMfaPreference=function(e,t,n){if(null==this.signInUserSession||!this.signInUserSession.isValid())return n(new Error("User is not authenticated"),null);this.client.request("SetUserMFAPreference",{SMSMfaSettings:e,SoftwareTokenMfaSettings:t,AccessToken:this.signInUserSession.getAccessToken().getJwtToken()},(function(e){return e?n(e,null):n(null,"SUCCESS")}))},t.disableMFA=function(e){if(null==this.signInUserSession||!this.signInUserSession.isValid())return e(new Error("User is not authenticated"),null);this.client.request("SetUserSettings",{MFAOptions:[],AccessToken:this.signInUserSession.getAccessToken().getJwtToken()},(function(t){return t?e(t,null):e(null,"SUCCESS")}))},t.deleteUser=function(e,t){var n=this;if(null==this.signInUserSession||!this.signInUserSession.isValid())return e(new Error("User is not authenticated"),null);this.client.request("DeleteUser",{AccessToken:this.signInUserSession.getAccessToken().getJwtToken(),ClientMetadata:t},(function(t){return t?e(t,null):(n.clearCachedUser(),e(null,"SUCCESS"))}))},t.updateAttributes=function(e,t,n){var r=this;if(null==this.signInUserSession||!this.signInUserSession.isValid())return t(new Error("User is not authenticated"),null);this.client.request("UpdateUserAttributes",{AccessToken:this.signInUserSession.getAccessToken().getJwtToken(),UserAttributes:e,ClientMetadata:n},(function(e){return e?t(e,null):r.getUserData((function(){return t(null,"SUCCESS")}),{bypassCache:!0})}))},t.getUserAttributes=function(e){if(null==this.signInUserSession||!this.signInUserSession.isValid())return e(new Error("User is not authenticated"),null);this.client.request("GetUser",{AccessToken:this.signInUserSession.getAccessToken().getJwtToken()},(function(t,n){if(t)return e(t,null);for(var r=[],s=0;s<n.UserAttributes.length;s++){var i={Name:n.UserAttributes[s].Name,Value:n.UserAttributes[s].Value},o=new j(i);r.push(o)}return e(null,r)}))},t.getMFAOptions=function(e){if(null==this.signInUserSession||!this.signInUserSession.isValid())return e(new Error("User is not authenticated"),null);this.client.request("GetUser",{AccessToken:this.signInUserSession.getAccessToken().getJwtToken()},(function(t,n){return t?e(t,null):e(null,n.MFAOptions)}))},t.createGetUserRequest=function(){return this.client.promisifyRequest("GetUser",{AccessToken:this.signInUserSession.getAccessToken().getJwtToken()})},t.refreshSessionIfPossible=function(e){var t=this;return void 0===e&&(e={}),new Promise((function(n){var r=t.signInUserSession.getRefreshToken();r&&r.getToken()?t.refreshSession(r,n,e.clientMetadata):n()}))},t.getUserData=function(e,t){var n=this;if(null==this.signInUserSession||!this.signInUserSession.isValid())return this.clearCachedUserData(),e(new Error("User is not authenticated"),null);var r=this.getUserDataFromCache();if(r)if(this.isFetchUserDataAndTokenRequired(t))this.fetchUserData().then((function(e){return n.refreshSessionIfPossible(t).then((function(){return e}))})).then((function(t){return e(null,t)})).catch(e);else try{return void e(null,JSON.parse(r))}catch(t){return this.clearCachedUserData(),void e(t,null)}else this.fetchUserData().then((function(t){e(null,t)})).catch(e)},t.getUserDataFromCache=function(){return this.storage.getItem(this.userDataKey)},t.isFetchUserDataAndTokenRequired=function(e){var t=(e||{}).bypassCache;return void 0!==t&&t},t.fetchUserData=function(){var e=this;return this.createGetUserRequest().then((function(t){return e.cacheUserData(t),t}))},t.deleteAttributes=function(e,t){if(null==this.signInUserSession||!this.signInUserSession.isValid())return t(new Error("User is not authenticated"),null);this.client.request("DeleteUserAttributes",{UserAttributeNames:e,AccessToken:this.signInUserSession.getAccessToken().getJwtToken()},(function(e){return e?t(e,null):t(null,"SUCCESS")}))},t.resendConfirmationCode=function(e,t){var n={ClientId:this.pool.getClientId(),Username:this.username,ClientMetadata:t};this.client.request("ResendConfirmationCode",n,(function(t,n){return t?e(t,null):e(null,n)}))},t.getSession=function(e,t){if(void 0===t&&(t={}),null==this.username)return e(new Error("Username is null. Cannot retrieve a new session"),null);if(null!=this.signInUserSession&&this.signInUserSession.isValid())return e(null,this.signInUserSession);var n="CognitoIdentityServiceProvider."+this.pool.getClientId()+"."+this.username,r=n+".idToken",s=n+".accessToken",i=n+".refreshToken",o=n+".clockDrift";if(this.storage.getItem(r)){var a=new B({IdToken:this.storage.getItem(r)}),u=new F({AccessToken:this.storage.getItem(s)}),c=new O({RefreshToken:this.storage.getItem(i)}),l=parseInt(this.storage.getItem(o),0)||0,h=new N({IdToken:a,AccessToken:u,RefreshToken:c,ClockDrift:l});if(h.isValid())return this.signInUserSession=h,e(null,this.signInUserSession);if(!c.getToken())return e(new Error("Cannot retrieve a new session. Please authenticate."),null);this.refreshSession(c,e,t.clientMetadata)}else e(new Error("Local storage is missing an ID Token, Please authenticate"),null)},t.refreshSession=function(e,t,n){var r=this,s=this.pool.wrapRefreshSessionCallback?this.pool.wrapRefreshSessionCallback(t):t,i={};i.REFRESH_TOKEN=e.getToken();var o="CognitoIdentityServiceProvider."+this.pool.getClientId(),a=o+".LastAuthUser";if(this.storage.getItem(a)){this.username=this.storage.getItem(a);var u=o+"."+this.username+".deviceKey";this.deviceKey=this.storage.getItem(u),i.DEVICE_KEY=this.deviceKey}var c={ClientId:this.pool.getClientId(),AuthFlow:"REFRESH_TOKEN_AUTH",AuthParameters:i,ClientMetadata:n};this.getUserContextData()&&(c.UserContextData=this.getUserContextData()),this.client.request("InitiateAuth",c,(function(t,n){if(t)return"NotAuthorizedException"===t.code&&r.clearCachedUser(),s(t,null);if(n){var i=n.AuthenticationResult;return Object.prototype.hasOwnProperty.call(i,"RefreshToken")||(i.RefreshToken=e.getToken()),r.signInUserSession=r.getCognitoUserSession(i),r.cacheTokens(),s(null,r.signInUserSession)}}))},t.cacheTokens=function(){var e="CognitoIdentityServiceProvider."+this.pool.getClientId(),t=e+"."+this.username+".idToken",n=e+"."+this.username+".accessToken",r=e+"."+this.username+".refreshToken",s=e+"."+this.username+".clockDrift",i=e+".LastAuthUser";this.storage.setItem(t,this.signInUserSession.getIdToken().getJwtToken()),this.storage.setItem(n,this.signInUserSession.getAccessToken().getJwtToken()),this.storage.setItem(r,this.signInUserSession.getRefreshToken().getToken()),this.storage.setItem(s,""+this.signInUserSession.getClockDrift()),this.storage.setItem(i,this.username)},t.cacheUserData=function(e){this.storage.setItem(this.userDataKey,JSON.stringify(e))},t.clearCachedUserData=function(){this.storage.removeItem(this.userDataKey)},t.clearCachedUser=function(){this.clearCachedTokens(),this.clearCachedUserData()},t.cacheDeviceKeyAndPassword=function(){var e="CognitoIdentityServiceProvider."+this.pool.getClientId()+"."+this.username,t=e+".deviceKey",n=e+".randomPasswordKey",r=e+".deviceGroupKey";this.storage.setItem(t,this.deviceKey),this.storage.setItem(n,this.randomPassword),this.storage.setItem(r,this.deviceGroupKey)},t.getCachedDeviceKeyAndPassword=function(){var e="CognitoIdentityServiceProvider."+this.pool.getClientId()+"."+this.username,t=e+".deviceKey",n=e+".randomPasswordKey",r=e+".deviceGroupKey";this.storage.getItem(t)&&(this.deviceKey=this.storage.getItem(t),this.randomPassword=this.storage.getItem(n),this.deviceGroupKey=this.storage.getItem(r))},t.clearCachedDeviceKeyAndPassword=function(){var e="CognitoIdentityServiceProvider."+this.pool.getClientId()+"."+this.username,t=e+".deviceKey",n=e+".randomPasswordKey",r=e+".deviceGroupKey";this.storage.removeItem(t),this.storage.removeItem(n),this.storage.removeItem(r)},t.clearCachedTokens=function(){var e="CognitoIdentityServiceProvider."+this.pool.getClientId(),t=e+"."+this.username+".idToken",n=e+"."+this.username+".accessToken",r=e+"."+this.username+".refreshToken",s=e+".LastAuthUser",i=e+"."+this.username+".clockDrift";this.storage.removeItem(t),this.storage.removeItem(n),this.storage.removeItem(r),this.storage.removeItem(s),this.storage.removeItem(i)},t.getCognitoUserSession=function(e){var t=new B(e),n=new F(e),r=new O(e);return new N({IdToken:t,AccessToken:n,RefreshToken:r})},t.forgotPassword=function(e,t){var n={ClientId:this.pool.getClientId(),Username:this.username,ClientMetadata:t};this.getUserContextData()&&(n.UserContextData=this.getUserContextData()),this.client.request("ForgotPassword",n,(function(t,n){return t?e.onFailure(t):"function"==typeof e.inputVerificationCode?e.inputVerificationCode(n):e.onSuccess(n)}))},t.confirmPassword=function(e,t,n,r){var s={ClientId:this.pool.getClientId(),Username:this.username,ConfirmationCode:e,Password:t,ClientMetadata:r};this.getUserContextData()&&(s.UserContextData=this.getUserContextData()),this.client.request("ConfirmForgotPassword",s,(function(e){return e?n.onFailure(e):n.onSuccess()}))},t.getAttributeVerificationCode=function(e,t,n){if(null==this.signInUserSession||!this.signInUserSession.isValid())return t.onFailure(new Error("User is not authenticated"));this.client.request("GetUserAttributeVerificationCode",{AttributeName:e,AccessToken:this.signInUserSession.getAccessToken().getJwtToken(),ClientMetadata:n},(function(e,n){return e?t.onFailure(e):"function"==typeof t.inputVerificationCode?t.inputVerificationCode(n):t.onSuccess()}))},t.verifyAttribute=function(e,t,n){if(null==this.signInUserSession||!this.signInUserSession.isValid())return n.onFailure(new Error("User is not authenticated"));this.client.request("VerifyUserAttribute",{AttributeName:e,Code:t,AccessToken:this.signInUserSession.getAccessToken().getJwtToken()},(function(e){return e?n.onFailure(e):n.onSuccess("SUCCESS")}))},t.getDevice=function(e){if(null==this.signInUserSession||!this.signInUserSession.isValid())return e.onFailure(new Error("User is not authenticated"));this.client.request("GetDevice",{AccessToken:this.signInUserSession.getAccessToken().getJwtToken(),DeviceKey:this.deviceKey},(function(t,n){return t?e.onFailure(t):e.onSuccess(n)}))},t.forgetSpecificDevice=function(e,t){if(null==this.signInUserSession||!this.signInUserSession.isValid())return t.onFailure(new Error("User is not authenticated"));this.client.request("ForgetDevice",{AccessToken:this.signInUserSession.getAccessToken().getJwtToken(),DeviceKey:e},(function(e){return e?t.onFailure(e):t.onSuccess("SUCCESS")}))},t.forgetDevice=function(e){var t=this;this.forgetSpecificDevice(this.deviceKey,{onFailure:e.onFailure,onSuccess:function(n){return t.deviceKey=null,t.deviceGroupKey=null,t.randomPassword=null,t.clearCachedDeviceKeyAndPassword(),e.onSuccess(n)}})},t.setDeviceStatusRemembered=function(e){if(null==this.signInUserSession||!this.signInUserSession.isValid())return e.onFailure(new Error("User is not authenticated"));this.client.request("UpdateDeviceStatus",{AccessToken:this.signInUserSession.getAccessToken().getJwtToken(),DeviceKey:this.deviceKey,DeviceRememberedStatus:"remembered"},(function(t){return t?e.onFailure(t):e.onSuccess("SUCCESS")}))},t.setDeviceStatusNotRemembered=function(e){if(null==this.signInUserSession||!this.signInUserSession.isValid())return e.onFailure(new Error("User is not authenticated"));this.client.request("UpdateDeviceStatus",{AccessToken:this.signInUserSession.getAccessToken().getJwtToken(),DeviceKey:this.deviceKey,DeviceRememberedStatus:"not_remembered"},(function(t){return t?e.onFailure(t):e.onSuccess("SUCCESS")}))},t.listDevices=function(e,t,n){if(null==this.signInUserSession||!this.signInUserSession.isValid())return n.onFailure(new Error("User is not authenticated"));var r={AccessToken:this.signInUserSession.getAccessToken().getJwtToken(),Limit:e};t&&(r.PaginationToken=t),this.client.request("ListDevices",r,(function(e,t){return e?n.onFailure(e):n.onSuccess(t)}))},t.globalSignOut=function(e){var t=this;if(null==this.signInUserSession||!this.signInUserSession.isValid())return e.onFailure(new Error("User is not authenticated"));this.client.request("GlobalSignOut",{AccessToken:this.signInUserSession.getAccessToken().getJwtToken()},(function(n){return n?e.onFailure(n):(t.clearCachedUser(),e.onSuccess("SUCCESS"))}))},t.signOut=function(e){var t=this;e&&"function"==typeof e?this.getSession((function(n,r){if(n)return e(n);t.revokeTokens((function(n){t.cleanClientData(),e(n)}))})):this.cleanClientData()},t.revokeTokens=function(e){if(void 0===e&&(e=function(){}),"function"!=typeof e)throw new Error("Invalid revokeTokenCallback. It should be a function.");if(!this.signInUserSession)return e(new Error("User is not authenticated"));if(!this.signInUserSession.getAccessToken())return e(new Error("No Access token available"));var t=this.signInUserSession.getRefreshToken().getToken(),n=this.signInUserSession.getAccessToken();if(this.isSessionRevocable(n)&&t)return this.revokeToken({token:t,callback:e});e()},t.isSessionRevocable=function(e){if(e&&"function"==typeof e.decodePayload)try{return!!e.decodePayload().origin_jti}catch(e){}return!1},t.cleanClientData=function(){this.signInUserSession=null,this.clearCachedUser()},t.revokeToken=function(e){var t=e.token,n=e.callback;this.client.requestWithRetry("RevokeToken",{Token:t,ClientId:this.pool.getClientId()},(function(e){if(e)return n(e);n()}))},t.sendMFASelectionAnswer=function(e,t){var n=this,r={};r.USERNAME=this.username,r.ANSWER=e;var s={ChallengeName:"SELECT_MFA_TYPE",ChallengeResponses:r,ClientId:this.pool.getClientId(),Session:this.Session};this.getUserContextData()&&(s.UserContextData=this.getUserContextData()),this.client.request("RespondToAuthChallenge",s,(function(r,s){return r?t.onFailure(r):(n.Session=s.Session,"SMS_MFA"===e?t.mfaRequired(s.ChallengeName,s.ChallengeParameters):"SOFTWARE_TOKEN_MFA"===e?t.totpRequired(s.ChallengeName,s.ChallengeParameters):void 0)}))},t.getUserContextData=function(){return this.pool.getUserContextData(this.username)},t.associateSoftwareToken=function(e){var t=this;null!=this.signInUserSession&&this.signInUserSession.isValid()?this.client.request("AssociateSoftwareToken",{AccessToken:this.signInUserSession.getAccessToken().getJwtToken()},(function(t,n){return t?e.onFailure(t):e.associateSecretCode(n.SecretCode)})):this.client.request("AssociateSoftwareToken",{Session:this.Session},(function(n,r){return n?e.onFailure(n):(t.Session=r.Session,e.associateSecretCode(r.SecretCode))}))},t.verifySoftwareToken=function(e,t,n){var r=this;null!=this.signInUserSession&&this.signInUserSession.isValid()?this.client.request("VerifySoftwareToken",{AccessToken:this.signInUserSession.getAccessToken().getJwtToken(),UserCode:e,FriendlyDeviceName:t},(function(e,t){return e?n.onFailure(e):n.onSuccess(t)})):this.client.request("VerifySoftwareToken",{Session:this.Session,UserCode:e,FriendlyDeviceName:t},(function(e,t){if(e)return n.onFailure(e);r.Session=t.Session;var s={};s.USERNAME=r.username;var i={ChallengeName:"MFA_SETUP",ClientId:r.pool.getClientId(),ChallengeResponses:s,Session:r.Session};r.getUserContextData()&&(i.UserContextData=r.getUserContextData()),r.client.request("RespondToAuthChallenge",i,(function(e,t){return e?n.onFailure(e):(r.signInUserSession=r.getCognitoUserSession(t.AuthenticationResult),r.cacheTokens(),n.onSuccess(r.signInUserSession))}))}))},e}();function $(){}n(79),$.prototype.userAgent="aws-amplify/0.1.x js";var G=function(e){e&&($.prototype.userAgent&&!$.prototype.userAgent.includes(e)&&($.prototype.userAgent=$.prototype.userAgent.concat(" ",e)),$.prototype.userAgent&&""!==$.prototype.userAgent||($.prototype.userAgent=e))};const Z=$;function Y(e,t,n,r,s,i,o){try{var a=e[i](o),u=a.value}catch(e){return void n(e)}a.done?t(u):Promise.resolve(u).then(r,s)}function X(e){return function(){var t=this,n=arguments;return new Promise((function(r,s){var i=e.apply(t,n);function o(e){Y(i,r,s,o,a,"next",e)}function a(e){Y(i,r,s,o,a,"throw",e)}o(void 0)}))}}function Q(e){var t="function"==typeof Map?new Map:void 0;return(Q=function(e){if(null===e||(n=e,-1===Function.toString.call(n).indexOf("[native code]")))return e;var n;if("function"!=typeof e)throw new TypeError("Super expression must either be null or a function");if(void 0!==t){if(t.has(e))return t.get(e);t.set(e,r)}function r(){return ee(e,arguments,re(this).constructor)}return r.prototype=Object.create(e.prototype,{constructor:{value:r,enumerable:!1,writable:!0,configurable:!0}}),ne(r,e)})(e)}function ee(e,t,n){return(ee=te()?Reflect.construct:function(e,t,n){var r=[null];r.push.apply(r,t);var s=new(Function.bind.apply(e,r));return n&&ne(s,n.prototype),s}).apply(null,arguments)}function te(){if("undefined"==typeof Reflect||!Reflect.construct)return!1;if(Reflect.construct.sham)return!1;if("function"==typeof Proxy)return!0;try{return Boolean.prototype.valueOf.call(Reflect.construct(Boolean,[],(function(){}))),!0}catch(e){return!1}}function ne(e,t){return(ne=Object.setPrototypeOf||function(e,t){return e.__proto__=t,e})(e,t)}function re(e){return(re=Object.setPrototypeOf?Object.getPrototypeOf:function(e){return e.__proto__||Object.getPrototypeOf(e)})(e)}var se=function(e){function t(t,n,r,s){var i;return(i=e.call(this,t)||this).code=n,i.name=r,i.statusCode=s,i}return r=e,(n=t).prototype=Object.create(r.prototype),n.prototype.constructor=n,ne(n,r),t;var n,r}(Q(Error)),ie=function(){function e(e,t,n){this.endpoint=t||"https://cognito-idp."+e+".amazonaws.com/";var r=(n||{}).credentials;this.fetchOptions=r?{credentials:r}:{}}var t=e.prototype;return t.promisifyRequest=function(e,t){var n=this;return new Promise((function(r,s){n.request(e,t,(function(e,t){e?s(new se(e.message,e.code,e.name,e.statusCode)):r(t)}))}))},t.requestWithRetry=function(e,t,n){var r,s,i=this;(r=[t],s=5e3,void 0===s&&(s=ce),ae((function(t){return new Promise((function(n,r){i.request(e,t,(function(e,t){e?r(e):n(t)}))}))}),r,function(e){return function(t){var n=100*Math.pow(2,t)+100*Math.random();return!(n>e)&&n}}(s))).then((function(e){return n(null,e)})).catch((function(e){return n(e)}))},t.request=function(e,t,n){var r,s={"Content-Type":"application/x-amz-json-1.1","X-Amz-Target":"AWSCognitoIdentityProviderService."+e,"X-Amz-User-Agent":Z.prototype.userAgent},i=Object.assign({},this.fetchOptions,{headers:s,method:"POST",mode:"cors",cache:"no-cache",body:JSON.stringify(t)});fetch(this.endpoint,i).then((function(e){return r=e,e}),(function(e){if(e instanceof TypeError)throw new Error("Network error");throw e})).then((function(e){return e.json().catch((function(){return{}}))})).then((function(e){if(r.ok)return n(null,e);var t=(e.__type||e.code).split("#").pop(),s={code:t,name:t,message:e.message||e.Message||null};return n(s)})).catch((function(e){if(!(r&&r.headers&&r.headers.get("x-amzn-errortype"))){if(e instanceof Error&&"Network error"===e.message){var t={code:"NetworkError",name:e.name,message:e.message};return n(t)}return n(e)}try{var s=r.headers.get("x-amzn-errortype").split(":")[0],i={code:s,name:s,statusCode:r.status,message:r.status?r.status.toString():null};return n(i)}catch(t){return n(e)}}))},e}(),oe=(Error,function(e){return e&&e.nonRetryable});function ae(e,t,n,r){return ue.apply(this,arguments)}function ue(){return(ue=X(regeneratorRuntime.mark((function e(t,n,r,s){var i;return regeneratorRuntime.wrap((function(e){for(;;)switch(e.prev=e.next){case 0:if(void 0===s&&(s=1),"function"==typeof t){e.next=3;break}throw Error("functionToRetry must be a function");case 3:return t.name,JSON.stringify(n),e.prev=4,e.next=7,t.apply(void 0,n);case 7:return e.abrupt("return",e.sent);case 10:if(e.prev=10,e.t0=e.catch(4),t.name,e.t0,!oe(e.t0)){e.next=16;break}throw t.name,e.t0,e.t0;case 16:if(i=r(s,n,e.t0),t.name,!1===i){e.next=26;break}return e.next=21,new Promise((function(e){return setTimeout(e,i)}));case 21:return e.next=23,ae(t,n,r,s+1);case 23:return e.abrupt("return",e.sent);case 26:throw e.t0;case 27:case"end":return e.stop()}}),e,null,[[4,10]])})))).apply(this,arguments)}var ce=3e5,le=function(){function e(e,t){var n=e||{},r=n.UserPoolId,s=n.ClientId,i=n.endpoint,o=n.fetchOptions,a=n.AdvancedSecurityDataCollectionFlag;if(!r||!s)throw new Error("Both UserPoolId and ClientId are required.");if(!/^[\w-]+_.+$/.test(r))throw new Error("Invalid UserPoolId format.");var u=r.split("_")[0];this.userPoolId=r,this.clientId=s,this.client=new ie(u,i,o),this.advancedSecurityDataCollectionFlag=!1!==a,this.storage=e.Storage||(new z).getStorage(),t&&(this.wrapRefreshSessionCallback=t)}var t=e.prototype;return t.getUserPoolId=function(){return this.userPoolId},t.getClientId=function(){return this.clientId},t.signUp=function(e,t,n,r,s,i){var o=this,a={ClientId:this.clientId,Username:e,Password:t,UserAttributes:n,ValidationData:r,ClientMetadata:i};this.getUserContextData(e)&&(a.UserContextData=this.getUserContextData(e)),this.client.request("SignUp",a,(function(t,n){if(t)return s(t,null);var r={Username:e,Pool:o,Storage:o.storage},i={user:new J(r),userConfirmed:n.UserConfirmed,userSub:n.UserSub,codeDeliveryDetails:n.CodeDeliveryDetails};return s(null,i)}))},t.getCurrentUser=function(){var e="CognitoIdentityServiceProvider."+this.clientId+".LastAuthUser",t=this.storage.getItem(e);if(t){var n={Username:t,Pool:this,Storage:this.storage};return new J(n)}return null},t.getUserContextData=function(e){if("undefined"!=typeof AmazonCognitoAdvancedSecurityData){var t=AmazonCognitoAdvancedSecurityData;if(this.advancedSecurityDataCollectionFlag){var n=t.getData(e,this.userPoolId,this.clientId);if(n)return{EncodedData:n}}return{}}},e}(),he=n(808),fe=function(){function e(e){if(!e.domain)throw new Error("The domain of cookieStorage can not be undefined.");if(this.domain=e.domain,e.path?this.path=e.path:this.path="/",Object.prototype.hasOwnProperty.call(e,"expires")?this.expires=e.expires:this.expires=365,Object.prototype.hasOwnProperty.call(e,"secure")?this.secure=e.secure:this.secure=!0,Object.prototype.hasOwnProperty.call(e,"sameSite")){if(!["strict","lax","none"].includes(e.sameSite))throw new Error('The sameSite value of cookieStorage must be "lax", "strict" or "none".');if("none"===e.sameSite&&!this.secure)throw new Error("sameSite = None requires the Secure attribute in latest browser versions.");this.sameSite=e.sameSite}else this.sameSite=null}var t=e.prototype;return t.setItem=function(e,t){var n={path:this.path,expires:this.expires,domain:this.domain,secure:this.secure};return this.sameSite&&(n.sameSite=this.sameSite),he.set(e,t,n),he.get(e)},t.getItem=function(e){return he.get(e)},t.removeItem=function(e){var t={path:this.path,expires:this.expires,domain:this.domain,secure:this.secure};return this.sameSite&&(t.sameSite=this.sameSite),he.remove(e,t)},t.clear=function(){for(var e=he.get(),t=Object.keys(e).length,n=0;n<t;++n)this.removeItem(Object.keys(e)[n]);return{}},e}()},249:function(e,t,n){var r;e.exports=r=r||function(e,t){var r;if("undefined"!=typeof window&&window.crypto&&(r=window.crypto),!r&&"undefined"!=typeof window&&window.msCrypto&&(r=window.msCrypto),!r&&"undefined"!=typeof global&&global.crypto&&(r=global.crypto),!r)try{r=n(417)}catch(e){}var s=function(){if(r){if("function"==typeof r.getRandomValues)try{return r.getRandomValues(new Uint32Array(1))[0]}catch(e){}if("function"==typeof r.randomBytes)try{return r.randomBytes(4).readInt32LE()}catch(e){}}throw new Error("Native crypto module could not be used to get secure random number.")},i=Object.create||function(){function e(){}return function(t){var n;return e.prototype=t,n=new e,e.prototype=null,n}}(),o={},a=o.lib={},u=a.Base={extend:function(e){var t=i(this);return e&&t.mixIn(e),t.hasOwnProperty("init")&&this.init!==t.init||(t.init=function(){t.$super.init.apply(this,arguments)}),t.init.prototype=t,t.$super=this,t},create:function(){var e=this.extend();return e.init.apply(e,arguments),e},init:function(){},mixIn:function(e){for(var t in e)e.hasOwnProperty(t)&&(this[t]=e[t]);e.hasOwnProperty("toString")&&(this.toString=e.toString)},clone:function(){return this.init.prototype.extend(this)}},c=a.WordArray=u.extend({init:function(e,t){e=this.words=e||[],this.sigBytes=null!=t?t:4*e.length},toString:function(e){return(e||h).stringify(this)},concat:function(e){var t=this.words,n=e.words,r=this.sigBytes,s=e.sigBytes;if(this.clamp(),r%4)for(var i=0;i<s;i++){var o=n[i>>>2]>>>24-i%4*8&255;t[r+i>>>2]|=o<<24-(r+i)%4*8}else for(i=0;i<s;i+=4)t[r+i>>>2]=n[i>>>2];return this.sigBytes+=s,this},clamp:function(){var t=this.words,n=this.sigBytes;t[n>>>2]&=4294967295<<32-n%4*8,t.length=e.ceil(n/4)},clone:function(){var e=u.clone.call(this);return e.words=this.words.slice(0),e},random:function(e){for(var t=[],n=0;n<e;n+=4)t.push(s());return new c.init(t,e)}}),l=o.enc={},h=l.Hex={stringify:function(e){for(var t=e.words,n=e.sigBytes,r=[],s=0;s<n;s++){var i=t[s>>>2]>>>24-s%4*8&255;r.push((i>>>4).toString(16)),r.push((15&i).toString(16))}return r.join("")},parse:function(e){for(var t=e.length,n=[],r=0;r<t;r+=2)n[r>>>3]|=parseInt(e.substr(r,2),16)<<24-r%8*4;return new c.init(n,t/2)}},f=l.Latin1={stringify:function(e){for(var t=e.words,n=e.sigBytes,r=[],s=0;s<n;s++){var i=t[s>>>2]>>>24-s%4*8&255;r.push(String.fromCharCode(i))}return r.join("")},parse:function(e){for(var t=e.length,n=[],r=0;r<t;r++)n[r>>>2]|=(255&e.charCodeAt(r))<<24-r%4*8;return new c.init(n,t)}},d=l.Utf8={stringify:function(e){try{return decodeURIComponent(escape(f.stringify(e)))}catch(e){throw new Error("Malformed UTF-8 data")}},parse:function(e){return f.parse(unescape(encodeURIComponent(e)))}},p=a.BufferedBlockAlgorithm=u.extend({reset:function(){this._data=new c.init,this._nDataBytes=0},_append:function(e){"string"==typeof e&&(e=d.parse(e)),this._data.concat(e),this._nDataBytes+=e.sigBytes},_process:function(t){var n,r=this._data,s=r.words,i=r.sigBytes,o=this.blockSize,a=i/(4*o),u=(a=t?e.ceil(a):e.max((0|a)-this._minBufferSize,0))*o,l=e.min(4*u,i);if(u){for(var h=0;h<u;h+=o)this._doProcessBlock(s,h);n=s.splice(0,u),r.sigBytes-=l}return new c.init(n,l)},clone:function(){var e=u.clone.call(this);return e._data=this._data.clone(),e},_minBufferSize:0}),g=(a.Hasher=p.extend({cfg:u.extend(),init:function(e){this.cfg=this.cfg.extend(e),this.reset()},reset:function(){p.reset.call(this),this._doReset()},update:function(e){return this._append(e),this._process(),this},finalize:function(e){return e&&this._append(e),this._doFinalize()},blockSize:16,_createHelper:function(e){return function(t,n){return new e.init(n).finalize(t)}},_createHmacHelper:function(e){return function(t,n){return new g.HMAC.init(e,n).finalize(t)}}}),o.algo={});return o}(Math)},269:function(e,t,n){var r,s,i;e.exports=(r=n(249),i=(s=r).lib.WordArray,s.enc.Base64={stringify:function(e){var t=e.words,n=e.sigBytes,r=this._map;e.clamp();for(var s=[],i=0;i<n;i+=3)for(var o=(t[i>>>2]>>>24-i%4*8&255)<<16|(t[i+1>>>2]>>>24-(i+1)%4*8&255)<<8|t[i+2>>>2]>>>24-(i+2)%4*8&255,a=0;a<4&&i+.75*a<n;a++)s.push(r.charAt(o>>>6*(3-a)&63));var u=r.charAt(64);if(u)for(;s.length%4;)s.push(u);return s.join("")},parse:function(e){var t=e.length,n=this._map,r=this._reverseMap;if(!r){r=this._reverseMap=[];for(var s=0;s<n.length;s++)r[n.charCodeAt(s)]=s}var o=n.charAt(64);if(o){var a=e.indexOf(o);-1!==a&&(t=a)}return function(e,t,n){for(var r=[],s=0,o=0;o<t;o++)if(o%4){var a=n[e.charCodeAt(o-1)]<<o%4*2|n[e.charCodeAt(o)]>>>6-o%4*2;r[s>>>2]|=a<<24-s%4*8,s++}return i.create(r,s)}(e,t,r)},_map:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="},r.enc.Base64)},10:function(e,t,n){var r;e.exports=(r=n(249),n(153),n(824),r.HmacSHA256)},824:function(e,t,n){var r,s,i;e.exports=(s=(r=n(249)).lib.Base,i=r.enc.Utf8,void(r.algo.HMAC=s.extend({init:function(e,t){e=this._hasher=new e.init,"string"==typeof t&&(t=i.parse(t));var n=e.blockSize,r=4*n;t.sigBytes>r&&(t=e.finalize(t)),t.clamp();for(var s=this._oKey=t.clone(),o=this._iKey=t.clone(),a=s.words,u=o.words,c=0;c<n;c++)a[c]^=1549556828,u[c]^=909522486;s.sigBytes=o.sigBytes=r,this.reset()},reset:function(){var e=this._hasher;e.reset(),e.update(this._iKey)},update:function(e){return this._hasher.update(e),this},finalize:function(e){var t=this._hasher,n=t.finalize(e);return t.reset(),t.finalize(this._oKey.clone().concat(n))}})))},433:function(e,t,n){var r;e.exports=(r=n(249),function(){if("function"==typeof ArrayBuffer){var e=r.lib.WordArray,t=e.init;(e.init=function(e){if(e instanceof ArrayBuffer&&(e=new Uint8Array(e)),(e instanceof Int8Array||"undefined"!=typeof Uint8ClampedArray&&e instanceof Uint8ClampedArray||e instanceof Int16Array||e instanceof Uint16Array||e instanceof Int32Array||e instanceof Uint32Array||e instanceof Float32Array||e instanceof Float64Array)&&(e=new Uint8Array(e.buffer,e.byteOffset,e.byteLength)),e instanceof Uint8Array){for(var n=e.byteLength,r=[],s=0;s<n;s++)r[s>>>2]|=e[s]<<24-s%4*8;t.call(this,r,n)}else t.apply(this,arguments)}).prototype=e}}(),r.lib.WordArray)},153:function(e,t,n){var r;e.exports=(r=n(249),function(e){var t=r,n=t.lib,s=n.WordArray,i=n.Hasher,o=t.algo,a=[],u=[];!function(){function t(t){for(var n=e.sqrt(t),r=2;r<=n;r++)if(!(t%r))return!1;return!0}function n(e){return 4294967296*(e-(0|e))|0}for(var r=2,s=0;s<64;)t(r)&&(s<8&&(a[s]=n(e.pow(r,.5))),u[s]=n(e.pow(r,1/3)),s++),r++}();var c=[],l=o.SHA256=i.extend({_doReset:function(){this._hash=new s.init(a.slice(0))},_doProcessBlock:function(e,t){for(var n=this._hash.words,r=n[0],s=n[1],i=n[2],o=n[3],a=n[4],l=n[5],h=n[6],f=n[7],d=0;d<64;d++){if(d<16)c[d]=0|e[t+d];else{var p=c[d-15],g=(p<<25|p>>>7)^(p<<14|p>>>18)^p>>>3,m=c[d-2],y=(m<<15|m>>>17)^(m<<13|m>>>19)^m>>>10;c[d]=g+c[d-7]+y+c[d-16]}var v=r&s^r&i^s&i,S=(r<<30|r>>>2)^(r<<19|r>>>13)^(r<<10|r>>>22),C=f+((a<<26|a>>>6)^(a<<21|a>>>11)^(a<<7|a>>>25))+(a&l^~a&h)+u[d]+c[d];f=h,h=l,l=a,a=o+C|0,o=i,i=s,s=r,r=C+(S+v)|0}n[0]=n[0]+r|0,n[1]=n[1]+s|0,n[2]=n[2]+i|0,n[3]=n[3]+o|0,n[4]=n[4]+a|0,n[5]=n[5]+l|0,n[6]=n[6]+h|0,n[7]=n[7]+f|0},_doFinalize:function(){var t=this._data,n=t.words,r=8*this._nDataBytes,s=8*t.sigBytes;return n[s>>>5]|=128<<24-s%32,n[14+(s+64>>>9<<4)]=e.floor(r/4294967296),n[15+(s+64>>>9<<4)]=r,t.sigBytes=4*n.length,this._process(),this._hash},clone:function(){var e=i.clone.call(this);return e._hash=this._hash.clone(),e}});t.SHA256=i._createHelper(l),t.HmacSHA256=i._createHmacHelper(l)}(Math),r.SHA256)},79:(e,t,n)=>{function r(e){return e&&e.default||e}e.exports=global.fetch=global.fetch||("undefined"==typeof process?r(n(869)):function(e,t){return r(n(854))(String(e).replace(/^\/\//g,"https://"),t)})},808:(e,t,n)=>{var r,s,i;void 0===(s="function"==typeof(r=i=function(){function e(){for(var e=0,t={};e<arguments.length;e++){var n=arguments[e];for(var r in n)t[r]=n[r]}return t}function t(e){return e.replace(/(%[0-9A-Z]{2})+/g,decodeURIComponent)}return function n(r){function s(){}function i(t,n,i){if("undefined"!=typeof document){"number"==typeof(i=e({path:"/"},s.defaults,i)).expires&&(i.expires=new Date(1*new Date+864e5*i.expires)),i.expires=i.expires?i.expires.toUTCString():"";try{var o=JSON.stringify(n);/^[\{\[]/.test(o)&&(n=o)}catch(e){}n=r.write?r.write(n,t):encodeURIComponent(String(n)).replace(/%(23|24|26|2B|3A|3C|3E|3D|2F|3F|40|5B|5D|5E|60|7B|7D|7C)/g,decodeURIComponent),t=encodeURIComponent(String(t)).replace(/%(23|24|26|2B|5E|60|7C)/g,decodeURIComponent).replace(/[\(\)]/g,escape);var a="";for(var u in i)i[u]&&(a+="; "+u,!0!==i[u]&&(a+="="+i[u].split(";")[0]));return document.cookie=t+"="+n+a}}function o(e,n){if("undefined"!=typeof document){for(var s={},i=document.cookie?document.cookie.split("; "):[],o=0;o<i.length;o++){var a=i[o].split("="),u=a.slice(1).join("=");n||'"'!==u.charAt(0)||(u=u.slice(1,-1));try{var c=t(a[0]);if(u=(r.read||r)(u,c)||t(u),n)try{u=JSON.parse(u)}catch(e){}if(s[c]=u,e===c)break}catch(e){}}return e?s[e]:s}}return s.set=i,s.get=function(e){return o(e,!1)},s.getJSON=function(e){return o(e,!0)},s.remove=function(t,n){i(t,"",e(n,{expires:-1}))},s.defaults={},s.withConverter=n,s}((function(){}))})?r.call(t,n,t,e):r)||(e.exports=s),e.exports=i()},854:(e,t,n)=>{"use strict";n.r(t),n.d(t,{FetchError:()=>f,Headers:()=>k,Request:()=>H,Response:()=>M,default:()=>$});const r=require("stream"),s=require("http"),i=require("url"),o=require("https"),a=require("zlib"),u=r.Readable,c=Symbol("buffer"),l=Symbol("type");class h{constructor(){this[l]="";const e=arguments[0],t=arguments[1],n=[];let r=0;if(e){const t=e,s=Number(t.length);for(let e=0;e<s;e++){const s=t[e];let i;i=s instanceof Buffer?s:ArrayBuffer.isView(s)?Buffer.from(s.buffer,s.byteOffset,s.byteLength):s instanceof ArrayBuffer?Buffer.from(s):s instanceof h?s[c]:Buffer.from("string"==typeof s?s:String(s)),r+=i.length,n.push(i)}}this[c]=Buffer.concat(n);let s=t&&void 0!==t.type&&String(t.type).toLowerCase();s&&!/[^\u0020-\u007E]/.test(s)&&(this[l]=s)}get size(){return this[c].length}get type(){return this[l]}text(){return Promise.resolve(this[c].toString())}arrayBuffer(){const e=this[c],t=e.buffer.slice(e.byteOffset,e.byteOffset+e.byteLength);return Promise.resolve(t)}stream(){const e=new u;return e._read=function(){},e.push(this[c]),e.push(null),e}toString(){return"[object Blob]"}slice(){const e=this.size,t=arguments[0],n=arguments[1];let r,s;r=void 0===t?0:t<0?Math.max(e+t,0):Math.min(t,e),s=void 0===n?e:n<0?Math.max(e+n,0):Math.min(n,e);const i=Math.max(s-r,0),o=this[c].slice(r,r+i),a=new h([],{type:arguments[2]});return a[c]=o,a}}function f(e,t,n){Error.call(this,e),this.message=e,this.type=t,n&&(this.code=this.errno=n.code),Error.captureStackTrace(this,this.constructor)}let d;Object.defineProperties(h.prototype,{size:{enumerable:!0},type:{enumerable:!0},slice:{enumerable:!0}}),Object.defineProperty(h.prototype,Symbol.toStringTag,{value:"Blob",writable:!1,enumerable:!1,configurable:!0}),f.prototype=Object.create(Error.prototype),f.prototype.constructor=f,f.prototype.name="FetchError";try{d=require("encoding").convert}catch(e){}const p=Symbol("Body internals"),g=r.PassThrough;function m(e){var t=this,n=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},s=n.size;let i=void 0===s?0:s;var o=n.timeout;let a=void 0===o?0:o;null==e?e=null:v(e)?e=Buffer.from(e.toString()):S(e)||Buffer.isBuffer(e)||("[object ArrayBuffer]"===Object.prototype.toString.call(e)?e=Buffer.from(e):ArrayBuffer.isView(e)?e=Buffer.from(e.buffer,e.byteOffset,e.byteLength):e instanceof r||(e=Buffer.from(String(e)))),this[p]={body:e,disturbed:!1,error:null},this.size=i,this.timeout=a,e instanceof r&&e.on("error",(function(e){const n="AbortError"===e.name?e:new f(`Invalid response body while trying to fetch ${t.url}: ${e.message}`,"system",e);t[p].error=n}))}function y(){var e=this;if(this[p].disturbed)return m.Promise.reject(new TypeError(`body used already for: ${this.url}`));if(this[p].disturbed=!0,this[p].error)return m.Promise.reject(this[p].error);let t=this.body;if(null===t)return m.Promise.resolve(Buffer.alloc(0));if(S(t)&&(t=t.stream()),Buffer.isBuffer(t))return m.Promise.resolve(t);if(!(t instanceof r))return m.Promise.resolve(Buffer.alloc(0));let n=[],s=0,i=!1;return new m.Promise((function(r,o){let a;e.timeout&&(a=setTimeout((function(){i=!0,o(new f(`Response timeout while trying to fetch ${e.url} (over ${e.timeout}ms)`,"body-timeout"))}),e.timeout)),t.on("error",(function(t){"AbortError"===t.name?(i=!0,o(t)):o(new f(`Invalid response body while trying to fetch ${e.url}: ${t.message}`,"system",t))})),t.on("data",(function(t){if(!i&&null!==t){if(e.size&&s+t.length>e.size)return i=!0,void o(new f(`content size at ${e.url} over limit: ${e.size}`,"max-size"));s+=t.length,n.push(t)}})),t.on("end",(function(){if(!i){clearTimeout(a);try{r(Buffer.concat(n,s))}catch(t){o(new f(`Could not create Buffer from response body for ${e.url}: ${t.message}`,"system",t))}}}))}))}function v(e){return"object"==typeof e&&"function"==typeof e.append&&"function"==typeof e.delete&&"function"==typeof e.get&&"function"==typeof e.getAll&&"function"==typeof e.has&&"function"==typeof e.set&&("URLSearchParams"===e.constructor.name||"[object URLSearchParams]"===Object.prototype.toString.call(e)||"function"==typeof e.sort)}function S(e){return"object"==typeof e&&"function"==typeof e.arrayBuffer&&"string"==typeof e.type&&"function"==typeof e.stream&&"function"==typeof e.constructor&&"string"==typeof e.constructor.name&&/^(Blob|File)$/.test(e.constructor.name)&&/^(Blob|File)$/.test(e[Symbol.toStringTag])}function C(e){let t,n,s=e.body;if(e.bodyUsed)throw new Error("cannot clone body after it is used");return s instanceof r&&"function"!=typeof s.getBoundary&&(t=new g,n=new g,s.pipe(t),s.pipe(n),e[p].body=t,s=n),s}function w(e){return null===e?null:"string"==typeof e?"text/plain;charset=UTF-8":v(e)?"application/x-www-form-urlencoded;charset=UTF-8":S(e)?e.type||null:Buffer.isBuffer(e)||"[object ArrayBuffer]"===Object.prototype.toString.call(e)||ArrayBuffer.isView(e)?null:"function"==typeof e.getBoundary?`multipart/form-data;boundary=${e.getBoundary()}`:e instanceof r?null:"text/plain;charset=UTF-8"}function A(e){const t=e.body;return null===t?0:S(t)?t.size:Buffer.isBuffer(t)?t.length:t&&"function"==typeof t.getLengthSync&&(t._lengthRetrievers&&0==t._lengthRetrievers.length||t.hasKnownLength&&t.hasKnownLength())?t.getLengthSync():null}m.prototype={get body(){return this[p].body},get bodyUsed(){return this[p].disturbed},arrayBuffer(){return y.call(this).then((function(e){return e.buffer.slice(e.byteOffset,e.byteOffset+e.byteLength)}))},blob(){let e=this.headers&&this.headers.get("content-type")||"";return y.call(this).then((function(t){return Object.assign(new h([],{type:e.toLowerCase()}),{[c]:t})}))},json(){var e=this;return y.call(this).then((function(t){try{return JSON.parse(t.toString())}catch(t){return m.Promise.reject(new f(`invalid json response body at ${e.url} reason: ${t.message}`,"invalid-json"))}}))},text(){return y.call(this).then((function(e){return e.toString()}))},buffer(){return y.call(this)},textConverted(){var e=this;return y.call(this).then((function(t){return function(e,t){if("function"!=typeof d)throw new Error("The package `encoding` must be installed to use the textConverted() function");const n=t.get("content-type");let r,s,i="utf-8";return n&&(r=/charset=([^;]*)/i.exec(n)),s=e.slice(0,1024).toString(),!r&&s&&(r=/<meta.+?charset=(['"])(.+?)\1/i.exec(s)),!r&&s&&(r=/<meta[\s]+?http-equiv=(['"])content-type\1[\s]+?content=(['"])(.+?)\2/i.exec(s),r||(r=/<meta[\s]+?content=(['"])(.+?)\1[\s]+?http-equiv=(['"])content-type\3/i.exec(s),r&&r.pop()),r&&(r=/charset=(.*)/i.exec(r.pop()))),!r&&s&&(r=/<\?xml.+?encoding=(['"])(.+?)\1/i.exec(s)),r&&(i=r.pop(),"gb2312"!==i&&"gbk"!==i||(i="gb18030")),d(e,"UTF-8",i).toString()}(t,e.headers)}))}},Object.defineProperties(m.prototype,{body:{enumerable:!0},bodyUsed:{enumerable:!0},arrayBuffer:{enumerable:!0},blob:{enumerable:!0},json:{enumerable:!0},text:{enumerable:!0}}),m.mixIn=function(e){for(const t of Object.getOwnPropertyNames(m.prototype))if(!(t in e)){const n=Object.getOwnPropertyDescriptor(m.prototype,t);Object.defineProperty(e,t,n)}},m.Promise=global.Promise;const b=/[^\^_`a-zA-Z\-0-9!#$%&'*+.|~]/,U=/[^\t\x20-\x7e\x80-\xff]/;function T(e){if(e=`${e}`,b.test(e)||""===e)throw new TypeError(`${e} is not a legal HTTP header name`)}function D(e){if(e=`${e}`,U.test(e))throw new TypeError(`${e} is not a legal HTTP header value`)}function E(e,t){t=t.toLowerCase();for(const n in e)if(n.toLowerCase()===t)return n}const I=Symbol("map");class k{constructor(){let e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:void 0;if(this[I]=Object.create(null),e instanceof k){const t=e.raw(),n=Object.keys(t);for(const e of n)for(const n of t[e])this.append(e,n)}else if(null==e);else{if("object"!=typeof e)throw new TypeError("Provided initializer must be an object");{const t=e[Symbol.iterator];if(null!=t){if("function"!=typeof t)throw new TypeError("Header pairs must be iterable");const n=[];for(const t of e){if("object"!=typeof t||"function"!=typeof t[Symbol.iterator])throw new TypeError("Each header pair must be iterable");n.push(Array.from(t))}for(const e of n){if(2!==e.length)throw new TypeError("Each header pair must be a name/value tuple");this.append(e[0],e[1])}}else for(const t of Object.keys(e)){const n=e[t];this.append(t,n)}}}}get(e){T(e=`${e}`);const t=E(this[I],e);return void 0===t?null:this[I][t].join(", ")}forEach(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:void 0,n=P(this),r=0;for(;r<n.length;){var s=n[r];const i=s[0],o=s[1];e.call(t,o,i,this),n=P(this),r++}}set(e,t){t=`${t}`,T(e=`${e}`),D(t);const n=E(this[I],e);this[I][void 0!==n?n:e]=[t]}append(e,t){t=`${t}`,T(e=`${e}`),D(t);const n=E(this[I],e);void 0!==n?this[I][n].push(t):this[I][e]=[t]}has(e){return T(e=`${e}`),void 0!==E(this[I],e)}delete(e){T(e=`${e}`);const t=E(this[I],e);void 0!==t&&delete this[I][t]}raw(){return this[I]}keys(){return F(this,"key")}values(){return F(this,"value")}[Symbol.iterator](){return F(this,"key+value")}}function P(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:"key+value";const n=Object.keys(e[I]).sort();return n.map("key"===t?function(e){return e.toLowerCase()}:"value"===t?function(t){return e[I][t].join(", ")}:function(t){return[t.toLowerCase(),e[I][t].join(", ")]})}k.prototype.entries=k.prototype[Symbol.iterator],Object.defineProperty(k.prototype,Symbol.toStringTag,{value:"Headers",writable:!1,enumerable:!1,configurable:!0}),Object.defineProperties(k.prototype,{get:{enumerable:!0},forEach:{enumerable:!0},set:{enumerable:!0},append:{enumerable:!0},has:{enumerable:!0},delete:{enumerable:!0},keys:{enumerable:!0},values:{enumerable:!0},entries:{enumerable:!0}});const R=Symbol("internal");function F(e,t){const n=Object.create(x);return n[R]={target:e,kind:t,index:0},n}const x=Object.setPrototypeOf({next(){if(!this||Object.getPrototypeOf(this)!==x)throw new TypeError("Value of `this` is not a HeadersIterator");var e=this[R];const t=e.target,n=e.kind,r=e.index,s=P(t,n);return r>=s.length?{value:void 0,done:!0}:(this[R].index=r+1,{value:s[r],done:!1})}},Object.getPrototypeOf(Object.getPrototypeOf([][Symbol.iterator]())));function B(e){const t=Object.assign({__proto__:null},e[I]),n=E(e[I],"Host");return void 0!==n&&(t[n]=t[n][0]),t}Object.defineProperty(x,Symbol.toStringTag,{value:"HeadersIterator",writable:!1,enumerable:!1,configurable:!0});const O=Symbol("Response internals"),_=s.STATUS_CODES;class M{constructor(){let e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:null,t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};m.call(this,e,t);const n=t.status||200,r=new k(t.headers);if(null!=e&&!r.has("Content-Type")){const t=w(e);t&&r.append("Content-Type",t)}this[O]={url:t.url,status:n,statusText:t.statusText||_[n],headers:r,counter:t.counter}}get url(){return this[O].url||""}get status(){return this[O].status}get ok(){return this[O].status>=200&&this[O].status<300}get redirected(){return this[O].counter>0}get statusText(){return this[O].statusText}get headers(){return this[O].headers}clone(){return new M(C(this),{url:this.url,status:this.status,statusText:this.statusText,headers:this.headers,ok:this.ok,redirected:this.redirected})}}m.mixIn(M.prototype),Object.defineProperties(M.prototype,{url:{enumerable:!0},status:{enumerable:!0},ok:{enumerable:!0},redirected:{enumerable:!0},statusText:{enumerable:!0},headers:{enumerable:!0},clone:{enumerable:!0}}),Object.defineProperty(M.prototype,Symbol.toStringTag,{value:"Response",writable:!1,enumerable:!1,configurable:!0});const N=Symbol("Request internals"),V=i.parse,K=i.format,q="destroy"in r.Readable.prototype;function j(e){return"object"==typeof e&&"object"==typeof e[N]}class H{constructor(e){let t,n=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};j(e)?t=V(e.url):(t=e&&e.href?V(e.href):V(`${e}`),e={});let r=n.method||e.method||"GET";if(r=r.toUpperCase(),(null!=n.body||j(e)&&null!==e.body)&&("GET"===r||"HEAD"===r))throw new TypeError("Request with GET/HEAD method cannot have body");let s=null!=n.body?n.body:j(e)&&null!==e.body?C(e):null;m.call(this,s,{timeout:n.timeout||e.timeout||0,size:n.size||e.size||0});const i=new k(n.headers||e.headers||{});if(null!=s&&!i.has("Content-Type")){const e=w(s);e&&i.append("Content-Type",e)}let o=j(e)?e.signal:null;if("signal"in n&&(o=n.signal),null!=o&&!function(e){const t=e&&"object"==typeof e&&Object.getPrototypeOf(e);return!(!t||"AbortSignal"!==t.constructor.name)}(o))throw new TypeError("Expected signal to be an instanceof AbortSignal");this[N]={method:r,redirect:n.redirect||e.redirect||"follow",headers:i,parsedURL:t,signal:o},this.follow=void 0!==n.follow?n.follow:void 0!==e.follow?e.follow:20,this.compress=void 0!==n.compress?n.compress:void 0===e.compress||e.compress,this.counter=n.counter||e.counter||0,this.agent=n.agent||e.agent}get method(){return this[N].method}get url(){return K(this[N].parsedURL)}get headers(){return this[N].headers}get redirect(){return this[N].redirect}get signal(){return this[N].signal}clone(){return new H(this)}}function L(e){Error.call(this,e),this.type="aborted",this.message=e,Error.captureStackTrace(this,this.constructor)}m.mixIn(H.prototype),Object.defineProperty(H.prototype,Symbol.toStringTag,{value:"Request",writable:!1,enumerable:!1,configurable:!0}),Object.defineProperties(H.prototype,{method:{enumerable:!0},url:{enumerable:!0},headers:{enumerable:!0},redirect:{enumerable:!0},clone:{enumerable:!0},signal:{enumerable:!0}}),L.prototype=Object.create(Error.prototype),L.prototype.constructor=L,L.prototype.name="AbortError";const z=r.PassThrough,W=i.resolve;function J(e,t){if(!J.Promise)throw new Error("native promise missing, set fetch.Promise to your favorite alternative");return m.Promise=J.Promise,new J.Promise((function(n,i){const u=new H(e,t),c=function(e){const t=e[N].parsedURL,n=new k(e[N].headers);if(n.has("Accept")||n.set("Accept","*/*"),!t.protocol||!t.hostname)throw new TypeError("Only absolute URLs are supported");if(!/^https?:$/.test(t.protocol))throw new TypeError("Only HTTP(S) protocols are supported");if(e.signal&&e.body instanceof r.Readable&&!q)throw new Error("Cancellation of streamed requests with AbortSignal is not supported in node < 8");let s=null;if(null==e.body&&/^(POST|PUT)$/i.test(e.method)&&(s="0"),null!=e.body){const t=A(e);"number"==typeof t&&(s=String(t))}s&&n.set("Content-Length",s),n.has("User-Agent")||n.set("User-Agent","node-fetch/1.0 (+https://github.com/bitinn/node-fetch)"),e.compress&&!n.has("Accept-Encoding")&&n.set("Accept-Encoding","gzip,deflate");let i=e.agent;return"function"==typeof i&&(i=i(t)),n.has("Connection")||i||n.set("Connection","close"),Object.assign({},t,{method:e.method,headers:B(n),agent:i})}(u),l=("https:"===c.protocol?o:s).request,h=u.signal;let d=null;const p=function(){let e=new L("The user aborted a request.");i(e),u.body&&u.body instanceof r.Readable&&u.body.destroy(e),d&&d.body&&d.body.emit("error",e)};if(h&&h.aborted)return void p();const g=function(){p(),v()},m=l(c);let y;function v(){m.abort(),h&&h.removeEventListener("abort",g),clearTimeout(y)}h&&h.addEventListener("abort",g),u.timeout&&m.once("socket",(function(e){y=setTimeout((function(){i(new f(`network timeout at: ${u.url}`,"request-timeout")),v()}),u.timeout)})),m.on("error",(function(e){i(new f(`request to ${u.url} failed, reason: ${e.message}`,"system",e)),v()})),m.on("response",(function(e){clearTimeout(y);const t=function(e){const t=new k;for(const n of Object.keys(e))if(!b.test(n))if(Array.isArray(e[n]))for(const r of e[n])U.test(r)||(void 0===t[I][n]?t[I][n]=[r]:t[I][n].push(r));else U.test(e[n])||(t[I][n]=[e[n]]);return t}(e.headers);if(J.isRedirect(e.statusCode)){const r=t.get("Location"),s=null===r?null:W(u.url,r);switch(u.redirect){case"error":return i(new f(`uri requested responds with a redirect, redirect mode is set to error: ${u.url}`,"no-redirect")),void v();case"manual":if(null!==s)try{t.set("Location",s)}catch(e){i(e)}break;case"follow":if(null===s)break;if(u.counter>=u.follow)return i(new f(`maximum redirect reached at: ${u.url}`,"max-redirect")),void v();const r={headers:new k(u.headers),follow:u.follow,counter:u.counter+1,agent:u.agent,compress:u.compress,method:u.method,body:u.body,signal:u.signal,timeout:u.timeout,size:u.size};return 303!==e.statusCode&&u.body&&null===A(u)?(i(new f("Cannot follow redirect with body being a readable stream","unsupported-redirect")),void v()):(303!==e.statusCode&&(301!==e.statusCode&&302!==e.statusCode||"POST"!==u.method)||(r.method="GET",r.body=void 0,r.headers.delete("content-length")),n(J(new H(s,r))),void v())}}e.once("end",(function(){h&&h.removeEventListener("abort",g)}));let r=e.pipe(new z);const s={url:u.url,status:e.statusCode,statusText:e.statusMessage,headers:t,size:u.size,timeout:u.timeout,counter:u.counter},o=t.get("Content-Encoding");if(!u.compress||"HEAD"===u.method||null===o||204===e.statusCode||304===e.statusCode)return d=new M(r,s),void n(d);const c={flush:a.Z_SYNC_FLUSH,finishFlush:a.Z_SYNC_FLUSH};if("gzip"==o||"x-gzip"==o)return r=r.pipe(a.createGunzip(c)),d=new M(r,s),void n(d);if("deflate"!=o&&"x-deflate"!=o){if("br"==o&&"function"==typeof a.createBrotliDecompress)return r=r.pipe(a.createBrotliDecompress()),d=new M(r,s),void n(d);d=new M(r,s),n(d)}else e.pipe(new z).once("data",(function(e){r=8==(15&e[0])?r.pipe(a.createInflate()):r.pipe(a.createInflateRaw()),d=new M(r,s),n(d)}))})),function(e,t){const n=t.body;null===n?e.end():S(n)?n.stream().pipe(e):Buffer.isBuffer(n)?(e.write(n),e.end()):n.pipe(e)}(m,u)}))}J.isRedirect=function(e){return 301===e||302===e||303===e||307===e||308===e},J.Promise=global.Promise;const $=J},525:(e,t)=>{"use strict";var n;Object.defineProperty(t,"__esModule",{value:!0}),t.HttpStatusCode=void 0,(n=t.HttpStatusCode||(t.HttpStatusCode={}))[n.Ok=200]="Ok",n[n.BadRequest=400]="BadRequest"},869:(e,t,n)=>{"use strict";function r(e,t){return t=t||{},new Promise((function(n,r){var s=new XMLHttpRequest,i=[],o=[],a={},u=function(){return{ok:2==(s.status/100|0),statusText:s.statusText,status:s.status,url:s.responseURL,text:function(){return Promise.resolve(s.responseText)},json:function(){return Promise.resolve(s.responseText).then(JSON.parse)},blob:function(){return Promise.resolve(new Blob([s.response]))},clone:u,headers:{keys:function(){return i},entries:function(){return o},get:function(e){return a[e.toLowerCase()]},has:function(e){return e.toLowerCase()in a}}}};for(var c in s.open(t.method||"get",e,!0),s.onload=function(){s.getAllResponseHeaders().replace(/^(.*?):[^\S\n]*([\s\S]*?)$/gm,(function(e,t,n){i.push(t=t.toLowerCase()),o.push([t,n]),a[t]=a[t]?a[t]+","+n:n})),n(u())},s.onerror=r,s.withCredentials="include"==t.credentials,t.headers)s.setRequestHeader(c,t.headers[c]);s.send(t.body||null)}))}n.r(t),n.d(t,{default:()=>r})},417:e=>{"use strict";e.exports=require("crypto")}},t={};function n(r){var s=t[r];if(void 0!==s)return s.exports;var i=t[r]={exports:{}};return e[r].call(i.exports,i,i.exports,n),i.exports}n.n=e=>{var t=e&&e.__esModule?()=>e.default:()=>e;return n.d(t,{a:t}),t},n.d=(e,t)=>{for(var r in t)n.o(t,r)&&!n.o(e,r)&&Object.defineProperty(e,r,{enumerable:!0,get:t[r]})},n.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t),n.r=e=>{"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},(()=>{"use strict";n(525),new(n(4).CognitoUserPool)({UserPoolId:"us-east-1_etBRMChzv",ClientId:"espsfilvarkr44put09u8e17l"})})()})();
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else {
+		var a = factory();
+		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
+	}
+})(global, function() {
+return /******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
+
+/***/ 4:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+// ESM COMPAT FLAG
+__webpack_require__.r(__webpack_exports__);
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  "AuthenticationDetails": () => (/* reexport */ AuthenticationDetails),
+  "AuthenticationHelper": () => (/* reexport */ AuthenticationHelper),
+  "CognitoAccessToken": () => (/* reexport */ CognitoAccessToken),
+  "CognitoIdToken": () => (/* reexport */ CognitoIdToken),
+  "CognitoRefreshToken": () => (/* reexport */ CognitoRefreshToken),
+  "CognitoUser": () => (/* reexport */ CognitoUser),
+  "CognitoUserAttribute": () => (/* reexport */ CognitoUserAttribute),
+  "CognitoUserPool": () => (/* reexport */ CognitoUserPool),
+  "CognitoUserSession": () => (/* reexport */ CognitoUserSession),
+  "CookieStorage": () => (/* reexport */ CookieStorage),
+  "DateHelper": () => (/* reexport */ DateHelper),
+  "WordArray": () => (/* reexport */ WordArray),
+  "appendToCognitoUserAgent": () => (/* reexport */ appendToCognitoUserAgent)
+});
+
+;// CONCATENATED MODULE: ./node_modules/amazon-cognito-identity-js/es/AuthenticationDetails.js
+/*!
+ * Copyright 2016 Amazon.com,
+ * Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Amazon Software License (the "License").
+ * You may not use this file except in compliance with the
+ * License. A copy of the License is located at
+ *
+ *     http://aws.amazon.com/asl/
+ *
+ * or in the "license" file accompanying this file. This file is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, express or implied. See the License
+ * for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/** @class */
+var AuthenticationDetails = /*#__PURE__*/function () {
+  /**
+   * Constructs a new AuthenticationDetails object
+   * @param {object=} data Creation options.
+   * @param {string} data.Username User being authenticated.
+   * @param {string} data.Password Plain-text password to authenticate with.
+   * @param {(AttributeArg[])?} data.ValidationData Application extra metadata.
+   * @param {(AttributeArg[])?} data.AuthParamaters Authentication paramaters for custom auth.
+   */
+  function AuthenticationDetails(data) {
+    var _ref = data || {},
+        ValidationData = _ref.ValidationData,
+        Username = _ref.Username,
+        Password = _ref.Password,
+        AuthParameters = _ref.AuthParameters,
+        ClientMetadata = _ref.ClientMetadata;
+
+    this.validationData = ValidationData || {};
+    this.authParameters = AuthParameters || {};
+    this.clientMetadata = ClientMetadata || {};
+    this.username = Username;
+    this.password = Password;
+  }
+  /**
+   * @returns {string} the record's username
+   */
+
+
+  var _proto = AuthenticationDetails.prototype;
+
+  _proto.getUsername = function getUsername() {
+    return this.username;
+  }
+  /**
+   * @returns {string} the record's password
+   */
+  ;
+
+  _proto.getPassword = function getPassword() {
+    return this.password;
+  }
+  /**
+   * @returns {Array} the record's validationData
+   */
+  ;
+
+  _proto.getValidationData = function getValidationData() {
+    return this.validationData;
+  }
+  /**
+   * @returns {Array} the record's authParameters
+   */
+  ;
+
+  _proto.getAuthParameters = function getAuthParameters() {
+    return this.authParameters;
+  }
+  /**
+   * @returns {ClientMetadata} the clientMetadata for a Lambda trigger
+   */
+  ;
+
+  _proto.getClientMetadata = function getClientMetadata() {
+    return this.clientMetadata;
+  };
+
+  return AuthenticationDetails;
+}();
+
+
+;// CONCATENATED MODULE: external "buffer"
+const external_buffer_namespaceObject = require("buffer");;
+// EXTERNAL MODULE: ./node_modules/crypto-js/core.js
+var core = __webpack_require__(249);
+var core_default = /*#__PURE__*/__webpack_require__.n(core);
+// EXTERNAL MODULE: ./node_modules/crypto-js/lib-typedarrays.js
+var lib_typedarrays = __webpack_require__(433);
+// EXTERNAL MODULE: ./node_modules/crypto-js/sha256.js
+var sha256 = __webpack_require__(153);
+var sha256_default = /*#__PURE__*/__webpack_require__.n(sha256);
+// EXTERNAL MODULE: ./node_modules/crypto-js/hmac-sha256.js
+var hmac_sha256 = __webpack_require__(10);
+var hmac_sha256_default = /*#__PURE__*/__webpack_require__.n(hmac_sha256);
+;// CONCATENATED MODULE: ./node_modules/amazon-cognito-identity-js/es/utils/cryptoSecureRandomInt.js
+var cryptoSecureRandomInt_crypto; // Native crypto from window (Browser)
+
+if (typeof window !== 'undefined' && window.crypto) {
+  cryptoSecureRandomInt_crypto = window.crypto;
+} // Native (experimental IE 11) crypto from window (Browser)
+
+
+if (!cryptoSecureRandomInt_crypto && typeof window !== 'undefined' && window.msCrypto) {
+  cryptoSecureRandomInt_crypto = window.msCrypto;
+} // Native crypto from global (NodeJS)
+
+
+if (!cryptoSecureRandomInt_crypto && typeof global !== 'undefined' && global.crypto) {
+  cryptoSecureRandomInt_crypto = global.crypto;
+} // Native crypto import via require (NodeJS)
+
+
+if (!cryptoSecureRandomInt_crypto && "function" === 'function') {
+  try {
+    cryptoSecureRandomInt_crypto = __webpack_require__(417);
+  } catch (err) {}
+}
+/*
+ * Cryptographically secure pseudorandom number generator
+ * As Math.random() is cryptographically not safe to use
+ */
+
+
+function cryptoSecureRandomInt() {
+  if (cryptoSecureRandomInt_crypto) {
+    // Use getRandomValues method (Browser)
+    if (typeof cryptoSecureRandomInt_crypto.getRandomValues === 'function') {
+      try {
+        return cryptoSecureRandomInt_crypto.getRandomValues(new Uint32Array(1))[0];
+      } catch (err) {}
+    } // Use randomBytes method (NodeJS)
+
+
+    if (typeof cryptoSecureRandomInt_crypto.randomBytes === 'function') {
+      try {
+        return cryptoSecureRandomInt_crypto.randomBytes(4).readInt32LE();
+      } catch (err) {}
+    }
+  }
+
+  throw new Error('Native crypto module could not be used to get secure random number.');
+}
+;// CONCATENATED MODULE: ./node_modules/amazon-cognito-identity-js/es/utils/WordArray.js
+
+/**
+ * Hex encoding strategy.
+ * Converts a word array to a hex string.
+ * @param {WordArray} wordArray The word array.
+ * @return {string} The hex string.
+ * @static
+ */
+
+function hexStringify(wordArray) {
+  // Shortcuts
+  var words = wordArray.words;
+  var sigBytes = wordArray.sigBytes; // Convert
+
+  var hexChars = [];
+
+  for (var i = 0; i < sigBytes; i++) {
+    var bite = words[i >>> 2] >>> 24 - i % 4 * 8 & 0xff;
+    hexChars.push((bite >>> 4).toString(16));
+    hexChars.push((bite & 0x0f).toString(16));
+  }
+
+  return hexChars.join('');
+}
+
+var WordArray = /*#__PURE__*/function () {
+  function WordArray(words, sigBytes) {
+    words = this.words = words || [];
+
+    if (sigBytes != undefined) {
+      this.sigBytes = sigBytes;
+    } else {
+      this.sigBytes = words.length * 4;
+    }
+  }
+
+  var _proto = WordArray.prototype;
+
+  _proto.random = function random(nBytes) {
+    var words = [];
+
+    for (var i = 0; i < nBytes; i += 4) {
+      words.push(cryptoSecureRandomInt());
+    }
+
+    return new WordArray(words, nBytes);
+  };
+
+  _proto.toString = function toString() {
+    return hexStringify(this);
+  };
+
+  return WordArray;
+}();
+
+
+;// CONCATENATED MODULE: ./node_modules/amazon-cognito-identity-js/es/BigInteger.js
+// A small implementation of BigInteger based on http://www-cs-students.stanford.edu/~tjw/jsbn/
+//
+// All public methods have been removed except the following:
+//   new BigInteger(a, b) (only radix 2, 4, 8, 16 and 32 supported)
+//   toString (only radix 2, 4, 8, 16 and 32 supported)
+//   negate
+//   abs
+//   compareTo
+//   bitLength
+//   mod
+//   equals
+//   add
+//   subtract
+//   multiply
+//   divide
+//   modPow
+/* harmony default export */ const BigInteger = (BigInteger_BigInteger);
+/*
+ * Copyright (c) 2003-2005  Tom Wu
+ * All Rights Reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
+ * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * IN NO EVENT SHALL TOM WU BE LIABLE FOR ANY SPECIAL, INCIDENTAL,
+ * INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND, OR ANY DAMAGES WHATSOEVER
+ * RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER OR NOT ADVISED OF
+ * THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF LIABILITY, ARISING OUT
+ * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ *
+ * In addition, the following condition applies:
+ *
+ * All redistributions must retain an intact copy of this copyright notice
+ * and disclaimer.
+ */
+// (public) Constructor
+
+function BigInteger_BigInteger(a, b) {
+  if (a != null) this.fromString(a, b);
+} // return new, unset BigInteger
+
+
+function nbi() {
+  return new BigInteger_BigInteger(null);
+} // Bits per digit
+
+
+var dbits; // JavaScript engine analysis
+
+var canary = 0xdeadbeefcafe;
+var j_lm = (canary & 0xffffff) == 0xefcafe; // am: Compute w_j += (x*this_i), propagate carries,
+// c is initial carry, returns final carry.
+// c < 3*dvalue, x < 2*dvalue, this_i < dvalue
+// We need to select the fastest one that works in this environment.
+// am1: use a single mult and divide to get the high bits,
+// max digit bits should be 26 because
+// max internal value = 2*dvalue^2-2*dvalue (< 2^53)
+
+function am1(i, x, w, j, c, n) {
+  while (--n >= 0) {
+    var v = x * this[i++] + w[j] + c;
+    c = Math.floor(v / 0x4000000);
+    w[j++] = v & 0x3ffffff;
+  }
+
+  return c;
+} // am2 avoids a big mult-and-extract completely.
+// Max digit bits should be <= 30 because we do bitwise ops
+// on values up to 2*hdvalue^2-hdvalue-1 (< 2^31)
+
+
+function am2(i, x, w, j, c, n) {
+  var xl = x & 0x7fff,
+      xh = x >> 15;
+
+  while (--n >= 0) {
+    var l = this[i] & 0x7fff;
+    var h = this[i++] >> 15;
+    var m = xh * l + h * xl;
+    l = xl * l + ((m & 0x7fff) << 15) + w[j] + (c & 0x3fffffff);
+    c = (l >>> 30) + (m >>> 15) + xh * h + (c >>> 30);
+    w[j++] = l & 0x3fffffff;
+  }
+
+  return c;
+} // Alternately, set max digit bits to 28 since some
+// browsers slow down when dealing with 32-bit numbers.
+
+
+function am3(i, x, w, j, c, n) {
+  var xl = x & 0x3fff,
+      xh = x >> 14;
+
+  while (--n >= 0) {
+    var l = this[i] & 0x3fff;
+    var h = this[i++] >> 14;
+    var m = xh * l + h * xl;
+    l = xl * l + ((m & 0x3fff) << 14) + w[j] + c;
+    c = (l >> 28) + (m >> 14) + xh * h;
+    w[j++] = l & 0xfffffff;
+  }
+
+  return c;
+}
+
+var inBrowser = typeof navigator !== 'undefined';
+
+if (inBrowser && j_lm && navigator.appName == 'Microsoft Internet Explorer') {
+  BigInteger_BigInteger.prototype.am = am2;
+  dbits = 30;
+} else if (inBrowser && j_lm && navigator.appName != 'Netscape') {
+  BigInteger_BigInteger.prototype.am = am1;
+  dbits = 26;
+} else {
+  // Mozilla/Netscape seems to prefer am3
+  BigInteger_BigInteger.prototype.am = am3;
+  dbits = 28;
+}
+
+BigInteger_BigInteger.prototype.DB = dbits;
+BigInteger_BigInteger.prototype.DM = (1 << dbits) - 1;
+BigInteger_BigInteger.prototype.DV = 1 << dbits;
+var BI_FP = 52;
+BigInteger_BigInteger.prototype.FV = Math.pow(2, BI_FP);
+BigInteger_BigInteger.prototype.F1 = BI_FP - dbits;
+BigInteger_BigInteger.prototype.F2 = 2 * dbits - BI_FP; // Digit conversions
+
+var BI_RM = '0123456789abcdefghijklmnopqrstuvwxyz';
+var BI_RC = new Array();
+var rr, vv;
+rr = '0'.charCodeAt(0);
+
+for (vv = 0; vv <= 9; ++vv) {
+  BI_RC[rr++] = vv;
+}
+
+rr = 'a'.charCodeAt(0);
+
+for (vv = 10; vv < 36; ++vv) {
+  BI_RC[rr++] = vv;
+}
+
+rr = 'A'.charCodeAt(0);
+
+for (vv = 10; vv < 36; ++vv) {
+  BI_RC[rr++] = vv;
+}
+
+function int2char(n) {
+  return BI_RM.charAt(n);
+}
+
+function intAt(s, i) {
+  var c = BI_RC[s.charCodeAt(i)];
+  return c == null ? -1 : c;
+} // (protected) copy this to r
+
+
+function bnpCopyTo(r) {
+  for (var i = this.t - 1; i >= 0; --i) {
+    r[i] = this[i];
+  }
+
+  r.t = this.t;
+  r.s = this.s;
+} // (protected) set from integer value x, -DV <= x < DV
+
+
+function bnpFromInt(x) {
+  this.t = 1;
+  this.s = x < 0 ? -1 : 0;
+  if (x > 0) this[0] = x;else if (x < -1) this[0] = x + this.DV;else this.t = 0;
+} // return bigint initialized to value
+
+
+function nbv(i) {
+  var r = nbi();
+  r.fromInt(i);
+  return r;
+} // (protected) set from string and radix
+
+
+function bnpFromString(s, b) {
+  var k;
+  if (b == 16) k = 4;else if (b == 8) k = 3;else if (b == 2) k = 1;else if (b == 32) k = 5;else if (b == 4) k = 2;else throw new Error('Only radix 2, 4, 8, 16, 32 are supported');
+  this.t = 0;
+  this.s = 0;
+  var i = s.length,
+      mi = false,
+      sh = 0;
+
+  while (--i >= 0) {
+    var x = intAt(s, i);
+
+    if (x < 0) {
+      if (s.charAt(i) == '-') mi = true;
+      continue;
+    }
+
+    mi = false;
+    if (sh == 0) this[this.t++] = x;else if (sh + k > this.DB) {
+      this[this.t - 1] |= (x & (1 << this.DB - sh) - 1) << sh;
+      this[this.t++] = x >> this.DB - sh;
+    } else this[this.t - 1] |= x << sh;
+    sh += k;
+    if (sh >= this.DB) sh -= this.DB;
+  }
+
+  this.clamp();
+  if (mi) BigInteger_BigInteger.ZERO.subTo(this, this);
+} // (protected) clamp off excess high words
+
+
+function bnpClamp() {
+  var c = this.s & this.DM;
+
+  while (this.t > 0 && this[this.t - 1] == c) {
+    --this.t;
+  }
+} // (public) return string representation in given radix
+
+
+function bnToString(b) {
+  if (this.s < 0) return '-' + this.negate().toString(b);
+  var k;
+  if (b == 16) k = 4;else if (b == 8) k = 3;else if (b == 2) k = 1;else if (b == 32) k = 5;else if (b == 4) k = 2;else throw new Error('Only radix 2, 4, 8, 16, 32 are supported');
+  var km = (1 << k) - 1,
+      d,
+      m = false,
+      r = '',
+      i = this.t;
+  var p = this.DB - i * this.DB % k;
+
+  if (i-- > 0) {
+    if (p < this.DB && (d = this[i] >> p) > 0) {
+      m = true;
+      r = int2char(d);
+    }
+
+    while (i >= 0) {
+      if (p < k) {
+        d = (this[i] & (1 << p) - 1) << k - p;
+        d |= this[--i] >> (p += this.DB - k);
+      } else {
+        d = this[i] >> (p -= k) & km;
+
+        if (p <= 0) {
+          p += this.DB;
+          --i;
+        }
+      }
+
+      if (d > 0) m = true;
+      if (m) r += int2char(d);
+    }
+  }
+
+  return m ? r : '0';
+} // (public) -this
+
+
+function bnNegate() {
+  var r = nbi();
+  BigInteger_BigInteger.ZERO.subTo(this, r);
+  return r;
+} // (public) |this|
+
+
+function bnAbs() {
+  return this.s < 0 ? this.negate() : this;
+} // (public) return + if this > a, - if this < a, 0 if equal
+
+
+function bnCompareTo(a) {
+  var r = this.s - a.s;
+  if (r != 0) return r;
+  var i = this.t;
+  r = i - a.t;
+  if (r != 0) return this.s < 0 ? -r : r;
+
+  while (--i >= 0) {
+    if ((r = this[i] - a[i]) != 0) return r;
+  }
+
+  return 0;
+} // returns bit length of the integer x
+
+
+function nbits(x) {
+  var r = 1,
+      t;
+
+  if ((t = x >>> 16) != 0) {
+    x = t;
+    r += 16;
+  }
+
+  if ((t = x >> 8) != 0) {
+    x = t;
+    r += 8;
+  }
+
+  if ((t = x >> 4) != 0) {
+    x = t;
+    r += 4;
+  }
+
+  if ((t = x >> 2) != 0) {
+    x = t;
+    r += 2;
+  }
+
+  if ((t = x >> 1) != 0) {
+    x = t;
+    r += 1;
+  }
+
+  return r;
+} // (public) return the number of bits in "this"
+
+
+function bnBitLength() {
+  if (this.t <= 0) return 0;
+  return this.DB * (this.t - 1) + nbits(this[this.t - 1] ^ this.s & this.DM);
+} // (protected) r = this << n*DB
+
+
+function bnpDLShiftTo(n, r) {
+  var i;
+
+  for (i = this.t - 1; i >= 0; --i) {
+    r[i + n] = this[i];
+  }
+
+  for (i = n - 1; i >= 0; --i) {
+    r[i] = 0;
+  }
+
+  r.t = this.t + n;
+  r.s = this.s;
+} // (protected) r = this >> n*DB
+
+
+function bnpDRShiftTo(n, r) {
+  for (var i = n; i < this.t; ++i) {
+    r[i - n] = this[i];
+  }
+
+  r.t = Math.max(this.t - n, 0);
+  r.s = this.s;
+} // (protected) r = this << n
+
+
+function bnpLShiftTo(n, r) {
+  var bs = n % this.DB;
+  var cbs = this.DB - bs;
+  var bm = (1 << cbs) - 1;
+  var ds = Math.floor(n / this.DB),
+      c = this.s << bs & this.DM,
+      i;
+
+  for (i = this.t - 1; i >= 0; --i) {
+    r[i + ds + 1] = this[i] >> cbs | c;
+    c = (this[i] & bm) << bs;
+  }
+
+  for (i = ds - 1; i >= 0; --i) {
+    r[i] = 0;
+  }
+
+  r[ds] = c;
+  r.t = this.t + ds + 1;
+  r.s = this.s;
+  r.clamp();
+} // (protected) r = this >> n
+
+
+function bnpRShiftTo(n, r) {
+  r.s = this.s;
+  var ds = Math.floor(n / this.DB);
+
+  if (ds >= this.t) {
+    r.t = 0;
+    return;
+  }
+
+  var bs = n % this.DB;
+  var cbs = this.DB - bs;
+  var bm = (1 << bs) - 1;
+  r[0] = this[ds] >> bs;
+
+  for (var i = ds + 1; i < this.t; ++i) {
+    r[i - ds - 1] |= (this[i] & bm) << cbs;
+    r[i - ds] = this[i] >> bs;
+  }
+
+  if (bs > 0) r[this.t - ds - 1] |= (this.s & bm) << cbs;
+  r.t = this.t - ds;
+  r.clamp();
+} // (protected) r = this - a
+
+
+function bnpSubTo(a, r) {
+  var i = 0,
+      c = 0,
+      m = Math.min(a.t, this.t);
+
+  while (i < m) {
+    c += this[i] - a[i];
+    r[i++] = c & this.DM;
+    c >>= this.DB;
+  }
+
+  if (a.t < this.t) {
+    c -= a.s;
+
+    while (i < this.t) {
+      c += this[i];
+      r[i++] = c & this.DM;
+      c >>= this.DB;
+    }
+
+    c += this.s;
+  } else {
+    c += this.s;
+
+    while (i < a.t) {
+      c -= a[i];
+      r[i++] = c & this.DM;
+      c >>= this.DB;
+    }
+
+    c -= a.s;
+  }
+
+  r.s = c < 0 ? -1 : 0;
+  if (c < -1) r[i++] = this.DV + c;else if (c > 0) r[i++] = c;
+  r.t = i;
+  r.clamp();
+} // (protected) r = this * a, r != this,a (HAC 14.12)
+// "this" should be the larger one if appropriate.
+
+
+function bnpMultiplyTo(a, r) {
+  var x = this.abs(),
+      y = a.abs();
+  var i = x.t;
+  r.t = i + y.t;
+
+  while (--i >= 0) {
+    r[i] = 0;
+  }
+
+  for (i = 0; i < y.t; ++i) {
+    r[i + x.t] = x.am(0, y[i], r, i, 0, x.t);
+  }
+
+  r.s = 0;
+  r.clamp();
+  if (this.s != a.s) BigInteger_BigInteger.ZERO.subTo(r, r);
+} // (protected) r = this^2, r != this (HAC 14.16)
+
+
+function bnpSquareTo(r) {
+  var x = this.abs();
+  var i = r.t = 2 * x.t;
+
+  while (--i >= 0) {
+    r[i] = 0;
+  }
+
+  for (i = 0; i < x.t - 1; ++i) {
+    var c = x.am(i, x[i], r, 2 * i, 0, 1);
+
+    if ((r[i + x.t] += x.am(i + 1, 2 * x[i], r, 2 * i + 1, c, x.t - i - 1)) >= x.DV) {
+      r[i + x.t] -= x.DV;
+      r[i + x.t + 1] = 1;
+    }
+  }
+
+  if (r.t > 0) r[r.t - 1] += x.am(i, x[i], r, 2 * i, 0, 1);
+  r.s = 0;
+  r.clamp();
+} // (protected) divide this by m, quotient and remainder to q, r (HAC 14.20)
+// r != q, this != m.  q or r may be null.
+
+
+function bnpDivRemTo(m, q, r) {
+  var pm = m.abs();
+  if (pm.t <= 0) return;
+  var pt = this.abs();
+
+  if (pt.t < pm.t) {
+    if (q != null) q.fromInt(0);
+    if (r != null) this.copyTo(r);
+    return;
+  }
+
+  if (r == null) r = nbi();
+  var y = nbi(),
+      ts = this.s,
+      ms = m.s;
+  var nsh = this.DB - nbits(pm[pm.t - 1]); // normalize modulus
+
+  if (nsh > 0) {
+    pm.lShiftTo(nsh, y);
+    pt.lShiftTo(nsh, r);
+  } else {
+    pm.copyTo(y);
+    pt.copyTo(r);
+  }
+
+  var ys = y.t;
+  var y0 = y[ys - 1];
+  if (y0 == 0) return;
+  var yt = y0 * (1 << this.F1) + (ys > 1 ? y[ys - 2] >> this.F2 : 0);
+  var d1 = this.FV / yt,
+      d2 = (1 << this.F1) / yt,
+      e = 1 << this.F2;
+  var i = r.t,
+      j = i - ys,
+      t = q == null ? nbi() : q;
+  y.dlShiftTo(j, t);
+
+  if (r.compareTo(t) >= 0) {
+    r[r.t++] = 1;
+    r.subTo(t, r);
+  }
+
+  BigInteger_BigInteger.ONE.dlShiftTo(ys, t);
+  t.subTo(y, y); // "negative" y so we can replace sub with am later
+
+  while (y.t < ys) {
+    y[y.t++] = 0;
+  }
+
+  while (--j >= 0) {
+    // Estimate quotient digit
+    var qd = r[--i] == y0 ? this.DM : Math.floor(r[i] * d1 + (r[i - 1] + e) * d2);
+
+    if ((r[i] += y.am(0, qd, r, j, 0, ys)) < qd) {
+      // Try it out
+      y.dlShiftTo(j, t);
+      r.subTo(t, r);
+
+      while (r[i] < --qd) {
+        r.subTo(t, r);
+      }
+    }
+  }
+
+  if (q != null) {
+    r.drShiftTo(ys, q);
+    if (ts != ms) BigInteger_BigInteger.ZERO.subTo(q, q);
+  }
+
+  r.t = ys;
+  r.clamp();
+  if (nsh > 0) r.rShiftTo(nsh, r); // Denormalize remainder
+
+  if (ts < 0) BigInteger_BigInteger.ZERO.subTo(r, r);
+} // (public) this mod a
+
+
+function bnMod(a) {
+  var r = nbi();
+  this.abs().divRemTo(a, null, r);
+  if (this.s < 0 && r.compareTo(BigInteger_BigInteger.ZERO) > 0) a.subTo(r, r);
+  return r;
+} // (protected) return "-1/this % 2^DB"; useful for Mont. reduction
+// justification:
+//         xy == 1 (mod m)
+//         xy =  1+km
+//   xy(2-xy) = (1+km)(1-km)
+// x[y(2-xy)] = 1-k^2m^2
+// x[y(2-xy)] == 1 (mod m^2)
+// if y is 1/x mod m, then y(2-xy) is 1/x mod m^2
+// should reduce x and y(2-xy) by m^2 at each step to keep size bounded.
+// JS multiply "overflows" differently from C/C++, so care is needed here.
+
+
+function bnpInvDigit() {
+  if (this.t < 1) return 0;
+  var x = this[0];
+  if ((x & 1) == 0) return 0;
+  var y = x & 3; // y == 1/x mod 2^2
+
+  y = y * (2 - (x & 0xf) * y) & 0xf; // y == 1/x mod 2^4
+
+  y = y * (2 - (x & 0xff) * y) & 0xff; // y == 1/x mod 2^8
+
+  y = y * (2 - ((x & 0xffff) * y & 0xffff)) & 0xffff; // y == 1/x mod 2^16
+  // last step - calculate inverse mod DV directly;
+  // assumes 16 < DB <= 32 and assumes ability to handle 48-bit ints
+
+  y = y * (2 - x * y % this.DV) % this.DV; // y == 1/x mod 2^dbits
+  // we really want the negative inverse, and -DV < y < DV
+
+  return y > 0 ? this.DV - y : -y;
+}
+
+function bnEquals(a) {
+  return this.compareTo(a) == 0;
+} // (protected) r = this + a
+
+
+function bnpAddTo(a, r) {
+  var i = 0,
+      c = 0,
+      m = Math.min(a.t, this.t);
+
+  while (i < m) {
+    c += this[i] + a[i];
+    r[i++] = c & this.DM;
+    c >>= this.DB;
+  }
+
+  if (a.t < this.t) {
+    c += a.s;
+
+    while (i < this.t) {
+      c += this[i];
+      r[i++] = c & this.DM;
+      c >>= this.DB;
+    }
+
+    c += this.s;
+  } else {
+    c += this.s;
+
+    while (i < a.t) {
+      c += a[i];
+      r[i++] = c & this.DM;
+      c >>= this.DB;
+    }
+
+    c += a.s;
+  }
+
+  r.s = c < 0 ? -1 : 0;
+  if (c > 0) r[i++] = c;else if (c < -1) r[i++] = this.DV + c;
+  r.t = i;
+  r.clamp();
+} // (public) this + a
+
+
+function bnAdd(a) {
+  var r = nbi();
+  this.addTo(a, r);
+  return r;
+} // (public) this - a
+
+
+function bnSubtract(a) {
+  var r = nbi();
+  this.subTo(a, r);
+  return r;
+} // (public) this * a
+
+
+function bnMultiply(a) {
+  var r = nbi();
+  this.multiplyTo(a, r);
+  return r;
+} // (public) this / a
+
+
+function bnDivide(a) {
+  var r = nbi();
+  this.divRemTo(a, r, null);
+  return r;
+} // Montgomery reduction
+
+
+function Montgomery(m) {
+  this.m = m;
+  this.mp = m.invDigit();
+  this.mpl = this.mp & 0x7fff;
+  this.mph = this.mp >> 15;
+  this.um = (1 << m.DB - 15) - 1;
+  this.mt2 = 2 * m.t;
+} // xR mod m
+
+
+function montConvert(x) {
+  var r = nbi();
+  x.abs().dlShiftTo(this.m.t, r);
+  r.divRemTo(this.m, null, r);
+  if (x.s < 0 && r.compareTo(BigInteger_BigInteger.ZERO) > 0) this.m.subTo(r, r);
+  return r;
+} // x/R mod m
+
+
+function montRevert(x) {
+  var r = nbi();
+  x.copyTo(r);
+  this.reduce(r);
+  return r;
+} // x = x/R mod m (HAC 14.32)
+
+
+function montReduce(x) {
+  while (x.t <= this.mt2) {
+    // pad x so am has enough room later
+    x[x.t++] = 0;
+  }
+
+  for (var i = 0; i < this.m.t; ++i) {
+    // faster way of calculating u0 = x[i]*mp mod DV
+    var j = x[i] & 0x7fff;
+    var u0 = j * this.mpl + ((j * this.mph + (x[i] >> 15) * this.mpl & this.um) << 15) & x.DM; // use am to combine the multiply-shift-add into one call
+
+    j = i + this.m.t;
+    x[j] += this.m.am(0, u0, x, i, 0, this.m.t); // propagate carry
+
+    while (x[j] >= x.DV) {
+      x[j] -= x.DV;
+      x[++j]++;
+    }
+  }
+
+  x.clamp();
+  x.drShiftTo(this.m.t, x);
+  if (x.compareTo(this.m) >= 0) x.subTo(this.m, x);
+} // r = "x^2/R mod m"; x != r
+
+
+function montSqrTo(x, r) {
+  x.squareTo(r);
+  this.reduce(r);
+} // r = "xy/R mod m"; x,y != r
+
+
+function montMulTo(x, y, r) {
+  x.multiplyTo(y, r);
+  this.reduce(r);
+}
+
+Montgomery.prototype.convert = montConvert;
+Montgomery.prototype.revert = montRevert;
+Montgomery.prototype.reduce = montReduce;
+Montgomery.prototype.mulTo = montMulTo;
+Montgomery.prototype.sqrTo = montSqrTo; // (public) this^e % m (HAC 14.85)
+
+function bnModPow(e, m, callback) {
+  var i = e.bitLength(),
+      k,
+      r = nbv(1),
+      z = new Montgomery(m);
+  if (i <= 0) return r;else if (i < 18) k = 1;else if (i < 48) k = 3;else if (i < 144) k = 4;else if (i < 768) k = 5;else k = 6; // precomputation
+
+  var g = new Array(),
+      n = 3,
+      k1 = k - 1,
+      km = (1 << k) - 1;
+  g[1] = z.convert(this);
+
+  if (k > 1) {
+    var g2 = nbi();
+    z.sqrTo(g[1], g2);
+
+    while (n <= km) {
+      g[n] = nbi();
+      z.mulTo(g2, g[n - 2], g[n]);
+      n += 2;
+    }
+  }
+
+  var j = e.t - 1,
+      w,
+      is1 = true,
+      r2 = nbi(),
+      t;
+  i = nbits(e[j]) - 1;
+
+  while (j >= 0) {
+    if (i >= k1) w = e[j] >> i - k1 & km;else {
+      w = (e[j] & (1 << i + 1) - 1) << k1 - i;
+      if (j > 0) w |= e[j - 1] >> this.DB + i - k1;
+    }
+    n = k;
+
+    while ((w & 1) == 0) {
+      w >>= 1;
+      --n;
+    }
+
+    if ((i -= n) < 0) {
+      i += this.DB;
+      --j;
+    }
+
+    if (is1) {
+      // ret == 1, don't bother squaring or multiplying it
+      g[w].copyTo(r);
+      is1 = false;
+    } else {
+      while (n > 1) {
+        z.sqrTo(r, r2);
+        z.sqrTo(r2, r);
+        n -= 2;
+      }
+
+      if (n > 0) z.sqrTo(r, r2);else {
+        t = r;
+        r = r2;
+        r2 = t;
+      }
+      z.mulTo(r2, g[w], r);
+    }
+
+    while (j >= 0 && (e[j] & 1 << i) == 0) {
+      z.sqrTo(r, r2);
+      t = r;
+      r = r2;
+      r2 = t;
+
+      if (--i < 0) {
+        i = this.DB - 1;
+        --j;
+      }
+    }
+  }
+
+  var result = z.revert(r);
+  callback(null, result);
+  return result;
+} // protected
+
+
+BigInteger_BigInteger.prototype.copyTo = bnpCopyTo;
+BigInteger_BigInteger.prototype.fromInt = bnpFromInt;
+BigInteger_BigInteger.prototype.fromString = bnpFromString;
+BigInteger_BigInteger.prototype.clamp = bnpClamp;
+BigInteger_BigInteger.prototype.dlShiftTo = bnpDLShiftTo;
+BigInteger_BigInteger.prototype.drShiftTo = bnpDRShiftTo;
+BigInteger_BigInteger.prototype.lShiftTo = bnpLShiftTo;
+BigInteger_BigInteger.prototype.rShiftTo = bnpRShiftTo;
+BigInteger_BigInteger.prototype.subTo = bnpSubTo;
+BigInteger_BigInteger.prototype.multiplyTo = bnpMultiplyTo;
+BigInteger_BigInteger.prototype.squareTo = bnpSquareTo;
+BigInteger_BigInteger.prototype.divRemTo = bnpDivRemTo;
+BigInteger_BigInteger.prototype.invDigit = bnpInvDigit;
+BigInteger_BigInteger.prototype.addTo = bnpAddTo; // public
+
+BigInteger_BigInteger.prototype.toString = bnToString;
+BigInteger_BigInteger.prototype.negate = bnNegate;
+BigInteger_BigInteger.prototype.abs = bnAbs;
+BigInteger_BigInteger.prototype.compareTo = bnCompareTo;
+BigInteger_BigInteger.prototype.bitLength = bnBitLength;
+BigInteger_BigInteger.prototype.mod = bnMod;
+BigInteger_BigInteger.prototype.equals = bnEquals;
+BigInteger_BigInteger.prototype.add = bnAdd;
+BigInteger_BigInteger.prototype.subtract = bnSubtract;
+BigInteger_BigInteger.prototype.multiply = bnMultiply;
+BigInteger_BigInteger.prototype.divide = bnDivide;
+BigInteger_BigInteger.prototype.modPow = bnModPow; // "constants"
+
+BigInteger_BigInteger.ZERO = nbv(0);
+BigInteger_BigInteger.ONE = nbv(1);
+;// CONCATENATED MODULE: ./node_modules/amazon-cognito-identity-js/es/AuthenticationHelper.js
+/*!
+ * Copyright 2016 Amazon.com,
+ * Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Amazon Software License (the "License").
+ * You may not use this file except in compliance with the
+ * License. A copy of the License is located at
+ *
+ *     http://aws.amazon.com/asl/
+ *
+ * or in the "license" file accompanying this file. This file is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, express or implied. See the License
+ * for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+ // necessary for crypto js
+
+
+
+
+/**
+ * Returns a Buffer with a sequence of random nBytes
+ *
+ * @param {number} nBytes
+ * @returns {Buffer} fixed-length sequence of random bytes
+ */
+
+function randomBytes(nBytes) {
+  return external_buffer_namespaceObject.Buffer.from(new WordArray().random(nBytes).toString(), 'hex');
+}
+
+
+/**
+ * Tests if a hex string has it most significant bit set (case-insensitive regex)
+ */
+
+var HEX_MSB_REGEX = /^[89a-f]/i;
+var initN = 'FFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD1' + '29024E088A67CC74020BBEA63B139B22514A08798E3404DD' + 'EF9519B3CD3A431B302B0A6DF25F14374FE1356D6D51C245' + 'E485B576625E7EC6F44C42E9A637ED6B0BFF5CB6F406B7ED' + 'EE386BFB5A899FA5AE9F24117C4B1FE649286651ECE45B3D' + 'C2007CB8A163BF0598DA48361C55D39A69163FA8FD24CF5F' + '83655D23DCA3AD961C62F356208552BB9ED529077096966D' + '670C354E4ABC9804F1746C08CA18217C32905E462E36CE3B' + 'E39E772C180E86039B2783A2EC07A28FB5C55DF06F4C52C9' + 'DE2BCBF6955817183995497CEA956AE515D2261898FA0510' + '15728E5A8AAAC42DAD33170D04507A33A85521ABDF1CBA64' + 'ECFB850458DBEF0A8AEA71575D060C7DB3970F85A6E1E4C7' + 'ABF5AE8CDB0933D71E8C94E04A25619DCEE3D2261AD2EE6B' + 'F12FFA06D98A0864D87602733EC86A64521F2B18177B200C' + 'BBE117577A615D6C770988C0BAD946E208E24FA074E5AB31' + '43DB5BFCE0FD108E4B82D120A93AD2CAFFFFFFFFFFFFFFFF';
+var newPasswordRequiredChallengeUserAttributePrefix = 'userAttributes.';
+/** @class */
+
+var AuthenticationHelper = /*#__PURE__*/function () {
+  /**
+   * Constructs a new AuthenticationHelper object
+   * @param {string} PoolName Cognito user pool name.
+   */
+  function AuthenticationHelper(PoolName) {
+    this.N = new BigInteger(initN, 16);
+    this.g = new BigInteger('2', 16);
+    this.k = new BigInteger(this.hexHash("" + this.padHex(this.N) + this.padHex(this.g)), 16);
+    this.smallAValue = this.generateRandomSmallA();
+    this.getLargeAValue(function () {});
+    this.infoBits = external_buffer_namespaceObject.Buffer.from('Caldera Derived Key', 'utf8');
+    this.poolName = PoolName;
+  }
+  /**
+   * @returns {BigInteger} small A, a random number
+   */
+
+
+  var _proto = AuthenticationHelper.prototype;
+
+  _proto.getSmallAValue = function getSmallAValue() {
+    return this.smallAValue;
+  }
+  /**
+   * @param {nodeCallback<BigInteger>} callback Called with (err, largeAValue)
+   * @returns {void}
+   */
+  ;
+
+  _proto.getLargeAValue = function getLargeAValue(callback) {
+    var _this = this;
+
+    if (this.largeAValue) {
+      callback(null, this.largeAValue);
+    } else {
+      this.calculateA(this.smallAValue, function (err, largeAValue) {
+        if (err) {
+          callback(err, null);
+        }
+
+        _this.largeAValue = largeAValue;
+        callback(null, _this.largeAValue);
+      });
+    }
+  }
+  /**
+   * helper function to generate a random big integer
+   * @returns {BigInteger} a random value.
+   * @private
+   */
+  ;
+
+  _proto.generateRandomSmallA = function generateRandomSmallA() {
+    // This will be interpreted as a postive 128-bit integer
+    var hexRandom = randomBytes(128).toString('hex');
+    var randomBigInt = new BigInteger(hexRandom, 16); // There is no need to do randomBigInt.mod(this.N - 1) as N (3072-bit) is > 128 bytes (1024-bit)
+
+    return randomBigInt;
+  }
+  /**
+   * helper function to generate a random string
+   * @returns {string} a random value.
+   * @private
+   */
+  ;
+
+  _proto.generateRandomString = function generateRandomString() {
+    return randomBytes(40).toString('base64');
+  }
+  /**
+   * @returns {string} Generated random value included in password hash.
+   */
+  ;
+
+  _proto.getRandomPassword = function getRandomPassword() {
+    return this.randomPassword;
+  }
+  /**
+   * @returns {string} Generated random value included in devices hash.
+   */
+  ;
+
+  _proto.getSaltDevices = function getSaltDevices() {
+    return this.SaltToHashDevices;
+  }
+  /**
+   * @returns {string} Value used to verify devices.
+   */
+  ;
+
+  _proto.getVerifierDevices = function getVerifierDevices() {
+    return this.verifierDevices;
+  }
+  /**
+   * Generate salts and compute verifier.
+   * @param {string} deviceGroupKey Devices to generate verifier for.
+   * @param {string} username User to generate verifier for.
+   * @param {nodeCallback<null>} callback Called with (err, null)
+   * @returns {void}
+   */
+  ;
+
+  _proto.generateHashDevice = function generateHashDevice(deviceGroupKey, username, callback) {
+    var _this2 = this;
+
+    this.randomPassword = this.generateRandomString();
+    var combinedString = "" + deviceGroupKey + username + ":" + this.randomPassword;
+    var hashedString = this.hash(combinedString);
+    var hexRandom = randomBytes(16).toString('hex'); // The random hex will be unambiguously represented as a postive integer
+
+    this.SaltToHashDevices = this.padHex(new BigInteger(hexRandom, 16));
+    this.g.modPow(new BigInteger(this.hexHash(this.SaltToHashDevices + hashedString), 16), this.N, function (err, verifierDevicesNotPadded) {
+      if (err) {
+        callback(err, null);
+      }
+
+      _this2.verifierDevices = _this2.padHex(verifierDevicesNotPadded);
+      callback(null, null);
+    });
+  }
+  /**
+   * Calculate the client's public value A = g^a%N
+   * with the generated random number a
+   * @param {BigInteger} a Randomly generated small A.
+   * @param {nodeCallback<BigInteger>} callback Called with (err, largeAValue)
+   * @returns {void}
+   * @private
+   */
+  ;
+
+  _proto.calculateA = function calculateA(a, callback) {
+    var _this3 = this;
+
+    this.g.modPow(a, this.N, function (err, A) {
+      if (err) {
+        callback(err, null);
+      }
+
+      if (A.mod(_this3.N).equals(BigInteger.ZERO)) {
+        callback(new Error('Illegal paramater. A mod N cannot be 0.'), null);
+      }
+
+      callback(null, A);
+    });
+  }
+  /**
+   * Calculate the client's value U which is the hash of A and B
+   * @param {BigInteger} A Large A value.
+   * @param {BigInteger} B Server B value.
+   * @returns {BigInteger} Computed U value.
+   * @private
+   */
+  ;
+
+  _proto.calculateU = function calculateU(A, B) {
+    this.UHexHash = this.hexHash(this.padHex(A) + this.padHex(B));
+    var finalU = new BigInteger(this.UHexHash, 16);
+    return finalU;
+  }
+  /**
+   * Calculate a hash from a bitArray
+   * @param {Buffer} buf Value to hash.
+   * @returns {String} Hex-encoded hash.
+   * @private
+   */
+  ;
+
+  _proto.hash = function hash(buf) {
+    var str = buf instanceof external_buffer_namespaceObject.Buffer ? core_default().lib.WordArray.create(buf) : buf;
+    var hashHex = sha256_default()(str).toString();
+    return new Array(64 - hashHex.length).join('0') + hashHex;
+  }
+  /**
+   * Calculate a hash from a hex string
+   * @param {String} hexStr Value to hash.
+   * @returns {String} Hex-encoded hash.
+   * @private
+   */
+  ;
+
+  _proto.hexHash = function hexHash(hexStr) {
+    return this.hash(external_buffer_namespaceObject.Buffer.from(hexStr, 'hex'));
+  }
+  /**
+   * Standard hkdf algorithm
+   * @param {Buffer} ikm Input key material.
+   * @param {Buffer} salt Salt value.
+   * @returns {Buffer} Strong key material.
+   * @private
+   */
+  ;
+
+  _proto.computehkdf = function computehkdf(ikm, salt) {
+    var infoBitsWordArray = core_default().lib.WordArray.create(external_buffer_namespaceObject.Buffer.concat([this.infoBits, external_buffer_namespaceObject.Buffer.from(String.fromCharCode(1), 'utf8')]));
+    var ikmWordArray = ikm instanceof external_buffer_namespaceObject.Buffer ? core_default().lib.WordArray.create(ikm) : ikm;
+    var saltWordArray = salt instanceof external_buffer_namespaceObject.Buffer ? core_default().lib.WordArray.create(salt) : salt;
+    var prk = hmac_sha256_default()(ikmWordArray, saltWordArray);
+    var hmac = hmac_sha256_default()(infoBitsWordArray, prk);
+    return external_buffer_namespaceObject.Buffer.from(hmac.toString(), 'hex').slice(0, 16);
+  }
+  /**
+   * Calculates the final hkdf based on computed S value, and computed U value and the key
+   * @param {String} username Username.
+   * @param {String} password Password.
+   * @param {BigInteger} serverBValue Server B value.
+   * @param {BigInteger} salt Generated salt.
+   * @param {nodeCallback<Buffer>} callback Called with (err, hkdfValue)
+   * @returns {void}
+   */
+  ;
+
+  _proto.getPasswordAuthenticationKey = function getPasswordAuthenticationKey(username, password, serverBValue, salt, callback) {
+    var _this4 = this;
+
+    if (serverBValue.mod(this.N).equals(BigInteger.ZERO)) {
+      throw new Error('B cannot be zero.');
+    }
+
+    this.UValue = this.calculateU(this.largeAValue, serverBValue);
+
+    if (this.UValue.equals(BigInteger.ZERO)) {
+      throw new Error('U cannot be zero.');
+    }
+
+    var usernamePassword = "" + this.poolName + username + ":" + password;
+    var usernamePasswordHash = this.hash(usernamePassword);
+    var xValue = new BigInteger(this.hexHash(this.padHex(salt) + usernamePasswordHash), 16);
+    this.calculateS(xValue, serverBValue, function (err, sValue) {
+      if (err) {
+        callback(err, null);
+      }
+
+      var hkdf = _this4.computehkdf(external_buffer_namespaceObject.Buffer.from(_this4.padHex(sValue), 'hex'), external_buffer_namespaceObject.Buffer.from(_this4.padHex(_this4.UValue), 'hex'));
+
+      callback(null, hkdf);
+    });
+  }
+  /**
+   * Calculates the S value used in getPasswordAuthenticationKey
+   * @param {BigInteger} xValue Salted password hash value.
+   * @param {BigInteger} serverBValue Server B value.
+   * @param {nodeCallback<string>} callback Called on success or error.
+   * @returns {void}
+   */
+  ;
+
+  _proto.calculateS = function calculateS(xValue, serverBValue, callback) {
+    var _this5 = this;
+
+    this.g.modPow(xValue, this.N, function (err, gModPowXN) {
+      if (err) {
+        callback(err, null);
+      }
+
+      var intValue2 = serverBValue.subtract(_this5.k.multiply(gModPowXN));
+      intValue2.modPow(_this5.smallAValue.add(_this5.UValue.multiply(xValue)), _this5.N, function (err2, result) {
+        if (err2) {
+          callback(err2, null);
+        }
+
+        callback(null, result.mod(_this5.N));
+      });
+    });
+  }
+  /**
+   * Return constant newPasswordRequiredChallengeUserAttributePrefix
+   * @return {newPasswordRequiredChallengeUserAttributePrefix} constant prefix value
+   */
+  ;
+
+  _proto.getNewPasswordRequiredChallengeUserAttributePrefix = function getNewPasswordRequiredChallengeUserAttributePrefix() {
+    return newPasswordRequiredChallengeUserAttributePrefix;
+  }
+  /**
+   * Returns an unambiguous, even-length hex string of the two's complement encoding of an integer.
+   *
+   * It is compatible with the hex encoding of Java's BigInteger's toByteArray(), wich returns a
+   * byte array containing the two's-complement representation of a BigInteger. The array contains
+   * the minimum number of bytes required to represent the BigInteger, including at least one sign bit.
+   *
+   * Examples showing how ambiguity is avoided by left padding with:
+   * 	"00" (for positive values where the most-significant-bit is set)
+   *  "FF" (for negative values where the most-significant-bit is set)
+   *
+   * padHex(bigInteger.fromInt(-236))  === "FF14"
+   * padHex(bigInteger.fromInt(20))    === "14"
+   *
+   * padHex(bigInteger.fromInt(-200))  === "FF38"
+   * padHex(bigInteger.fromInt(56))    === "38"
+   *
+   * padHex(bigInteger.fromInt(-20))   === "EC"
+   * padHex(bigInteger.fromInt(236))   === "00EC"
+   *
+   * padHex(bigInteger.fromInt(-56))   === "C8"
+   * padHex(bigInteger.fromInt(200))   === "00C8"
+   *
+   * @param {BigInteger} bigInt Number to encode.
+   * @returns {String} even-length hex string of the two's complement encoding.
+   */
+  ;
+
+  _proto.padHex = function padHex(bigInt) {
+    if (!(bigInt instanceof BigInteger)) {
+      throw new Error('Not a BigInteger');
+    }
+
+    var isNegative = bigInt.compareTo(BigInteger.ZERO) < 0;
+    /* Get a hex string for abs(bigInt) */
+
+    var hexStr = bigInt.abs().toString(16);
+    /* Pad hex to even length if needed */
+
+    hexStr = hexStr.length % 2 !== 0 ? "0" + hexStr : hexStr;
+    /* Prepend "00" if the most significant bit is set */
+
+    hexStr = HEX_MSB_REGEX.test(hexStr) ? "00" + hexStr : hexStr;
+
+    if (isNegative) {
+      /* Flip the bits of the representation */
+      var invertedNibbles = hexStr.split('').map(function (x) {
+        var invertedNibble = ~parseInt(x, 16) & 0xf;
+        return '0123456789ABCDEF'.charAt(invertedNibble);
+      }).join('');
+      /* After flipping the bits, add one to get the 2's complement representation */
+
+      var flippedBitsBI = new BigInteger(invertedNibbles, 16).add(BigInteger.ONE);
+      hexStr = flippedBitsBI.toString(16);
+      /*
+      For hex strings starting with 'FF8', 'FF' can be dropped, e.g. 0xFFFF80=0xFF80=0x80=-128
+      		Any sequence of '1' bits on the left can always be substituted with a single '1' bit
+      without changing the represented value.
+      		This only happens in the case when the input is 80...00
+      */
+
+      if (hexStr.toUpperCase().startsWith('FF8')) {
+        hexStr = hexStr.substring(2);
+      }
+    }
+
+    return hexStr;
+  };
+
+  return AuthenticationHelper;
+}();
+
+
+;// CONCATENATED MODULE: ./node_modules/amazon-cognito-identity-js/es/CognitoJwtToken.js
+/*!
+ * Copyright 2016 Amazon.com,
+ * Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Amazon Software License (the "License").
+ * You may not use this file except in compliance with the
+ * License. A copy of the License is located at
+ *
+ *     http://aws.amazon.com/asl/
+ *
+ * or in the "license" file accompanying this file. This file is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, express or implied. See the License
+ * for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/** @class */
+
+var CognitoJwtToken = /*#__PURE__*/function () {
+  /**
+   * Constructs a new CognitoJwtToken object
+   * @param {string=} token The JWT token.
+   */
+  function CognitoJwtToken(token) {
+    // Assign object
+    this.jwtToken = token || '';
+    this.payload = this.decodePayload();
+  }
+  /**
+   * @returns {string} the record's token.
+   */
+
+
+  var _proto = CognitoJwtToken.prototype;
+
+  _proto.getJwtToken = function getJwtToken() {
+    return this.jwtToken;
+  }
+  /**
+   * @returns {int} the token's expiration (exp member).
+   */
+  ;
+
+  _proto.getExpiration = function getExpiration() {
+    return this.payload.exp;
+  }
+  /**
+   * @returns {int} the token's "issued at" (iat member).
+   */
+  ;
+
+  _proto.getIssuedAt = function getIssuedAt() {
+    return this.payload.iat;
+  }
+  /**
+   * @returns {object} the token's payload.
+   */
+  ;
+
+  _proto.decodePayload = function decodePayload() {
+    var payload = this.jwtToken.split('.')[1];
+
+    try {
+      return JSON.parse(external_buffer_namespaceObject.Buffer.from(payload, 'base64').toString('utf8'));
+    } catch (err) {
+      return {};
+    }
+  };
+
+  return CognitoJwtToken;
+}();
+
+
+;// CONCATENATED MODULE: ./node_modules/amazon-cognito-identity-js/es/CognitoAccessToken.js
+function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+/*
+ * Copyright 2016 Amazon.com,
+ * Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Amazon Software License (the "License").
+ * You may not use this file except in compliance with the
+ * License. A copy of the License is located at
+ *
+ *     http://aws.amazon.com/asl/
+ *
+ * or in the "license" file accompanying this file. This file is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, express or implied. See the License
+ * for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/** @class */
+
+var CognitoAccessToken = /*#__PURE__*/function (_CognitoJwtToken) {
+  _inheritsLoose(CognitoAccessToken, _CognitoJwtToken);
+
+  /**
+   * Constructs a new CognitoAccessToken object
+   * @param {string=} AccessToken The JWT access token.
+   */
+  function CognitoAccessToken(_temp) {
+    var _ref = _temp === void 0 ? {} : _temp,
+        AccessToken = _ref.AccessToken;
+
+    return _CognitoJwtToken.call(this, AccessToken || '') || this;
+  }
+
+  return CognitoAccessToken;
+}(CognitoJwtToken);
+
+
+;// CONCATENATED MODULE: ./node_modules/amazon-cognito-identity-js/es/CognitoIdToken.js
+function CognitoIdToken_inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; CognitoIdToken_setPrototypeOf(subClass, superClass); }
+
+function CognitoIdToken_setPrototypeOf(o, p) { CognitoIdToken_setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return CognitoIdToken_setPrototypeOf(o, p); }
+
+/*!
+ * Copyright 2016 Amazon.com,
+ * Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Amazon Software License (the "License").
+ * You may not use this file except in compliance with the
+ * License. A copy of the License is located at
+ *
+ *     http://aws.amazon.com/asl/
+ *
+ * or in the "license" file accompanying this file. This file is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, express or implied. See the License
+ * for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/** @class */
+
+var CognitoIdToken = /*#__PURE__*/function (_CognitoJwtToken) {
+  CognitoIdToken_inheritsLoose(CognitoIdToken, _CognitoJwtToken);
+
+  /**
+   * Constructs a new CognitoIdToken object
+   * @param {string=} IdToken The JWT Id token
+   */
+  function CognitoIdToken(_temp) {
+    var _ref = _temp === void 0 ? {} : _temp,
+        IdToken = _ref.IdToken;
+
+    return _CognitoJwtToken.call(this, IdToken || '') || this;
+  }
+
+  return CognitoIdToken;
+}(CognitoJwtToken);
+
+
+;// CONCATENATED MODULE: ./node_modules/amazon-cognito-identity-js/es/CognitoRefreshToken.js
+/*!
+ * Copyright 2016 Amazon.com,
+ * Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Amazon Software License (the "License").
+ * You may not use this file except in compliance with the
+ * License. A copy of the License is located at
+ *
+ *     http://aws.amazon.com/asl/
+ *
+ * or in the "license" file accompanying this file. This file is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, express or implied. See the License
+ * for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/** @class */
+var CognitoRefreshToken = /*#__PURE__*/function () {
+  /**
+   * Constructs a new CognitoRefreshToken object
+   * @param {string=} RefreshToken The JWT refresh token.
+   */
+  function CognitoRefreshToken(_temp) {
+    var _ref = _temp === void 0 ? {} : _temp,
+        RefreshToken = _ref.RefreshToken;
+
+    // Assign object
+    this.token = RefreshToken || '';
+  }
+  /**
+   * @returns {string} the record's token.
+   */
+
+
+  var _proto = CognitoRefreshToken.prototype;
+
+  _proto.getToken = function getToken() {
+    return this.token;
+  };
+
+  return CognitoRefreshToken;
+}();
+
+
+// EXTERNAL MODULE: ./node_modules/crypto-js/enc-base64.js
+var enc_base64 = __webpack_require__(269);
+var enc_base64_default = /*#__PURE__*/__webpack_require__.n(enc_base64);
+;// CONCATENATED MODULE: ./node_modules/amazon-cognito-identity-js/es/CognitoUserSession.js
+/*!
+ * Copyright 2016 Amazon.com,
+ * Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Amazon Software License (the "License").
+ * You may not use this file except in compliance with the
+ * License. A copy of the License is located at
+ *
+ *     http://aws.amazon.com/asl/
+ *
+ * or in the "license" file accompanying this file. This file is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, express or implied. See the License
+ * for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/** @class */
+var CognitoUserSession = /*#__PURE__*/function () {
+  /**
+   * Constructs a new CognitoUserSession object
+   * @param {CognitoIdToken} IdToken The session's Id token.
+   * @param {CognitoRefreshToken=} RefreshToken The session's refresh token.
+   * @param {CognitoAccessToken} AccessToken The session's access token.
+   * @param {int} ClockDrift The saved computer's clock drift or undefined to force calculation.
+   */
+  function CognitoUserSession(_temp) {
+    var _ref = _temp === void 0 ? {} : _temp,
+        IdToken = _ref.IdToken,
+        RefreshToken = _ref.RefreshToken,
+        AccessToken = _ref.AccessToken,
+        ClockDrift = _ref.ClockDrift;
+
+    if (AccessToken == null || IdToken == null) {
+      throw new Error('Id token and Access Token must be present.');
+    }
+
+    this.idToken = IdToken;
+    this.refreshToken = RefreshToken;
+    this.accessToken = AccessToken;
+    this.clockDrift = ClockDrift === undefined ? this.calculateClockDrift() : ClockDrift;
+  }
+  /**
+   * @returns {CognitoIdToken} the session's Id token
+   */
+
+
+  var _proto = CognitoUserSession.prototype;
+
+  _proto.getIdToken = function getIdToken() {
+    return this.idToken;
+  }
+  /**
+   * @returns {CognitoRefreshToken} the session's refresh token
+   */
+  ;
+
+  _proto.getRefreshToken = function getRefreshToken() {
+    return this.refreshToken;
+  }
+  /**
+   * @returns {CognitoAccessToken} the session's access token
+   */
+  ;
+
+  _proto.getAccessToken = function getAccessToken() {
+    return this.accessToken;
+  }
+  /**
+   * @returns {int} the session's clock drift
+   */
+  ;
+
+  _proto.getClockDrift = function getClockDrift() {
+    return this.clockDrift;
+  }
+  /**
+   * @returns {int} the computer's clock drift
+   */
+  ;
+
+  _proto.calculateClockDrift = function calculateClockDrift() {
+    var now = Math.floor(new Date() / 1000);
+    var iat = Math.min(this.accessToken.getIssuedAt(), this.idToken.getIssuedAt());
+    return now - iat;
+  }
+  /**
+   * Checks to see if the session is still valid based on session expiry information found
+   * in tokens and the current time (adjusted with clock drift)
+   * @returns {boolean} if the session is still valid
+   */
+  ;
+
+  _proto.isValid = function isValid() {
+    var now = Math.floor(new Date() / 1000);
+    var adjusted = now - this.clockDrift;
+    return adjusted < this.accessToken.getExpiration() && adjusted < this.idToken.getExpiration();
+  };
+
+  return CognitoUserSession;
+}();
+
+
+;// CONCATENATED MODULE: ./node_modules/amazon-cognito-identity-js/es/DateHelper.js
+/*!
+ * Copyright 2016 Amazon.com,
+ * Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Amazon Software License (the "License").
+ * You may not use this file except in compliance with the
+ * License. A copy of the License is located at
+ *
+ *     http://aws.amazon.com/asl/
+ *
+ * or in the "license" file accompanying this file. This file is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, express or implied. See the License
+ * for the specific language governing permissions and
+ * limitations under the License.
+ */
+var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+var weekNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+/** @class */
+
+var DateHelper = /*#__PURE__*/function () {
+  function DateHelper() {}
+
+  var _proto = DateHelper.prototype;
+
+  /**
+   * @returns {string} The current time in "ddd MMM D HH:mm:ss UTC YYYY" format.
+   */
+  _proto.getNowString = function getNowString() {
+    var now = new Date();
+    var weekDay = weekNames[now.getUTCDay()];
+    var month = monthNames[now.getUTCMonth()];
+    var day = now.getUTCDate();
+    var hours = now.getUTCHours();
+
+    if (hours < 10) {
+      hours = "0" + hours;
+    }
+
+    var minutes = now.getUTCMinutes();
+
+    if (minutes < 10) {
+      minutes = "0" + minutes;
+    }
+
+    var seconds = now.getUTCSeconds();
+
+    if (seconds < 10) {
+      seconds = "0" + seconds;
+    }
+
+    var year = now.getUTCFullYear(); // ddd MMM D HH:mm:ss UTC YYYY
+
+    var dateNow = weekDay + " " + month + " " + day + " " + hours + ":" + minutes + ":" + seconds + " UTC " + year;
+    return dateNow;
+  };
+
+  return DateHelper;
+}();
+
+
+;// CONCATENATED MODULE: ./node_modules/amazon-cognito-identity-js/es/CognitoUserAttribute.js
+/*!
+ * Copyright 2016 Amazon.com,
+ * Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Amazon Software License (the "License").
+ * You may not use this file except in compliance with the
+ * License. A copy of the License is located at
+ *
+ *     http://aws.amazon.com/asl/
+ *
+ * or in the "license" file accompanying this file. This file is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, express or implied. See the License
+ * for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/** @class */
+var CognitoUserAttribute = /*#__PURE__*/function () {
+  /**
+   * Constructs a new CognitoUserAttribute object
+   * @param {string=} Name The record's name
+   * @param {string=} Value The record's value
+   */
+  function CognitoUserAttribute(_temp) {
+    var _ref = _temp === void 0 ? {} : _temp,
+        Name = _ref.Name,
+        Value = _ref.Value;
+
+    this.Name = Name || '';
+    this.Value = Value || '';
+  }
+  /**
+   * @returns {string} the record's value.
+   */
+
+
+  var _proto = CognitoUserAttribute.prototype;
+
+  _proto.getValue = function getValue() {
+    return this.Value;
+  }
+  /**
+   * Sets the record's value.
+   * @param {string} value The new value.
+   * @returns {CognitoUserAttribute} The record for method chaining.
+   */
+  ;
+
+  _proto.setValue = function setValue(value) {
+    this.Value = value;
+    return this;
+  }
+  /**
+   * @returns {string} the record's name.
+   */
+  ;
+
+  _proto.getName = function getName() {
+    return this.Name;
+  }
+  /**
+   * Sets the record's name
+   * @param {string} name The new name.
+   * @returns {CognitoUserAttribute} The record for method chaining.
+   */
+  ;
+
+  _proto.setName = function setName(name) {
+    this.Name = name;
+    return this;
+  }
+  /**
+   * @returns {string} a string representation of the record.
+   */
+  ;
+
+  _proto.toString = function toString() {
+    return JSON.stringify(this);
+  }
+  /**
+   * @returns {object} a flat object representing the record.
+   */
+  ;
+
+  _proto.toJSON = function toJSON() {
+    return {
+      Name: this.Name,
+      Value: this.Value
+    };
+  };
+
+  return CognitoUserAttribute;
+}();
+
+
+;// CONCATENATED MODULE: ./node_modules/amazon-cognito-identity-js/es/StorageHelper.js
+/*!
+ * Copyright 2016 Amazon.com,
+ * Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Amazon Software License (the "License").
+ * You may not use this file except in compliance with the
+ * License. A copy of the License is located at
+ *
+ *     http://aws.amazon.com/asl/
+ *
+ * or in the "license" file accompanying this file. This file is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, express or implied. See the License
+ * for the specific language governing permissions and
+ * limitations under the License.
+ */
+var dataMemory = {};
+/** @class */
+
+var MemoryStorage = /*#__PURE__*/function () {
+  function MemoryStorage() {}
+
+  /**
+   * This is used to set a specific item in storage
+   * @param {string} key - the key for the item
+   * @param {object} value - the value
+   * @returns {string} value that was set
+   */
+  MemoryStorage.setItem = function setItem(key, value) {
+    dataMemory[key] = value;
+    return dataMemory[key];
+  }
+  /**
+   * This is used to get a specific key from storage
+   * @param {string} key - the key for the item
+   * This is used to clear the storage
+   * @returns {string} the data item
+   */
+  ;
+
+  MemoryStorage.getItem = function getItem(key) {
+    return Object.prototype.hasOwnProperty.call(dataMemory, key) ? dataMemory[key] : undefined;
+  }
+  /**
+   * This is used to remove an item from storage
+   * @param {string} key - the key being set
+   * @returns {boolean} return true
+   */
+  ;
+
+  MemoryStorage.removeItem = function removeItem(key) {
+    return delete dataMemory[key];
+  }
+  /**
+   * This is used to clear the storage
+   * @returns {string} nothing
+   */
+  ;
+
+  MemoryStorage.clear = function clear() {
+    dataMemory = {};
+    return dataMemory;
+  };
+
+  return MemoryStorage;
+}();
+/** @class */
+
+var StorageHelper = /*#__PURE__*/function () {
+  /**
+   * This is used to get a storage object
+   * @returns {object} the storage
+   */
+  function StorageHelper() {
+    try {
+      this.storageWindow = window.localStorage;
+      this.storageWindow.setItem('aws.cognito.test-ls', 1);
+      this.storageWindow.removeItem('aws.cognito.test-ls');
+    } catch (exception) {
+      this.storageWindow = MemoryStorage;
+    }
+  }
+  /**
+   * This is used to return the storage
+   * @returns {object} the storage
+   */
+
+
+  var _proto = StorageHelper.prototype;
+
+  _proto.getStorage = function getStorage() {
+    return this.storageWindow;
+  };
+
+  return StorageHelper;
+}();
+
+
+;// CONCATENATED MODULE: ./node_modules/amazon-cognito-identity-js/es/CognitoUser.js
+/*!
+ * Copyright 2016 Amazon.com,
+ * Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Amazon Software License (the "License").
+ * You may not use this file except in compliance with the
+ * License. A copy of the License is located at
+ *
+ *     http://aws.amazon.com/asl/
+ *
+ * or in the "license" file accompanying this file. This file is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, express or implied. See the License
+ * for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+ // necessary for crypto js
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * @callback nodeCallback
+ * @template T result
+ * @param {*} err The operation failure reason, or null.
+ * @param {T} result The operation result.
+ */
+
+/**
+ * @callback onFailure
+ * @param {*} err Failure reason.
+ */
+
+/**
+ * @callback onSuccess
+ * @template T result
+ * @param {T} result The operation result.
+ */
+
+/**
+ * @callback mfaRequired
+ * @param {*} details MFA challenge details.
+ */
+
+/**
+ * @callback customChallenge
+ * @param {*} details Custom challenge details.
+ */
+
+/**
+ * @callback inputVerificationCode
+ * @param {*} data Server response.
+ */
+
+/**
+ * @callback authSuccess
+ * @param {CognitoUserSession} session The new session.
+ * @param {bool=} userConfirmationNecessary User must be confirmed.
+ */
+
+var isBrowser = typeof navigator !== 'undefined';
+var userAgent = isBrowser ? navigator.userAgent : 'nodejs';
+/** @class */
+
+var CognitoUser = /*#__PURE__*/function () {
+  /**
+   * Constructs a new CognitoUser object
+   * @param {object} data Creation options
+   * @param {string} data.Username The user's username.
+   * @param {CognitoUserPool} data.Pool Pool containing the user.
+   * @param {object} data.Storage Optional storage object.
+   */
+  function CognitoUser(data) {
+    if (data == null || data.Username == null || data.Pool == null) {
+      throw new Error('Username and Pool information are required.');
+    }
+
+    this.username = data.Username || '';
+    this.pool = data.Pool;
+    this.Session = null;
+    this.client = data.Pool.client;
+    this.signInUserSession = null;
+    this.authenticationFlowType = 'USER_SRP_AUTH';
+    this.storage = data.Storage || new StorageHelper().getStorage();
+    this.keyPrefix = "CognitoIdentityServiceProvider." + this.pool.getClientId();
+    this.userDataKey = this.keyPrefix + "." + this.username + ".userData";
+  }
+  /**
+   * Sets the session for this user
+   * @param {CognitoUserSession} signInUserSession the session
+   * @returns {void}
+   */
+
+
+  var _proto = CognitoUser.prototype;
+
+  _proto.setSignInUserSession = function setSignInUserSession(signInUserSession) {
+    this.clearCachedUserData();
+    this.signInUserSession = signInUserSession;
+    this.cacheTokens();
+  }
+  /**
+   * @returns {CognitoUserSession} the current session for this user
+   */
+  ;
+
+  _proto.getSignInUserSession = function getSignInUserSession() {
+    return this.signInUserSession;
+  }
+  /**
+   * @returns {string} the user's username
+   */
+  ;
+
+  _proto.getUsername = function getUsername() {
+    return this.username;
+  }
+  /**
+   * @returns {String} the authentication flow type
+   */
+  ;
+
+  _proto.getAuthenticationFlowType = function getAuthenticationFlowType() {
+    return this.authenticationFlowType;
+  }
+  /**
+   * sets authentication flow type
+   * @param {string} authenticationFlowType New value.
+   * @returns {void}
+   */
+  ;
+
+  _proto.setAuthenticationFlowType = function setAuthenticationFlowType(authenticationFlowType) {
+    this.authenticationFlowType = authenticationFlowType;
+  }
+  /**
+   * This is used for authenticating the user through the custom authentication flow.
+   * @param {AuthenticationDetails} authDetails Contains the authentication data
+   * @param {object} callback Result callback map.
+   * @param {onFailure} callback.onFailure Called on any error.
+   * @param {customChallenge} callback.customChallenge Custom challenge
+   *        response required to continue.
+   * @param {authSuccess} callback.onSuccess Called on success with the new session.
+   * @returns {void}
+   */
+  ;
+
+  _proto.initiateAuth = function initiateAuth(authDetails, callback) {
+    var _this = this;
+
+    var authParameters = authDetails.getAuthParameters();
+    authParameters.USERNAME = this.username;
+    var clientMetaData = Object.keys(authDetails.getValidationData()).length !== 0 ? authDetails.getValidationData() : authDetails.getClientMetadata();
+    var jsonReq = {
+      AuthFlow: 'CUSTOM_AUTH',
+      ClientId: this.pool.getClientId(),
+      AuthParameters: authParameters,
+      ClientMetadata: clientMetaData
+    };
+
+    if (this.getUserContextData()) {
+      jsonReq.UserContextData = this.getUserContextData();
+    }
+
+    this.client.request('InitiateAuth', jsonReq, function (err, data) {
+      if (err) {
+        return callback.onFailure(err);
+      }
+
+      var challengeName = data.ChallengeName;
+      var challengeParameters = data.ChallengeParameters;
+
+      if (challengeName === 'CUSTOM_CHALLENGE') {
+        _this.Session = data.Session;
+        return callback.customChallenge(challengeParameters);
+      }
+
+      _this.signInUserSession = _this.getCognitoUserSession(data.AuthenticationResult);
+
+      _this.cacheTokens();
+
+      return callback.onSuccess(_this.signInUserSession);
+    });
+  }
+  /**
+   * This is used for authenticating the user.
+   * stuff
+   * @param {AuthenticationDetails} authDetails Contains the authentication data
+   * @param {object} callback Result callback map.
+   * @param {onFailure} callback.onFailure Called on any error.
+   * @param {newPasswordRequired} callback.newPasswordRequired new
+   *        password and any required attributes are required to continue
+   * @param {mfaRequired} callback.mfaRequired MFA code
+   *        required to continue.
+   * @param {customChallenge} callback.customChallenge Custom challenge
+   *        response required to continue.
+   * @param {authSuccess} callback.onSuccess Called on success with the new session.
+   * @returns {void}
+   */
+  ;
+
+  _proto.authenticateUser = function authenticateUser(authDetails, callback) {
+    if (this.authenticationFlowType === 'USER_PASSWORD_AUTH') {
+      return this.authenticateUserPlainUsernamePassword(authDetails, callback);
+    } else if (this.authenticationFlowType === 'USER_SRP_AUTH' || this.authenticationFlowType === 'CUSTOM_AUTH') {
+      return this.authenticateUserDefaultAuth(authDetails, callback);
+    }
+
+    return callback.onFailure(new Error('Authentication flow type is invalid.'));
+  }
+  /**
+   * PRIVATE ONLY: This is an internal only method and should not
+   * be directly called by the consumers.
+   * It calls the AuthenticationHelper for SRP related
+   * stuff
+   * @param {AuthenticationDetails} authDetails Contains the authentication data
+   * @param {object} callback Result callback map.
+   * @param {onFailure} callback.onFailure Called on any error.
+   * @param {newPasswordRequired} callback.newPasswordRequired new
+   *        password and any required attributes are required to continue
+   * @param {mfaRequired} callback.mfaRequired MFA code
+   *        required to continue.
+   * @param {customChallenge} callback.customChallenge Custom challenge
+   *        response required to continue.
+   * @param {authSuccess} callback.onSuccess Called on success with the new session.
+   * @returns {void}
+   */
+  ;
+
+  _proto.authenticateUserDefaultAuth = function authenticateUserDefaultAuth(authDetails, callback) {
+    var _this2 = this;
+
+    var authenticationHelper = new AuthenticationHelper(this.pool.getUserPoolId().split('_')[1]);
+    var dateHelper = new DateHelper();
+    var serverBValue;
+    var salt;
+    var authParameters = {};
+
+    if (this.deviceKey != null) {
+      authParameters.DEVICE_KEY = this.deviceKey;
+    }
+
+    authParameters.USERNAME = this.username;
+    authenticationHelper.getLargeAValue(function (errOnAValue, aValue) {
+      // getLargeAValue callback start
+      if (errOnAValue) {
+        callback.onFailure(errOnAValue);
+      }
+
+      authParameters.SRP_A = aValue.toString(16);
+
+      if (_this2.authenticationFlowType === 'CUSTOM_AUTH') {
+        authParameters.CHALLENGE_NAME = 'SRP_A';
+      }
+
+      var clientMetaData = Object.keys(authDetails.getValidationData()).length !== 0 ? authDetails.getValidationData() : authDetails.getClientMetadata();
+      var jsonReq = {
+        AuthFlow: _this2.authenticationFlowType,
+        ClientId: _this2.pool.getClientId(),
+        AuthParameters: authParameters,
+        ClientMetadata: clientMetaData
+      };
+
+      if (_this2.getUserContextData(_this2.username)) {
+        jsonReq.UserContextData = _this2.getUserContextData(_this2.username);
+      }
+
+      _this2.client.request('InitiateAuth', jsonReq, function (err, data) {
+        if (err) {
+          return callback.onFailure(err);
+        }
+
+        var challengeParameters = data.ChallengeParameters;
+        _this2.username = challengeParameters.USER_ID_FOR_SRP;
+        _this2.userDataKey = _this2.keyPrefix + "." + _this2.username + ".userData";
+        serverBValue = new BigInteger(challengeParameters.SRP_B, 16);
+        salt = new BigInteger(challengeParameters.SALT, 16);
+
+        _this2.getCachedDeviceKeyAndPassword();
+
+        authenticationHelper.getPasswordAuthenticationKey(_this2.username, authDetails.getPassword(), serverBValue, salt, function (errOnHkdf, hkdf) {
+          // getPasswordAuthenticationKey callback start
+          if (errOnHkdf) {
+            callback.onFailure(errOnHkdf);
+          }
+
+          var dateNow = dateHelper.getNowString();
+          var message = core_default().lib.WordArray.create(external_buffer_namespaceObject.Buffer.concat([external_buffer_namespaceObject.Buffer.from(_this2.pool.getUserPoolId().split('_')[1], 'utf8'), external_buffer_namespaceObject.Buffer.from(_this2.username, 'utf8'), external_buffer_namespaceObject.Buffer.from(challengeParameters.SECRET_BLOCK, 'base64'), external_buffer_namespaceObject.Buffer.from(dateNow, 'utf8')]));
+          var key = core_default().lib.WordArray.create(hkdf);
+          var signatureString = enc_base64_default().stringify(hmac_sha256_default()(message, key));
+          var challengeResponses = {};
+          challengeResponses.USERNAME = _this2.username;
+          challengeResponses.PASSWORD_CLAIM_SECRET_BLOCK = challengeParameters.SECRET_BLOCK;
+          challengeResponses.TIMESTAMP = dateNow;
+          challengeResponses.PASSWORD_CLAIM_SIGNATURE = signatureString;
+
+          if (_this2.deviceKey != null) {
+            challengeResponses.DEVICE_KEY = _this2.deviceKey;
+          }
+
+          var respondToAuthChallenge = function respondToAuthChallenge(challenge, challengeCallback) {
+            return _this2.client.request('RespondToAuthChallenge', challenge, function (errChallenge, dataChallenge) {
+              if (errChallenge && errChallenge.code === 'ResourceNotFoundException' && errChallenge.message.toLowerCase().indexOf('device') !== -1) {
+                challengeResponses.DEVICE_KEY = null;
+                _this2.deviceKey = null;
+                _this2.randomPassword = null;
+                _this2.deviceGroupKey = null;
+
+                _this2.clearCachedDeviceKeyAndPassword();
+
+                return respondToAuthChallenge(challenge, challengeCallback);
+              }
+
+              return challengeCallback(errChallenge, dataChallenge);
+            });
+          };
+
+          var jsonReqResp = {
+            ChallengeName: 'PASSWORD_VERIFIER',
+            ClientId: _this2.pool.getClientId(),
+            ChallengeResponses: challengeResponses,
+            Session: data.Session,
+            ClientMetadata: clientMetaData
+          };
+
+          if (_this2.getUserContextData()) {
+            jsonReqResp.UserContextData = _this2.getUserContextData();
+          }
+
+          respondToAuthChallenge(jsonReqResp, function (errAuthenticate, dataAuthenticate) {
+            if (errAuthenticate) {
+              return callback.onFailure(errAuthenticate);
+            }
+
+            return _this2.authenticateUserInternal(dataAuthenticate, authenticationHelper, callback);
+          });
+          return undefined; // getPasswordAuthenticationKey callback end
+        });
+        return undefined;
+      }); // getLargeAValue callback end
+
+    });
+  }
+  /**
+   * PRIVATE ONLY: This is an internal only method and should not
+   * be directly called by the consumers.
+   * @param {AuthenticationDetails} authDetails Contains the authentication data.
+   * @param {object} callback Result callback map.
+   * @param {onFailure} callback.onFailure Called on any error.
+   * @param {mfaRequired} callback.mfaRequired MFA code
+   *        required to continue.
+   * @param {authSuccess} callback.onSuccess Called on success with the new session.
+   * @returns {void}
+   */
+  ;
+
+  _proto.authenticateUserPlainUsernamePassword = function authenticateUserPlainUsernamePassword(authDetails, callback) {
+    var _this3 = this;
+
+    var authParameters = {};
+    authParameters.USERNAME = this.username;
+    authParameters.PASSWORD = authDetails.getPassword();
+
+    if (!authParameters.PASSWORD) {
+      callback.onFailure(new Error('PASSWORD parameter is required'));
+      return;
+    }
+
+    var authenticationHelper = new AuthenticationHelper(this.pool.getUserPoolId().split('_')[1]);
+    this.getCachedDeviceKeyAndPassword();
+
+    if (this.deviceKey != null) {
+      authParameters.DEVICE_KEY = this.deviceKey;
+    }
+
+    var clientMetaData = Object.keys(authDetails.getValidationData()).length !== 0 ? authDetails.getValidationData() : authDetails.getClientMetadata();
+    var jsonReq = {
+      AuthFlow: 'USER_PASSWORD_AUTH',
+      ClientId: this.pool.getClientId(),
+      AuthParameters: authParameters,
+      ClientMetadata: clientMetaData
+    };
+
+    if (this.getUserContextData(this.username)) {
+      jsonReq.UserContextData = this.getUserContextData(this.username);
+    } // USER_PASSWORD_AUTH happens in a single round-trip: client sends userName and password,
+    // Cognito UserPools verifies password and returns tokens.
+
+
+    this.client.request('InitiateAuth', jsonReq, function (err, authResult) {
+      if (err) {
+        return callback.onFailure(err);
+      }
+
+      return _this3.authenticateUserInternal(authResult, authenticationHelper, callback);
+    });
+  }
+  /**
+   * PRIVATE ONLY: This is an internal only method and should not
+   * be directly called by the consumers.
+   * @param {object} dataAuthenticate authentication data
+   * @param {object} authenticationHelper helper created
+   * @param {callback} callback passed on from caller
+   * @returns {void}
+   */
+  ;
+
+  _proto.authenticateUserInternal = function authenticateUserInternal(dataAuthenticate, authenticationHelper, callback) {
+    var _this4 = this;
+
+    var challengeName = dataAuthenticate.ChallengeName;
+    var challengeParameters = dataAuthenticate.ChallengeParameters;
+
+    if (challengeName === 'SMS_MFA') {
+      this.Session = dataAuthenticate.Session;
+      return callback.mfaRequired(challengeName, challengeParameters);
+    }
+
+    if (challengeName === 'SELECT_MFA_TYPE') {
+      this.Session = dataAuthenticate.Session;
+      return callback.selectMFAType(challengeName, challengeParameters);
+    }
+
+    if (challengeName === 'MFA_SETUP') {
+      this.Session = dataAuthenticate.Session;
+      return callback.mfaSetup(challengeName, challengeParameters);
+    }
+
+    if (challengeName === 'SOFTWARE_TOKEN_MFA') {
+      this.Session = dataAuthenticate.Session;
+      return callback.totpRequired(challengeName, challengeParameters);
+    }
+
+    if (challengeName === 'CUSTOM_CHALLENGE') {
+      this.Session = dataAuthenticate.Session;
+      return callback.customChallenge(challengeParameters);
+    }
+
+    if (challengeName === 'NEW_PASSWORD_REQUIRED') {
+      this.Session = dataAuthenticate.Session;
+      var userAttributes = null;
+      var rawRequiredAttributes = null;
+      var requiredAttributes = [];
+      var userAttributesPrefix = authenticationHelper.getNewPasswordRequiredChallengeUserAttributePrefix();
+
+      if (challengeParameters) {
+        userAttributes = JSON.parse(dataAuthenticate.ChallengeParameters.userAttributes);
+        rawRequiredAttributes = JSON.parse(dataAuthenticate.ChallengeParameters.requiredAttributes);
+      }
+
+      if (rawRequiredAttributes) {
+        for (var i = 0; i < rawRequiredAttributes.length; i++) {
+          requiredAttributes[i] = rawRequiredAttributes[i].substr(userAttributesPrefix.length);
+        }
+      }
+
+      return callback.newPasswordRequired(userAttributes, requiredAttributes);
+    }
+
+    if (challengeName === 'DEVICE_SRP_AUTH') {
+      this.getDeviceResponse(callback);
+      return undefined;
+    }
+
+    this.signInUserSession = this.getCognitoUserSession(dataAuthenticate.AuthenticationResult);
+    this.challengeName = challengeName;
+    this.cacheTokens();
+    var newDeviceMetadata = dataAuthenticate.AuthenticationResult.NewDeviceMetadata;
+
+    if (newDeviceMetadata == null) {
+      return callback.onSuccess(this.signInUserSession);
+    }
+
+    authenticationHelper.generateHashDevice(dataAuthenticate.AuthenticationResult.NewDeviceMetadata.DeviceGroupKey, dataAuthenticate.AuthenticationResult.NewDeviceMetadata.DeviceKey, function (errGenHash) {
+      if (errGenHash) {
+        return callback.onFailure(errGenHash);
+      }
+
+      var deviceSecretVerifierConfig = {
+        Salt: external_buffer_namespaceObject.Buffer.from(authenticationHelper.getSaltDevices(), 'hex').toString('base64'),
+        PasswordVerifier: external_buffer_namespaceObject.Buffer.from(authenticationHelper.getVerifierDevices(), 'hex').toString('base64')
+      };
+      _this4.verifierDevices = deviceSecretVerifierConfig.PasswordVerifier;
+      _this4.deviceGroupKey = newDeviceMetadata.DeviceGroupKey;
+      _this4.randomPassword = authenticationHelper.getRandomPassword();
+
+      _this4.client.request('ConfirmDevice', {
+        DeviceKey: newDeviceMetadata.DeviceKey,
+        AccessToken: _this4.signInUserSession.getAccessToken().getJwtToken(),
+        DeviceSecretVerifierConfig: deviceSecretVerifierConfig,
+        DeviceName: userAgent
+      }, function (errConfirm, dataConfirm) {
+        if (errConfirm) {
+          return callback.onFailure(errConfirm);
+        }
+
+        _this4.deviceKey = dataAuthenticate.AuthenticationResult.NewDeviceMetadata.DeviceKey;
+
+        _this4.cacheDeviceKeyAndPassword();
+
+        if (dataConfirm.UserConfirmationNecessary === true) {
+          return callback.onSuccess(_this4.signInUserSession, dataConfirm.UserConfirmationNecessary);
+        }
+
+        return callback.onSuccess(_this4.signInUserSession);
+      });
+
+      return undefined;
+    });
+    return undefined;
+  }
+  /**
+   * This method is user to complete the NEW_PASSWORD_REQUIRED challenge.
+   * Pass the new password with any new user attributes to be updated.
+   * User attribute keys must be of format userAttributes.<attribute_name>.
+   * @param {string} newPassword new password for this user
+   * @param {object} requiredAttributeData map with values for all required attributes
+   * @param {object} callback Result callback map.
+   * @param {onFailure} callback.onFailure Called on any error.
+   * @param {mfaRequired} callback.mfaRequired MFA code required to continue.
+   * @param {customChallenge} callback.customChallenge Custom challenge
+   *         response required to continue.
+   * @param {authSuccess} callback.onSuccess Called on success with the new session.
+   * @param {ClientMetadata} clientMetadata object which is passed from client to Cognito Lambda trigger
+   * @returns {void}
+   */
+  ;
+
+  _proto.completeNewPasswordChallenge = function completeNewPasswordChallenge(newPassword, requiredAttributeData, callback, clientMetadata) {
+    var _this5 = this;
+
+    if (!newPassword) {
+      return callback.onFailure(new Error('New password is required.'));
+    }
+
+    var authenticationHelper = new AuthenticationHelper(this.pool.getUserPoolId().split('_')[1]);
+    var userAttributesPrefix = authenticationHelper.getNewPasswordRequiredChallengeUserAttributePrefix();
+    var finalUserAttributes = {};
+
+    if (requiredAttributeData) {
+      Object.keys(requiredAttributeData).forEach(function (key) {
+        finalUserAttributes[userAttributesPrefix + key] = requiredAttributeData[key];
+      });
+    }
+
+    finalUserAttributes.NEW_PASSWORD = newPassword;
+    finalUserAttributes.USERNAME = this.username;
+    var jsonReq = {
+      ChallengeName: 'NEW_PASSWORD_REQUIRED',
+      ClientId: this.pool.getClientId(),
+      ChallengeResponses: finalUserAttributes,
+      Session: this.Session,
+      ClientMetadata: clientMetadata
+    };
+
+    if (this.getUserContextData()) {
+      jsonReq.UserContextData = this.getUserContextData();
+    }
+
+    this.client.request('RespondToAuthChallenge', jsonReq, function (errAuthenticate, dataAuthenticate) {
+      if (errAuthenticate) {
+        return callback.onFailure(errAuthenticate);
+      }
+
+      return _this5.authenticateUserInternal(dataAuthenticate, authenticationHelper, callback);
+    });
+    return undefined;
+  }
+  /**
+   * This is used to get a session using device authentication. It is called at the end of user
+   * authentication
+   *
+   * @param {object} callback Result callback map.
+   * @param {onFailure} callback.onFailure Called on any error.
+   * @param {authSuccess} callback.onSuccess Called on success with the new session.
+   * @param {ClientMetadata} clientMetadata object which is passed from client to Cognito Lambda trigger
+   * @returns {void}
+   * @private
+   */
+  ;
+
+  _proto.getDeviceResponse = function getDeviceResponse(callback, clientMetadata) {
+    var _this6 = this;
+
+    var authenticationHelper = new AuthenticationHelper(this.deviceGroupKey);
+    var dateHelper = new DateHelper();
+    var authParameters = {};
+    authParameters.USERNAME = this.username;
+    authParameters.DEVICE_KEY = this.deviceKey;
+    authenticationHelper.getLargeAValue(function (errAValue, aValue) {
+      // getLargeAValue callback start
+      if (errAValue) {
+        callback.onFailure(errAValue);
+      }
+
+      authParameters.SRP_A = aValue.toString(16);
+      var jsonReq = {
+        ChallengeName: 'DEVICE_SRP_AUTH',
+        ClientId: _this6.pool.getClientId(),
+        ChallengeResponses: authParameters,
+        ClientMetadata: clientMetadata
+      };
+
+      if (_this6.getUserContextData()) {
+        jsonReq.UserContextData = _this6.getUserContextData();
+      }
+
+      _this6.client.request('RespondToAuthChallenge', jsonReq, function (err, data) {
+        if (err) {
+          return callback.onFailure(err);
+        }
+
+        var challengeParameters = data.ChallengeParameters;
+        var serverBValue = new BigInteger(challengeParameters.SRP_B, 16);
+        var salt = new BigInteger(challengeParameters.SALT, 16);
+        authenticationHelper.getPasswordAuthenticationKey(_this6.deviceKey, _this6.randomPassword, serverBValue, salt, function (errHkdf, hkdf) {
+          // getPasswordAuthenticationKey callback start
+          if (errHkdf) {
+            return callback.onFailure(errHkdf);
+          }
+
+          var dateNow = dateHelper.getNowString();
+          var message = core_default().lib.WordArray.create(external_buffer_namespaceObject.Buffer.concat([external_buffer_namespaceObject.Buffer.from(_this6.deviceGroupKey, 'utf8'), external_buffer_namespaceObject.Buffer.from(_this6.deviceKey, 'utf8'), external_buffer_namespaceObject.Buffer.from(challengeParameters.SECRET_BLOCK, 'base64'), external_buffer_namespaceObject.Buffer.from(dateNow, 'utf8')]));
+          var key = core_default().lib.WordArray.create(hkdf);
+          var signatureString = enc_base64_default().stringify(hmac_sha256_default()(message, key));
+          var challengeResponses = {};
+          challengeResponses.USERNAME = _this6.username;
+          challengeResponses.PASSWORD_CLAIM_SECRET_BLOCK = challengeParameters.SECRET_BLOCK;
+          challengeResponses.TIMESTAMP = dateNow;
+          challengeResponses.PASSWORD_CLAIM_SIGNATURE = signatureString;
+          challengeResponses.DEVICE_KEY = _this6.deviceKey;
+          var jsonReqResp = {
+            ChallengeName: 'DEVICE_PASSWORD_VERIFIER',
+            ClientId: _this6.pool.getClientId(),
+            ChallengeResponses: challengeResponses,
+            Session: data.Session
+          };
+
+          if (_this6.getUserContextData()) {
+            jsonReqResp.UserContextData = _this6.getUserContextData();
+          }
+
+          _this6.client.request('RespondToAuthChallenge', jsonReqResp, function (errAuthenticate, dataAuthenticate) {
+            if (errAuthenticate) {
+              return callback.onFailure(errAuthenticate);
+            }
+
+            _this6.signInUserSession = _this6.getCognitoUserSession(dataAuthenticate.AuthenticationResult);
+
+            _this6.cacheTokens();
+
+            return callback.onSuccess(_this6.signInUserSession);
+          });
+
+          return undefined; // getPasswordAuthenticationKey callback end
+        });
+        return undefined;
+      }); // getLargeAValue callback end
+
+    });
+  }
+  /**
+   * This is used for a certain user to confirm the registration by using a confirmation code
+   * @param {string} confirmationCode Code entered by user.
+   * @param {bool} forceAliasCreation Allow migrating from an existing email / phone number.
+   * @param {nodeCallback<string>} callback Called on success or error.
+   * @param {ClientMetadata} clientMetadata object which is passed from client to Cognito Lambda trigger
+   * @returns {void}
+   */
+  ;
+
+  _proto.confirmRegistration = function confirmRegistration(confirmationCode, forceAliasCreation, callback, clientMetadata) {
+    var jsonReq = {
+      ClientId: this.pool.getClientId(),
+      ConfirmationCode: confirmationCode,
+      Username: this.username,
+      ForceAliasCreation: forceAliasCreation,
+      ClientMetadata: clientMetadata
+    };
+
+    if (this.getUserContextData()) {
+      jsonReq.UserContextData = this.getUserContextData();
+    }
+
+    this.client.request('ConfirmSignUp', jsonReq, function (err) {
+      if (err) {
+        return callback(err, null);
+      }
+
+      return callback(null, 'SUCCESS');
+    });
+  }
+  /**
+   * This is used by the user once he has the responses to a custom challenge
+   * @param {string} answerChallenge The custom challenge answer.
+   * @param {object} callback Result callback map.
+   * @param {onFailure} callback.onFailure Called on any error.
+   * @param {customChallenge} callback.customChallenge
+   *    Custom challenge response required to continue.
+   * @param {authSuccess} callback.onSuccess Called on success with the new session.
+   * @param {ClientMetadata} clientMetadata object which is passed from client to Cognito Lambda trigger
+   * @returns {void}
+   */
+  ;
+
+  _proto.sendCustomChallengeAnswer = function sendCustomChallengeAnswer(answerChallenge, callback, clientMetadata) {
+    var _this7 = this;
+
+    var challengeResponses = {};
+    challengeResponses.USERNAME = this.username;
+    challengeResponses.ANSWER = answerChallenge;
+    var authenticationHelper = new AuthenticationHelper(this.pool.getUserPoolId().split('_')[1]);
+    this.getCachedDeviceKeyAndPassword();
+
+    if (this.deviceKey != null) {
+      challengeResponses.DEVICE_KEY = this.deviceKey;
+    }
+
+    var jsonReq = {
+      ChallengeName: 'CUSTOM_CHALLENGE',
+      ChallengeResponses: challengeResponses,
+      ClientId: this.pool.getClientId(),
+      Session: this.Session,
+      ClientMetadata: clientMetadata
+    };
+
+    if (this.getUserContextData()) {
+      jsonReq.UserContextData = this.getUserContextData();
+    }
+
+    this.client.request('RespondToAuthChallenge', jsonReq, function (err, data) {
+      if (err) {
+        return callback.onFailure(err);
+      }
+
+      return _this7.authenticateUserInternal(data, authenticationHelper, callback);
+    });
+  }
+  /**
+   * This is used by the user once he has an MFA code
+   * @param {string} confirmationCode The MFA code entered by the user.
+   * @param {object} callback Result callback map.
+   * @param {string} mfaType The mfa we are replying to.
+   * @param {onFailure} callback.onFailure Called on any error.
+   * @param {authSuccess} callback.onSuccess Called on success with the new session.
+   * @param {ClientMetadata} clientMetadata object which is passed from client to Cognito Lambda trigger
+   * @returns {void}
+   */
+  ;
+
+  _proto.sendMFACode = function sendMFACode(confirmationCode, callback, mfaType, clientMetadata) {
+    var _this8 = this;
+
+    var challengeResponses = {};
+    challengeResponses.USERNAME = this.username;
+    challengeResponses.SMS_MFA_CODE = confirmationCode;
+    var mfaTypeSelection = mfaType || 'SMS_MFA';
+
+    if (mfaTypeSelection === 'SOFTWARE_TOKEN_MFA') {
+      challengeResponses.SOFTWARE_TOKEN_MFA_CODE = confirmationCode;
+    }
+
+    if (this.deviceKey != null) {
+      challengeResponses.DEVICE_KEY = this.deviceKey;
+    }
+
+    var jsonReq = {
+      ChallengeName: mfaTypeSelection,
+      ChallengeResponses: challengeResponses,
+      ClientId: this.pool.getClientId(),
+      Session: this.Session,
+      ClientMetadata: clientMetadata
+    };
+
+    if (this.getUserContextData()) {
+      jsonReq.UserContextData = this.getUserContextData();
+    }
+
+    this.client.request('RespondToAuthChallenge', jsonReq, function (err, dataAuthenticate) {
+      if (err) {
+        return callback.onFailure(err);
+      }
+
+      var challengeName = dataAuthenticate.ChallengeName;
+
+      if (challengeName === 'DEVICE_SRP_AUTH') {
+        _this8.getDeviceResponse(callback);
+
+        return undefined;
+      }
+
+      _this8.signInUserSession = _this8.getCognitoUserSession(dataAuthenticate.AuthenticationResult);
+
+      _this8.cacheTokens();
+
+      if (dataAuthenticate.AuthenticationResult.NewDeviceMetadata == null) {
+        return callback.onSuccess(_this8.signInUserSession);
+      }
+
+      var authenticationHelper = new AuthenticationHelper(_this8.pool.getUserPoolId().split('_')[1]);
+      authenticationHelper.generateHashDevice(dataAuthenticate.AuthenticationResult.NewDeviceMetadata.DeviceGroupKey, dataAuthenticate.AuthenticationResult.NewDeviceMetadata.DeviceKey, function (errGenHash) {
+        if (errGenHash) {
+          return callback.onFailure(errGenHash);
+        }
+
+        var deviceSecretVerifierConfig = {
+          Salt: external_buffer_namespaceObject.Buffer.from(authenticationHelper.getSaltDevices(), 'hex').toString('base64'),
+          PasswordVerifier: external_buffer_namespaceObject.Buffer.from(authenticationHelper.getVerifierDevices(), 'hex').toString('base64')
+        };
+        _this8.verifierDevices = deviceSecretVerifierConfig.PasswordVerifier;
+        _this8.deviceGroupKey = dataAuthenticate.AuthenticationResult.NewDeviceMetadata.DeviceGroupKey;
+        _this8.randomPassword = authenticationHelper.getRandomPassword();
+
+        _this8.client.request('ConfirmDevice', {
+          DeviceKey: dataAuthenticate.AuthenticationResult.NewDeviceMetadata.DeviceKey,
+          AccessToken: _this8.signInUserSession.getAccessToken().getJwtToken(),
+          DeviceSecretVerifierConfig: deviceSecretVerifierConfig,
+          DeviceName: userAgent
+        }, function (errConfirm, dataConfirm) {
+          if (errConfirm) {
+            return callback.onFailure(errConfirm);
+          }
+
+          _this8.deviceKey = dataAuthenticate.AuthenticationResult.NewDeviceMetadata.DeviceKey;
+
+          _this8.cacheDeviceKeyAndPassword();
+
+          if (dataConfirm.UserConfirmationNecessary === true) {
+            return callback.onSuccess(_this8.signInUserSession, dataConfirm.UserConfirmationNecessary);
+          }
+
+          return callback.onSuccess(_this8.signInUserSession);
+        });
+
+        return undefined;
+      });
+      return undefined;
+    });
+  }
+  /**
+   * This is used by an authenticated user to change the current password
+   * @param {string} oldUserPassword The current password.
+   * @param {string} newUserPassword The requested new password.
+   * @param {nodeCallback<string>} callback Called on success or error.
+   * @param {ClientMetadata} clientMetadata object which is passed from client to Cognito Lambda trigger
+   * @returns {void}
+   */
+  ;
+
+  _proto.changePassword = function changePassword(oldUserPassword, newUserPassword, callback, clientMetadata) {
+    if (!(this.signInUserSession != null && this.signInUserSession.isValid())) {
+      return callback(new Error('User is not authenticated'), null);
+    }
+
+    this.client.request('ChangePassword', {
+      PreviousPassword: oldUserPassword,
+      ProposedPassword: newUserPassword,
+      AccessToken: this.signInUserSession.getAccessToken().getJwtToken(),
+      ClientMetadata: clientMetadata
+    }, function (err) {
+      if (err) {
+        return callback(err, null);
+      }
+
+      return callback(null, 'SUCCESS');
+    });
+    return undefined;
+  }
+  /**
+   * This is used by an authenticated user to enable MFA for itself
+   * @deprecated
+   * @param {nodeCallback<string>} callback Called on success or error.
+   * @returns {void}
+   */
+  ;
+
+  _proto.enableMFA = function enableMFA(callback) {
+    if (this.signInUserSession == null || !this.signInUserSession.isValid()) {
+      return callback(new Error('User is not authenticated'), null);
+    }
+
+    var mfaOptions = [];
+    var mfaEnabled = {
+      DeliveryMedium: 'SMS',
+      AttributeName: 'phone_number'
+    };
+    mfaOptions.push(mfaEnabled);
+    this.client.request('SetUserSettings', {
+      MFAOptions: mfaOptions,
+      AccessToken: this.signInUserSession.getAccessToken().getJwtToken()
+    }, function (err) {
+      if (err) {
+        return callback(err, null);
+      }
+
+      return callback(null, 'SUCCESS');
+    });
+    return undefined;
+  }
+  /**
+   * This is used by an authenticated user to enable MFA for itself
+   * @param {IMfaSettings} smsMfaSettings the sms mfa settings
+   * @param {IMFASettings} softwareTokenMfaSettings the software token mfa settings
+   * @param {nodeCallback<string>} callback Called on success or error.
+   * @returns {void}
+   */
+  ;
+
+  _proto.setUserMfaPreference = function setUserMfaPreference(smsMfaSettings, softwareTokenMfaSettings, callback) {
+    if (this.signInUserSession == null || !this.signInUserSession.isValid()) {
+      return callback(new Error('User is not authenticated'), null);
+    }
+
+    this.client.request('SetUserMFAPreference', {
+      SMSMfaSettings: smsMfaSettings,
+      SoftwareTokenMfaSettings: softwareTokenMfaSettings,
+      AccessToken: this.signInUserSession.getAccessToken().getJwtToken()
+    }, function (err) {
+      if (err) {
+        return callback(err, null);
+      }
+
+      return callback(null, 'SUCCESS');
+    });
+    return undefined;
+  }
+  /**
+   * This is used by an authenticated user to disable MFA for itself
+   * @deprecated
+   * @param {nodeCallback<string>} callback Called on success or error.
+   * @returns {void}
+   */
+  ;
+
+  _proto.disableMFA = function disableMFA(callback) {
+    if (this.signInUserSession == null || !this.signInUserSession.isValid()) {
+      return callback(new Error('User is not authenticated'), null);
+    }
+
+    var mfaOptions = [];
+    this.client.request('SetUserSettings', {
+      MFAOptions: mfaOptions,
+      AccessToken: this.signInUserSession.getAccessToken().getJwtToken()
+    }, function (err) {
+      if (err) {
+        return callback(err, null);
+      }
+
+      return callback(null, 'SUCCESS');
+    });
+    return undefined;
+  }
+  /**
+   * This is used by an authenticated user to delete itself
+   * @param {nodeCallback<string>} callback Called on success or error.
+   * @param {ClientMetadata} clientMetadata object which is passed from client to Cognito Lambda trigger
+   * @returns {void}
+   */
+  ;
+
+  _proto.deleteUser = function deleteUser(callback, clientMetadata) {
+    var _this9 = this;
+
+    if (this.signInUserSession == null || !this.signInUserSession.isValid()) {
+      return callback(new Error('User is not authenticated'), null);
+    }
+
+    this.client.request('DeleteUser', {
+      AccessToken: this.signInUserSession.getAccessToken().getJwtToken(),
+      ClientMetadata: clientMetadata
+    }, function (err) {
+      if (err) {
+        return callback(err, null);
+      }
+
+      _this9.clearCachedUser();
+
+      return callback(null, 'SUCCESS');
+    });
+    return undefined;
+  }
+  /**
+   * @typedef {CognitoUserAttribute | { Name:string, Value:string }} AttributeArg
+   */
+
+  /**
+   * This is used by an authenticated user to change a list of attributes
+   * @param {AttributeArg[]} attributes A list of the new user attributes.
+   * @param {nodeCallback<string>} callback Called on success or error.
+   * @param {ClientMetadata} clientMetadata object which is passed from client to Cognito Lambda trigger
+   * @returns {void}
+   */
+  ;
+
+  _proto.updateAttributes = function updateAttributes(attributes, callback, clientMetadata) {
+    var _this10 = this;
+
+    if (this.signInUserSession == null || !this.signInUserSession.isValid()) {
+      return callback(new Error('User is not authenticated'), null);
+    }
+
+    this.client.request('UpdateUserAttributes', {
+      AccessToken: this.signInUserSession.getAccessToken().getJwtToken(),
+      UserAttributes: attributes,
+      ClientMetadata: clientMetadata
+    }, function (err) {
+      if (err) {
+        return callback(err, null);
+      } // update cached user
+
+
+      return _this10.getUserData(function () {
+        return callback(null, 'SUCCESS');
+      }, {
+        bypassCache: true
+      });
+    });
+    return undefined;
+  }
+  /**
+   * This is used by an authenticated user to get a list of attributes
+   * @param {nodeCallback<CognitoUserAttribute[]>} callback Called on success or error.
+   * @returns {void}
+   */
+  ;
+
+  _proto.getUserAttributes = function getUserAttributes(callback) {
+    if (!(this.signInUserSession != null && this.signInUserSession.isValid())) {
+      return callback(new Error('User is not authenticated'), null);
+    }
+
+    this.client.request('GetUser', {
+      AccessToken: this.signInUserSession.getAccessToken().getJwtToken()
+    }, function (err, userData) {
+      if (err) {
+        return callback(err, null);
+      }
+
+      var attributeList = [];
+
+      for (var i = 0; i < userData.UserAttributes.length; i++) {
+        var attribute = {
+          Name: userData.UserAttributes[i].Name,
+          Value: userData.UserAttributes[i].Value
+        };
+        var userAttribute = new CognitoUserAttribute(attribute);
+        attributeList.push(userAttribute);
+      }
+
+      return callback(null, attributeList);
+    });
+    return undefined;
+  }
+  /**
+   * This was previously used by an authenticated user to get MFAOptions,
+   * but no longer returns a meaningful response. Refer to the documentation for
+   * how to setup and use MFA: https://docs.amplify.aws/lib/auth/mfa/q/platform/js
+   * @deprecated
+   * @param {nodeCallback<MFAOptions>} callback Called on success or error.
+   * @returns {void}
+   */
+  ;
+
+  _proto.getMFAOptions = function getMFAOptions(callback) {
+    if (!(this.signInUserSession != null && this.signInUserSession.isValid())) {
+      return callback(new Error('User is not authenticated'), null);
+    }
+
+    this.client.request('GetUser', {
+      AccessToken: this.signInUserSession.getAccessToken().getJwtToken()
+    }, function (err, userData) {
+      if (err) {
+        return callback(err, null);
+      }
+
+      return callback(null, userData.MFAOptions);
+    });
+    return undefined;
+  }
+  /**
+   * PRIVATE ONLY: This is an internal only method and should not
+   * be directly called by the consumers.
+   */
+  ;
+
+  _proto.createGetUserRequest = function createGetUserRequest() {
+    return this.client.promisifyRequest('GetUser', {
+      AccessToken: this.signInUserSession.getAccessToken().getJwtToken()
+    });
+  }
+  /**
+   * PRIVATE ONLY: This is an internal only method and should not
+   * be directly called by the consumers.
+   */
+  ;
+
+  _proto.refreshSessionIfPossible = function refreshSessionIfPossible(options) {
+    var _this11 = this;
+
+    if (options === void 0) {
+      options = {};
+    }
+
+    // best effort, if not possible
+    return new Promise(function (resolve) {
+      var refresh = _this11.signInUserSession.getRefreshToken();
+
+      if (refresh && refresh.getToken()) {
+        _this11.refreshSession(refresh, resolve, options.clientMetadata);
+      } else {
+        resolve();
+      }
+    });
+  }
+  /**
+   * @typedef {Object} GetUserDataOptions
+   * @property {boolean} bypassCache - force getting data from Cognito service
+   * @property {Record<string, string>} clientMetadata - clientMetadata for getSession
+   */
+
+  /**
+   * This is used by an authenticated users to get the userData
+   * @param {nodeCallback<UserData>} callback Called on success or error.
+   * @param {GetUserDataOptions} params
+   * @returns {void}
+   */
+  ;
+
+  _proto.getUserData = function getUserData(callback, params) {
+    var _this12 = this;
+
+    if (!(this.signInUserSession != null && this.signInUserSession.isValid())) {
+      this.clearCachedUserData();
+      return callback(new Error('User is not authenticated'), null);
+    }
+
+    var userData = this.getUserDataFromCache();
+
+    if (!userData) {
+      this.fetchUserData().then(function (data) {
+        callback(null, data);
+      })["catch"](callback);
+      return;
+    }
+
+    if (this.isFetchUserDataAndTokenRequired(params)) {
+      this.fetchUserData().then(function (data) {
+        return _this12.refreshSessionIfPossible(params).then(function () {
+          return data;
+        });
+      }).then(function (data) {
+        return callback(null, data);
+      })["catch"](callback);
+      return;
+    }
+
+    try {
+      callback(null, JSON.parse(userData));
+      return;
+    } catch (err) {
+      this.clearCachedUserData();
+      callback(err, null);
+      return;
+    }
+  }
+  /**
+   *
+   * PRIVATE ONLY: This is an internal only method and should not
+   * be directly called by the consumers.
+   */
+  ;
+
+  _proto.getUserDataFromCache = function getUserDataFromCache() {
+    var userData = this.storage.getItem(this.userDataKey);
+    return userData;
+  }
+  /**
+   *
+   * PRIVATE ONLY: This is an internal only method and should not
+   * be directly called by the consumers.
+   */
+  ;
+
+  _proto.isFetchUserDataAndTokenRequired = function isFetchUserDataAndTokenRequired(params) {
+    var _ref = params || {},
+        _ref$bypassCache = _ref.bypassCache,
+        bypassCache = _ref$bypassCache === void 0 ? false : _ref$bypassCache;
+
+    return bypassCache;
+  }
+  /**
+   *
+   * PRIVATE ONLY: This is an internal only method and should not
+   * be directly called by the consumers.
+   */
+  ;
+
+  _proto.fetchUserData = function fetchUserData() {
+    var _this13 = this;
+
+    return this.createGetUserRequest().then(function (data) {
+      _this13.cacheUserData(data);
+
+      return data;
+    });
+  }
+  /**
+   * This is used by an authenticated user to delete a list of attributes
+   * @param {string[]} attributeList Names of the attributes to delete.
+   * @param {nodeCallback<string>} callback Called on success or error.
+   * @returns {void}
+   */
+  ;
+
+  _proto.deleteAttributes = function deleteAttributes(attributeList, callback) {
+    if (!(this.signInUserSession != null && this.signInUserSession.isValid())) {
+      return callback(new Error('User is not authenticated'), null);
+    }
+
+    this.client.request('DeleteUserAttributes', {
+      UserAttributeNames: attributeList,
+      AccessToken: this.signInUserSession.getAccessToken().getJwtToken()
+    }, function (err) {
+      if (err) {
+        return callback(err, null);
+      }
+
+      return callback(null, 'SUCCESS');
+    });
+    return undefined;
+  }
+  /**
+   * This is used by a user to resend a confirmation code
+   * @param {nodeCallback<string>} callback Called on success or error.
+   * @param {ClientMetadata} clientMetadata object which is passed from client to Cognito Lambda trigger
+   * @returns {void}
+   */
+  ;
+
+  _proto.resendConfirmationCode = function resendConfirmationCode(callback, clientMetadata) {
+    var jsonReq = {
+      ClientId: this.pool.getClientId(),
+      Username: this.username,
+      ClientMetadata: clientMetadata
+    };
+    this.client.request('ResendConfirmationCode', jsonReq, function (err, result) {
+      if (err) {
+        return callback(err, null);
+      }
+
+      return callback(null, result);
+    });
+  }
+  /**
+   * @typedef {Object} GetSessionOptions
+   * @property {Record<string, string>} clientMetadata - clientMetadata for getSession
+   */
+
+  /**
+   * This is used to get a session, either from the session object
+   * or from  the local storage, or by using a refresh token
+   *
+   * @param {nodeCallback<CognitoUserSession>} callback Called on success or error.
+   * @param {GetSessionOptions} options
+   * @returns {void}
+   */
+  ;
+
+  _proto.getSession = function getSession(callback, options) {
+    if (options === void 0) {
+      options = {};
+    }
+
+    if (this.username == null) {
+      return callback(new Error('Username is null. Cannot retrieve a new session'), null);
+    }
+
+    if (this.signInUserSession != null && this.signInUserSession.isValid()) {
+      return callback(null, this.signInUserSession);
+    }
+
+    var keyPrefix = "CognitoIdentityServiceProvider." + this.pool.getClientId() + "." + this.username;
+    var idTokenKey = keyPrefix + ".idToken";
+    var accessTokenKey = keyPrefix + ".accessToken";
+    var refreshTokenKey = keyPrefix + ".refreshToken";
+    var clockDriftKey = keyPrefix + ".clockDrift";
+
+    if (this.storage.getItem(idTokenKey)) {
+      var idToken = new CognitoIdToken({
+        IdToken: this.storage.getItem(idTokenKey)
+      });
+      var accessToken = new CognitoAccessToken({
+        AccessToken: this.storage.getItem(accessTokenKey)
+      });
+      var refreshToken = new CognitoRefreshToken({
+        RefreshToken: this.storage.getItem(refreshTokenKey)
+      });
+      var clockDrift = parseInt(this.storage.getItem(clockDriftKey), 0) || 0;
+      var sessionData = {
+        IdToken: idToken,
+        AccessToken: accessToken,
+        RefreshToken: refreshToken,
+        ClockDrift: clockDrift
+      };
+      var cachedSession = new CognitoUserSession(sessionData);
+
+      if (cachedSession.isValid()) {
+        this.signInUserSession = cachedSession;
+        return callback(null, this.signInUserSession);
+      }
+
+      if (!refreshToken.getToken()) {
+        return callback(new Error('Cannot retrieve a new session. Please authenticate.'), null);
+      }
+
+      this.refreshSession(refreshToken, callback, options.clientMetadata);
+    } else {
+      callback(new Error('Local storage is missing an ID Token, Please authenticate'), null);
+    }
+
+    return undefined;
+  }
+  /**
+   * This uses the refreshToken to retrieve a new session
+   * @param {CognitoRefreshToken} refreshToken A previous session's refresh token.
+   * @param {nodeCallback<CognitoUserSession>} callback Called on success or error.
+   * @param {ClientMetadata} clientMetadata object which is passed from client to Cognito Lambda trigger
+   * @returns {void}
+   */
+  ;
+
+  _proto.refreshSession = function refreshSession(refreshToken, callback, clientMetadata) {
+    var _this14 = this;
+
+    var wrappedCallback = this.pool.wrapRefreshSessionCallback ? this.pool.wrapRefreshSessionCallback(callback) : callback;
+    var authParameters = {};
+    authParameters.REFRESH_TOKEN = refreshToken.getToken();
+    var keyPrefix = "CognitoIdentityServiceProvider." + this.pool.getClientId();
+    var lastUserKey = keyPrefix + ".LastAuthUser";
+
+    if (this.storage.getItem(lastUserKey)) {
+      this.username = this.storage.getItem(lastUserKey);
+      var deviceKeyKey = keyPrefix + "." + this.username + ".deviceKey";
+      this.deviceKey = this.storage.getItem(deviceKeyKey);
+      authParameters.DEVICE_KEY = this.deviceKey;
+    }
+
+    var jsonReq = {
+      ClientId: this.pool.getClientId(),
+      AuthFlow: 'REFRESH_TOKEN_AUTH',
+      AuthParameters: authParameters,
+      ClientMetadata: clientMetadata
+    };
+
+    if (this.getUserContextData()) {
+      jsonReq.UserContextData = this.getUserContextData();
+    }
+
+    this.client.request('InitiateAuth', jsonReq, function (err, authResult) {
+      if (err) {
+        if (err.code === 'NotAuthorizedException') {
+          _this14.clearCachedUser();
+        }
+
+        return wrappedCallback(err, null);
+      }
+
+      if (authResult) {
+        var authenticationResult = authResult.AuthenticationResult;
+
+        if (!Object.prototype.hasOwnProperty.call(authenticationResult, 'RefreshToken')) {
+          authenticationResult.RefreshToken = refreshToken.getToken();
+        }
+
+        _this14.signInUserSession = _this14.getCognitoUserSession(authenticationResult);
+
+        _this14.cacheTokens();
+
+        return wrappedCallback(null, _this14.signInUserSession);
+      }
+
+      return undefined;
+    });
+  }
+  /**
+   * This is used to save the session tokens to local storage
+   * @returns {void}
+   */
+  ;
+
+  _proto.cacheTokens = function cacheTokens() {
+    var keyPrefix = "CognitoIdentityServiceProvider." + this.pool.getClientId();
+    var idTokenKey = keyPrefix + "." + this.username + ".idToken";
+    var accessTokenKey = keyPrefix + "." + this.username + ".accessToken";
+    var refreshTokenKey = keyPrefix + "." + this.username + ".refreshToken";
+    var clockDriftKey = keyPrefix + "." + this.username + ".clockDrift";
+    var lastUserKey = keyPrefix + ".LastAuthUser";
+    this.storage.setItem(idTokenKey, this.signInUserSession.getIdToken().getJwtToken());
+    this.storage.setItem(accessTokenKey, this.signInUserSession.getAccessToken().getJwtToken());
+    this.storage.setItem(refreshTokenKey, this.signInUserSession.getRefreshToken().getToken());
+    this.storage.setItem(clockDriftKey, "" + this.signInUserSession.getClockDrift());
+    this.storage.setItem(lastUserKey, this.username);
+  }
+  /**
+   * This is to cache user data
+   */
+  ;
+
+  _proto.cacheUserData = function cacheUserData(userData) {
+    this.storage.setItem(this.userDataKey, JSON.stringify(userData));
+  }
+  /**
+   * This is to remove cached user data
+   */
+  ;
+
+  _proto.clearCachedUserData = function clearCachedUserData() {
+    this.storage.removeItem(this.userDataKey);
+  };
+
+  _proto.clearCachedUser = function clearCachedUser() {
+    this.clearCachedTokens();
+    this.clearCachedUserData();
+  }
+  /**
+   * This is used to cache the device key and device group and device password
+   * @returns {void}
+   */
+  ;
+
+  _proto.cacheDeviceKeyAndPassword = function cacheDeviceKeyAndPassword() {
+    var keyPrefix = "CognitoIdentityServiceProvider." + this.pool.getClientId() + "." + this.username;
+    var deviceKeyKey = keyPrefix + ".deviceKey";
+    var randomPasswordKey = keyPrefix + ".randomPasswordKey";
+    var deviceGroupKeyKey = keyPrefix + ".deviceGroupKey";
+    this.storage.setItem(deviceKeyKey, this.deviceKey);
+    this.storage.setItem(randomPasswordKey, this.randomPassword);
+    this.storage.setItem(deviceGroupKeyKey, this.deviceGroupKey);
+  }
+  /**
+   * This is used to get current device key and device group and device password
+   * @returns {void}
+   */
+  ;
+
+  _proto.getCachedDeviceKeyAndPassword = function getCachedDeviceKeyAndPassword() {
+    var keyPrefix = "CognitoIdentityServiceProvider." + this.pool.getClientId() + "." + this.username;
+    var deviceKeyKey = keyPrefix + ".deviceKey";
+    var randomPasswordKey = keyPrefix + ".randomPasswordKey";
+    var deviceGroupKeyKey = keyPrefix + ".deviceGroupKey";
+
+    if (this.storage.getItem(deviceKeyKey)) {
+      this.deviceKey = this.storage.getItem(deviceKeyKey);
+      this.randomPassword = this.storage.getItem(randomPasswordKey);
+      this.deviceGroupKey = this.storage.getItem(deviceGroupKeyKey);
+    }
+  }
+  /**
+   * This is used to clear the device key info from local storage
+   * @returns {void}
+   */
+  ;
+
+  _proto.clearCachedDeviceKeyAndPassword = function clearCachedDeviceKeyAndPassword() {
+    var keyPrefix = "CognitoIdentityServiceProvider." + this.pool.getClientId() + "." + this.username;
+    var deviceKeyKey = keyPrefix + ".deviceKey";
+    var randomPasswordKey = keyPrefix + ".randomPasswordKey";
+    var deviceGroupKeyKey = keyPrefix + ".deviceGroupKey";
+    this.storage.removeItem(deviceKeyKey);
+    this.storage.removeItem(randomPasswordKey);
+    this.storage.removeItem(deviceGroupKeyKey);
+  }
+  /**
+   * This is used to clear the session tokens from local storage
+   * @returns {void}
+   */
+  ;
+
+  _proto.clearCachedTokens = function clearCachedTokens() {
+    var keyPrefix = "CognitoIdentityServiceProvider." + this.pool.getClientId();
+    var idTokenKey = keyPrefix + "." + this.username + ".idToken";
+    var accessTokenKey = keyPrefix + "." + this.username + ".accessToken";
+    var refreshTokenKey = keyPrefix + "." + this.username + ".refreshToken";
+    var lastUserKey = keyPrefix + ".LastAuthUser";
+    var clockDriftKey = keyPrefix + "." + this.username + ".clockDrift";
+    this.storage.removeItem(idTokenKey);
+    this.storage.removeItem(accessTokenKey);
+    this.storage.removeItem(refreshTokenKey);
+    this.storage.removeItem(lastUserKey);
+    this.storage.removeItem(clockDriftKey);
+  }
+  /**
+   * This is used to build a user session from tokens retrieved in the authentication result
+   * @param {object} authResult Successful auth response from server.
+   * @returns {CognitoUserSession} The new user session.
+   * @private
+   */
+  ;
+
+  _proto.getCognitoUserSession = function getCognitoUserSession(authResult) {
+    var idToken = new CognitoIdToken(authResult);
+    var accessToken = new CognitoAccessToken(authResult);
+    var refreshToken = new CognitoRefreshToken(authResult);
+    var sessionData = {
+      IdToken: idToken,
+      AccessToken: accessToken,
+      RefreshToken: refreshToken
+    };
+    return new CognitoUserSession(sessionData);
+  }
+  /**
+   * This is used to initiate a forgot password request
+   * @param {object} callback Result callback map.
+   * @param {onFailure} callback.onFailure Called on any error.
+   * @param {inputVerificationCode?} callback.inputVerificationCode
+   *    Optional callback raised instead of onSuccess with response data.
+   * @param {onSuccess} callback.onSuccess Called on success.
+   * @param {ClientMetadata} clientMetadata object which is passed from client to Cognito Lambda trigger
+   * @returns {void}
+   */
+  ;
+
+  _proto.forgotPassword = function forgotPassword(callback, clientMetadata) {
+    var jsonReq = {
+      ClientId: this.pool.getClientId(),
+      Username: this.username,
+      ClientMetadata: clientMetadata
+    };
+
+    if (this.getUserContextData()) {
+      jsonReq.UserContextData = this.getUserContextData();
+    }
+
+    this.client.request('ForgotPassword', jsonReq, function (err, data) {
+      if (err) {
+        return callback.onFailure(err);
+      }
+
+      if (typeof callback.inputVerificationCode === 'function') {
+        return callback.inputVerificationCode(data);
+      }
+
+      return callback.onSuccess(data);
+    });
+  }
+  /**
+   * This is used to confirm a new password using a confirmationCode
+   * @param {string} confirmationCode Code entered by user.
+   * @param {string} newPassword Confirm new password.
+   * @param {object} callback Result callback map.
+   * @param {onFailure} callback.onFailure Called on any error.
+   * @param {onSuccess<void>} callback.onSuccess Called on success.
+   * @param {ClientMetadata} clientMetadata object which is passed from client to Cognito Lambda trigger
+   * @returns {void}
+   */
+  ;
+
+  _proto.confirmPassword = function confirmPassword(confirmationCode, newPassword, callback, clientMetadata) {
+    var jsonReq = {
+      ClientId: this.pool.getClientId(),
+      Username: this.username,
+      ConfirmationCode: confirmationCode,
+      Password: newPassword,
+      ClientMetadata: clientMetadata
+    };
+
+    if (this.getUserContextData()) {
+      jsonReq.UserContextData = this.getUserContextData();
+    }
+
+    this.client.request('ConfirmForgotPassword', jsonReq, function (err) {
+      if (err) {
+        return callback.onFailure(err);
+      }
+
+      return callback.onSuccess();
+    });
+  }
+  /**
+   * This is used to initiate an attribute confirmation request
+   * @param {string} attributeName User attribute that needs confirmation.
+   * @param {object} callback Result callback map.
+   * @param {onFailure} callback.onFailure Called on any error.
+   * @param {inputVerificationCode} callback.inputVerificationCode Called on success.
+   * @param {ClientMetadata} clientMetadata object which is passed from client to Cognito Lambda trigger
+   * @returns {void}
+   */
+  ;
+
+  _proto.getAttributeVerificationCode = function getAttributeVerificationCode(attributeName, callback, clientMetadata) {
+    if (this.signInUserSession == null || !this.signInUserSession.isValid()) {
+      return callback.onFailure(new Error('User is not authenticated'));
+    }
+
+    this.client.request('GetUserAttributeVerificationCode', {
+      AttributeName: attributeName,
+      AccessToken: this.signInUserSession.getAccessToken().getJwtToken(),
+      ClientMetadata: clientMetadata
+    }, function (err, data) {
+      if (err) {
+        return callback.onFailure(err);
+      }
+
+      if (typeof callback.inputVerificationCode === 'function') {
+        return callback.inputVerificationCode(data);
+      }
+
+      return callback.onSuccess();
+    });
+    return undefined;
+  }
+  /**
+   * This is used to confirm an attribute using a confirmation code
+   * @param {string} attributeName Attribute being confirmed.
+   * @param {string} confirmationCode Code entered by user.
+   * @param {object} callback Result callback map.
+   * @param {onFailure} callback.onFailure Called on any error.
+   * @param {onSuccess<string>} callback.onSuccess Called on success.
+   * @returns {void}
+   */
+  ;
+
+  _proto.verifyAttribute = function verifyAttribute(attributeName, confirmationCode, callback) {
+    if (this.signInUserSession == null || !this.signInUserSession.isValid()) {
+      return callback.onFailure(new Error('User is not authenticated'));
+    }
+
+    this.client.request('VerifyUserAttribute', {
+      AttributeName: attributeName,
+      Code: confirmationCode,
+      AccessToken: this.signInUserSession.getAccessToken().getJwtToken()
+    }, function (err) {
+      if (err) {
+        return callback.onFailure(err);
+      }
+
+      return callback.onSuccess('SUCCESS');
+    });
+    return undefined;
+  }
+  /**
+   * This is used to get the device information using the current device key
+   * @param {object} callback Result callback map.
+   * @param {onFailure} callback.onFailure Called on any error.
+   * @param {onSuccess<*>} callback.onSuccess Called on success with device data.
+   * @returns {void}
+   */
+  ;
+
+  _proto.getDevice = function getDevice(callback) {
+    if (this.signInUserSession == null || !this.signInUserSession.isValid()) {
+      return callback.onFailure(new Error('User is not authenticated'));
+    }
+
+    this.client.request('GetDevice', {
+      AccessToken: this.signInUserSession.getAccessToken().getJwtToken(),
+      DeviceKey: this.deviceKey
+    }, function (err, data) {
+      if (err) {
+        return callback.onFailure(err);
+      }
+
+      return callback.onSuccess(data);
+    });
+    return undefined;
+  }
+  /**
+   * This is used to forget a specific device
+   * @param {string} deviceKey Device key.
+   * @param {object} callback Result callback map.
+   * @param {onFailure} callback.onFailure Called on any error.
+   * @param {onSuccess<string>} callback.onSuccess Called on success.
+   * @returns {void}
+   */
+  ;
+
+  _proto.forgetSpecificDevice = function forgetSpecificDevice(deviceKey, callback) {
+    if (this.signInUserSession == null || !this.signInUserSession.isValid()) {
+      return callback.onFailure(new Error('User is not authenticated'));
+    }
+
+    this.client.request('ForgetDevice', {
+      AccessToken: this.signInUserSession.getAccessToken().getJwtToken(),
+      DeviceKey: deviceKey
+    }, function (err) {
+      if (err) {
+        return callback.onFailure(err);
+      }
+
+      return callback.onSuccess('SUCCESS');
+    });
+    return undefined;
+  }
+  /**
+   * This is used to forget the current device
+   * @param {object} callback Result callback map.
+   * @param {onFailure} callback.onFailure Called on any error.
+   * @param {onSuccess<string>} callback.onSuccess Called on success.
+   * @returns {void}
+   */
+  ;
+
+  _proto.forgetDevice = function forgetDevice(callback) {
+    var _this15 = this;
+
+    this.forgetSpecificDevice(this.deviceKey, {
+      onFailure: callback.onFailure,
+      onSuccess: function onSuccess(result) {
+        _this15.deviceKey = null;
+        _this15.deviceGroupKey = null;
+        _this15.randomPassword = null;
+
+        _this15.clearCachedDeviceKeyAndPassword();
+
+        return callback.onSuccess(result);
+      }
+    });
+  }
+  /**
+   * This is used to set the device status as remembered
+   * @param {object} callback Result callback map.
+   * @param {onFailure} callback.onFailure Called on any error.
+   * @param {onSuccess<string>} callback.onSuccess Called on success.
+   * @returns {void}
+   */
+  ;
+
+  _proto.setDeviceStatusRemembered = function setDeviceStatusRemembered(callback) {
+    if (this.signInUserSession == null || !this.signInUserSession.isValid()) {
+      return callback.onFailure(new Error('User is not authenticated'));
+    }
+
+    this.client.request('UpdateDeviceStatus', {
+      AccessToken: this.signInUserSession.getAccessToken().getJwtToken(),
+      DeviceKey: this.deviceKey,
+      DeviceRememberedStatus: 'remembered'
+    }, function (err) {
+      if (err) {
+        return callback.onFailure(err);
+      }
+
+      return callback.onSuccess('SUCCESS');
+    });
+    return undefined;
+  }
+  /**
+   * This is used to set the device status as not remembered
+   * @param {object} callback Result callback map.
+   * @param {onFailure} callback.onFailure Called on any error.
+   * @param {onSuccess<string>} callback.onSuccess Called on success.
+   * @returns {void}
+   */
+  ;
+
+  _proto.setDeviceStatusNotRemembered = function setDeviceStatusNotRemembered(callback) {
+    if (this.signInUserSession == null || !this.signInUserSession.isValid()) {
+      return callback.onFailure(new Error('User is not authenticated'));
+    }
+
+    this.client.request('UpdateDeviceStatus', {
+      AccessToken: this.signInUserSession.getAccessToken().getJwtToken(),
+      DeviceKey: this.deviceKey,
+      DeviceRememberedStatus: 'not_remembered'
+    }, function (err) {
+      if (err) {
+        return callback.onFailure(err);
+      }
+
+      return callback.onSuccess('SUCCESS');
+    });
+    return undefined;
+  }
+  /**
+   * This is used to list all devices for a user
+   *
+   * @param {int} limit the number of devices returned in a call
+   * @param {string | null} paginationToken the pagination token in case any was returned before
+   * @param {object} callback Result callback map.
+   * @param {onFailure} callback.onFailure Called on any error.
+   * @param {onSuccess<*>} callback.onSuccess Called on success with device list.
+   * @returns {void}
+   */
+  ;
+
+  _proto.listDevices = function listDevices(limit, paginationToken, callback) {
+    if (this.signInUserSession == null || !this.signInUserSession.isValid()) {
+      return callback.onFailure(new Error('User is not authenticated'));
+    }
+
+    var requestParams = {
+      AccessToken: this.signInUserSession.getAccessToken().getJwtToken(),
+      Limit: limit
+    };
+
+    if (paginationToken) {
+      requestParams.PaginationToken = paginationToken;
+    }
+
+    this.client.request('ListDevices', requestParams, function (err, data) {
+      if (err) {
+        return callback.onFailure(err);
+      }
+
+      return callback.onSuccess(data);
+    });
+    return undefined;
+  }
+  /**
+   * This is used to globally revoke all tokens issued to a user
+   * @param {object} callback Result callback map.
+   * @param {onFailure} callback.onFailure Called on any error.
+   * @param {onSuccess<string>} callback.onSuccess Called on success.
+   * @returns {void}
+   */
+  ;
+
+  _proto.globalSignOut = function globalSignOut(callback) {
+    var _this16 = this;
+
+    if (this.signInUserSession == null || !this.signInUserSession.isValid()) {
+      return callback.onFailure(new Error('User is not authenticated'));
+    }
+
+    this.client.request('GlobalSignOut', {
+      AccessToken: this.signInUserSession.getAccessToken().getJwtToken()
+    }, function (err) {
+      if (err) {
+        return callback.onFailure(err);
+      }
+
+      _this16.clearCachedUser();
+
+      return callback.onSuccess('SUCCESS');
+    });
+    return undefined;
+  }
+  /**
+   * This is used for the user to signOut of the application and clear the cached tokens.
+   * @returns {void}
+   */
+  ;
+
+  _proto.signOut = function signOut(revokeTokenCallback) {
+    var _this17 = this;
+
+    // If tokens won't be revoked, we just clean the client data.
+    if (!revokeTokenCallback || typeof revokeTokenCallback !== "function") {
+      this.cleanClientData();
+      return;
+    }
+
+    this.getSession(function (error, _session) {
+      if (error) {
+        return revokeTokenCallback(error);
+      }
+
+      _this17.revokeTokens(function (err) {
+        _this17.cleanClientData();
+
+        revokeTokenCallback(err);
+      });
+    });
+  };
+
+  _proto.revokeTokens = function revokeTokens(revokeTokenCallback) {
+    if (revokeTokenCallback === void 0) {
+      revokeTokenCallback = function revokeTokenCallback() {};
+    }
+
+    if (typeof revokeTokenCallback !== 'function') {
+      throw new Error('Invalid revokeTokenCallback. It should be a function.');
+    }
+
+    var tokensToBeRevoked = [];
+
+    if (!this.signInUserSession) {
+      var error = new Error('User is not authenticated');
+      return revokeTokenCallback(error);
+    }
+
+    if (!this.signInUserSession.getAccessToken()) {
+      var _error = new Error('No Access token available');
+
+      return revokeTokenCallback(_error);
+    }
+
+    var refreshToken = this.signInUserSession.getRefreshToken().getToken();
+    var accessToken = this.signInUserSession.getAccessToken();
+
+    if (this.isSessionRevocable(accessToken)) {
+      if (refreshToken) {
+        return this.revokeToken({
+          token: refreshToken,
+          callback: revokeTokenCallback
+        });
+      }
+    }
+
+    revokeTokenCallback();
+  };
+
+  _proto.isSessionRevocable = function isSessionRevocable(token) {
+    if (token && typeof token.decodePayload === 'function') {
+      try {
+        var _token$decodePayload = token.decodePayload(),
+            origin_jti = _token$decodePayload.origin_jti;
+
+        return !!origin_jti;
+      } catch (err) {// Nothing to do, token doesnt have origin_jti claim
+      }
+    }
+
+    return false;
+  };
+
+  _proto.cleanClientData = function cleanClientData() {
+    this.signInUserSession = null;
+    this.clearCachedUser();
+  };
+
+  _proto.revokeToken = function revokeToken(_ref2) {
+    var token = _ref2.token,
+        callback = _ref2.callback;
+    this.client.requestWithRetry('RevokeToken', {
+      Token: token,
+      ClientId: this.pool.getClientId()
+    }, function (err) {
+      if (err) {
+        return callback(err);
+      }
+
+      callback();
+    });
+  }
+  /**
+   * This is used by a user trying to select a given MFA
+   * @param {string} answerChallenge the mfa the user wants
+   * @param {nodeCallback<string>} callback Called on success or error.
+   * @returns {void}
+   */
+  ;
+
+  _proto.sendMFASelectionAnswer = function sendMFASelectionAnswer(answerChallenge, callback) {
+    var _this18 = this;
+
+    var challengeResponses = {};
+    challengeResponses.USERNAME = this.username;
+    challengeResponses.ANSWER = answerChallenge;
+    var jsonReq = {
+      ChallengeName: 'SELECT_MFA_TYPE',
+      ChallengeResponses: challengeResponses,
+      ClientId: this.pool.getClientId(),
+      Session: this.Session
+    };
+
+    if (this.getUserContextData()) {
+      jsonReq.UserContextData = this.getUserContextData();
+    }
+
+    this.client.request('RespondToAuthChallenge', jsonReq, function (err, data) {
+      if (err) {
+        return callback.onFailure(err);
+      }
+
+      _this18.Session = data.Session;
+
+      if (answerChallenge === 'SMS_MFA') {
+        return callback.mfaRequired(data.ChallengeName, data.ChallengeParameters);
+      }
+
+      if (answerChallenge === 'SOFTWARE_TOKEN_MFA') {
+        return callback.totpRequired(data.ChallengeName, data.ChallengeParameters);
+      }
+
+      return undefined;
+    });
+  }
+  /**
+   * This returns the user context data for advanced security feature.
+   * @returns {string} the user context data from CognitoUserPool
+   */
+  ;
+
+  _proto.getUserContextData = function getUserContextData() {
+    var pool = this.pool;
+    return pool.getUserContextData(this.username);
+  }
+  /**
+   * This is used by an authenticated or a user trying to authenticate to associate a TOTP MFA
+   * @param {nodeCallback<string>} callback Called on success or error.
+   * @returns {void}
+   */
+  ;
+
+  _proto.associateSoftwareToken = function associateSoftwareToken(callback) {
+    var _this19 = this;
+
+    if (!(this.signInUserSession != null && this.signInUserSession.isValid())) {
+      this.client.request('AssociateSoftwareToken', {
+        Session: this.Session
+      }, function (err, data) {
+        if (err) {
+          return callback.onFailure(err);
+        }
+
+        _this19.Session = data.Session;
+        return callback.associateSecretCode(data.SecretCode);
+      });
+    } else {
+      this.client.request('AssociateSoftwareToken', {
+        AccessToken: this.signInUserSession.getAccessToken().getJwtToken()
+      }, function (err, data) {
+        if (err) {
+          return callback.onFailure(err);
+        }
+
+        return callback.associateSecretCode(data.SecretCode);
+      });
+    }
+  }
+  /**
+   * This is used by an authenticated or a user trying to authenticate to verify a TOTP MFA
+   * @param {string} totpCode The MFA code entered by the user.
+   * @param {string} friendlyDeviceName The device name we are assigning to the device.
+   * @param {nodeCallback<string>} callback Called on success or error.
+   * @returns {void}
+   */
+  ;
+
+  _proto.verifySoftwareToken = function verifySoftwareToken(totpCode, friendlyDeviceName, callback) {
+    var _this20 = this;
+
+    if (!(this.signInUserSession != null && this.signInUserSession.isValid())) {
+      this.client.request('VerifySoftwareToken', {
+        Session: this.Session,
+        UserCode: totpCode,
+        FriendlyDeviceName: friendlyDeviceName
+      }, function (err, data) {
+        if (err) {
+          return callback.onFailure(err);
+        }
+
+        _this20.Session = data.Session;
+        var challengeResponses = {};
+        challengeResponses.USERNAME = _this20.username;
+        var jsonReq = {
+          ChallengeName: 'MFA_SETUP',
+          ClientId: _this20.pool.getClientId(),
+          ChallengeResponses: challengeResponses,
+          Session: _this20.Session
+        };
+
+        if (_this20.getUserContextData()) {
+          jsonReq.UserContextData = _this20.getUserContextData();
+        }
+
+        _this20.client.request('RespondToAuthChallenge', jsonReq, function (errRespond, dataRespond) {
+          if (errRespond) {
+            return callback.onFailure(errRespond);
+          }
+
+          _this20.signInUserSession = _this20.getCognitoUserSession(dataRespond.AuthenticationResult);
+
+          _this20.cacheTokens();
+
+          return callback.onSuccess(_this20.signInUserSession);
+        });
+
+        return undefined;
+      });
+    } else {
+      this.client.request('VerifySoftwareToken', {
+        AccessToken: this.signInUserSession.getAccessToken().getJwtToken(),
+        UserCode: totpCode,
+        FriendlyDeviceName: friendlyDeviceName
+      }, function (err, data) {
+        if (err) {
+          return callback.onFailure(err);
+        }
+
+        return callback.onSuccess(data);
+      });
+    }
+  };
+
+  return CognitoUser;
+}();
+
+
+// EXTERNAL MODULE: ./node_modules/isomorphic-unfetch/index.js
+var isomorphic_unfetch = __webpack_require__(79);
+;// CONCATENATED MODULE: ./node_modules/amazon-cognito-identity-js/es/UserAgent.js
+// constructor
+function UserAgent() {} // public
+
+
+UserAgent.prototype.userAgent = 'aws-amplify/0.1.x js';
+var appendToCognitoUserAgent = function appendToCognitoUserAgent(content) {
+  if (!content) {
+    return;
+  }
+
+  if (UserAgent.prototype.userAgent && !UserAgent.prototype.userAgent.includes(content)) {
+    UserAgent.prototype.userAgent = UserAgent.prototype.userAgent.concat(' ', content);
+  }
+
+  if (!UserAgent.prototype.userAgent || UserAgent.prototype.userAgent === '') {
+    UserAgent.prototype.userAgent = content;
+  }
+}; // class for defining the amzn user-agent
+
+/* harmony default export */ const es_UserAgent = (UserAgent);
+;// CONCATENATED MODULE: ./node_modules/amazon-cognito-identity-js/es/Client.js
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+function Client_inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; Client_setPrototypeOf(subClass, superClass); }
+
+function _wrapNativeSuper(Class) { var _cache = typeof Map === "function" ? new Map() : undefined; _wrapNativeSuper = function _wrapNativeSuper(Class) { if (Class === null || !_isNativeFunction(Class)) return Class; if (typeof Class !== "function") { throw new TypeError("Super expression must either be null or a function"); } if (typeof _cache !== "undefined") { if (_cache.has(Class)) return _cache.get(Class); _cache.set(Class, Wrapper); } function Wrapper() { return _construct(Class, arguments, _getPrototypeOf(this).constructor); } Wrapper.prototype = Object.create(Class.prototype, { constructor: { value: Wrapper, enumerable: false, writable: true, configurable: true } }); return Client_setPrototypeOf(Wrapper, Class); }; return _wrapNativeSuper(Class); }
+
+function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) Client_setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _isNativeFunction(fn) { return Function.toString.call(fn).indexOf("[native code]") !== -1; }
+
+function Client_setPrototypeOf(o, p) { Client_setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return Client_setPrototypeOf(o, p); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+
+
+
+var CognitoError = /*#__PURE__*/function (_Error) {
+  Client_inheritsLoose(CognitoError, _Error);
+
+  function CognitoError(message, code, name, statusCode) {
+    var _this;
+
+    _this = _Error.call(this, message) || this;
+    _this.code = code;
+    _this.name = name;
+    _this.statusCode = statusCode;
+    return _this;
+  }
+
+  return CognitoError;
+}( /*#__PURE__*/_wrapNativeSuper(Error));
+/** @class */
+
+
+var Client = /*#__PURE__*/function () {
+  /**
+   * Constructs a new AWS Cognito Identity Provider client object
+   * @param {string} region AWS region
+   * @param {string} endpoint endpoint
+   * @param {object} fetchOptions options for fetch API (only credentials is supported)
+   */
+  function Client(region, endpoint, fetchOptions) {
+    this.endpoint = endpoint || "https://cognito-idp." + region + ".amazonaws.com/";
+
+    var _ref = fetchOptions || {},
+        credentials = _ref.credentials;
+
+    this.fetchOptions = credentials ? {
+      credentials: credentials
+    } : {};
+  }
+  /**
+   * Makes an unauthenticated request on AWS Cognito Identity Provider API
+   * using fetch
+   * @param {string} operation API operation
+   * @param {object} params Input parameters
+   * @returns Promise<object>
+   */
+
+
+  var _proto = Client.prototype;
+
+  _proto.promisifyRequest = function promisifyRequest(operation, params) {
+    var _this2 = this;
+
+    return new Promise(function (resolve, reject) {
+      _this2.request(operation, params, function (err, data) {
+        if (err) {
+          reject(new CognitoError(err.message, err.code, err.name, err.statusCode));
+        } else {
+          resolve(data);
+        }
+      });
+    });
+  };
+
+  _proto.requestWithRetry = function requestWithRetry(operation, params, callback) {
+    var _this3 = this;
+
+    var MAX_DELAY_IN_MILLIS = 5 * 1000;
+    jitteredExponentialRetry(function (p) {
+      return new Promise(function (res, rej) {
+        _this3.request(operation, p, function (error, result) {
+          if (error) {
+            rej(error);
+          } else {
+            res(result);
+          }
+        });
+      });
+    }, [params], MAX_DELAY_IN_MILLIS).then(function (result) {
+      return callback(null, result);
+    })["catch"](function (error) {
+      return callback(error);
+    });
+  }
+  /**
+   * Makes an unauthenticated request on AWS Cognito Identity Provider API
+   * using fetch
+   * @param {string} operation API operation
+   * @param {object} params Input parameters
+   * @param {function} callback Callback called when a response is returned
+   * @returns {void}
+   */
+  ;
+
+  _proto.request = function request(operation, params, callback) {
+    var headers = {
+      'Content-Type': 'application/x-amz-json-1.1',
+      'X-Amz-Target': "AWSCognitoIdentityProviderService." + operation,
+      'X-Amz-User-Agent': es_UserAgent.prototype.userAgent
+    };
+    var options = Object.assign({}, this.fetchOptions, {
+      headers: headers,
+      method: 'POST',
+      mode: 'cors',
+      cache: 'no-cache',
+      body: JSON.stringify(params)
+    });
+    var response;
+    var responseJsonData;
+    fetch(this.endpoint, options).then(function (resp) {
+      response = resp;
+      return resp;
+    }, function (err) {
+      // If error happens here, the request failed
+      // if it is TypeError throw network error
+      if (err instanceof TypeError) {
+        throw new Error('Network error');
+      }
+
+      throw err;
+    }).then(function (resp) {
+      return resp.json()["catch"](function () {
+        return {};
+      });
+    }).then(function (data) {
+      // return parsed body stream
+      if (response.ok) return callback(null, data);
+      responseJsonData = data; // Taken from aws-sdk-js/lib/protocol/json.js
+      // eslint-disable-next-line no-underscore-dangle
+
+      var code = (data.__type || data.code).split('#').pop();
+      var error = {
+        code: code,
+        name: code,
+        message: data.message || data.Message || null
+      };
+      return callback(error);
+    })["catch"](function (err) {
+      // first check if we have a service error
+      if (response && response.headers && response.headers.get('x-amzn-errortype')) {
+        try {
+          var code = response.headers.get('x-amzn-errortype').split(':')[0];
+          var error = {
+            code: code,
+            name: code,
+            statusCode: response.status,
+            message: response.status ? response.status.toString() : null
+          };
+          return callback(error);
+        } catch (ex) {
+          return callback(err);
+        } // otherwise check if error is Network error
+
+      } else if (err instanceof Error && err.message === 'Network error') {
+        var _error = {
+          code: 'NetworkError',
+          name: err.name,
+          message: err.message
+        };
+        return callback(_error);
+      } else {
+        return callback(err);
+      }
+    });
+  };
+
+  return Client;
+}();
+
+
+var logger = {
+  debug: function debug() {// Intentionally blank. This package doesn't have logging
+  }
+};
+/**
+ * For now, all errors are retryable.
+ */
+
+var NonRetryableError = /*#__PURE__*/function (_Error2) {
+  Client_inheritsLoose(NonRetryableError, _Error2);
+
+  function NonRetryableError(message) {
+    var _this4;
+
+    _this4 = _Error2.call(this, message) || this;
+    _this4.nonRetryable = true;
+    return _this4;
+  }
+
+  return NonRetryableError;
+}( /*#__PURE__*/_wrapNativeSuper(Error));
+
+var isNonRetryableError = function isNonRetryableError(obj) {
+  var key = 'nonRetryable';
+  return obj && obj[key];
+};
+
+function retry(_x, _x2, _x3, _x4) {
+  return _retry.apply(this, arguments);
+}
+
+function _retry() {
+  _retry = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(functionToRetry, args, delayFn, attempt) {
+    var retryIn;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            if (attempt === void 0) {
+              attempt = 1;
+            }
+
+            if (!(typeof functionToRetry !== 'function')) {
+              _context.next = 3;
+              break;
+            }
+
+            throw Error('functionToRetry must be a function');
+
+          case 3:
+            logger.debug(functionToRetry.name + " attempt #" + attempt + " with args: " + JSON.stringify(args));
+            _context.prev = 4;
+            _context.next = 7;
+            return functionToRetry.apply(void 0, args);
+
+          case 7:
+            return _context.abrupt("return", _context.sent);
+
+          case 10:
+            _context.prev = 10;
+            _context.t0 = _context["catch"](4);
+            logger.debug("error on " + functionToRetry.name, _context.t0);
+
+            if (!isNonRetryableError(_context.t0)) {
+              _context.next = 16;
+              break;
+            }
+
+            logger.debug(functionToRetry.name + " non retryable error", _context.t0);
+            throw _context.t0;
+
+          case 16:
+            retryIn = delayFn(attempt, args, _context.t0);
+            logger.debug(functionToRetry.name + " retrying in " + retryIn + " ms");
+
+            if (!(retryIn !== false)) {
+              _context.next = 26;
+              break;
+            }
+
+            _context.next = 21;
+            return new Promise(function (res) {
+              return setTimeout(res, retryIn);
+            });
+
+          case 21:
+            _context.next = 23;
+            return retry(functionToRetry, args, delayFn, attempt + 1);
+
+          case 23:
+            return _context.abrupt("return", _context.sent);
+
+          case 26:
+            throw _context.t0;
+
+          case 27:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, null, [[4, 10]]);
+  }));
+  return _retry.apply(this, arguments);
+}
+
+function jitteredBackoff(maxDelayMs) {
+  var BASE_TIME_MS = 100;
+  var JITTER_FACTOR = 100;
+  return function (attempt) {
+    var delay = Math.pow(2, attempt) * BASE_TIME_MS + JITTER_FACTOR * Math.random();
+    return delay > maxDelayMs ? false : delay;
+  };
+}
+
+var MAX_DELAY_MS = 5 * 60 * 1000;
+
+function jitteredExponentialRetry(functionToRetry, args, maxDelayMs) {
+  if (maxDelayMs === void 0) {
+    maxDelayMs = MAX_DELAY_MS;
+  }
+
+  return retry(functionToRetry, args, jitteredBackoff(maxDelayMs));
+}
+
+;
+;// CONCATENATED MODULE: ./node_modules/amazon-cognito-identity-js/es/CognitoUserPool.js
+/*!
+ * Copyright 2016 Amazon.com,
+ * Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Amazon Software License (the "License").
+ * You may not use this file except in compliance with the
+ * License. A copy of the License is located at
+ *
+ *     http://aws.amazon.com/asl/
+ *
+ * or in the "license" file accompanying this file. This file is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, express or implied. See the License
+ * for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
+/** @class */
+
+var CognitoUserPool = /*#__PURE__*/function () {
+  /**
+   * Constructs a new CognitoUserPool object
+   * @param {object} data Creation options.
+   * @param {string} data.UserPoolId Cognito user pool id.
+   * @param {string} data.ClientId User pool application client id.
+   * @param {string} data.endpoint Optional custom service endpoint.
+   * @param {object} data.fetchOptions Optional options for fetch API.
+   *        (only credentials option is supported)
+   * @param {object} data.Storage Optional storage object.
+   * @param {boolean} data.AdvancedSecurityDataCollectionFlag Optional:
+   *        boolean flag indicating if the data collection is enabled
+   *        to support cognito advanced security features. By default, this
+   *        flag is set to true.
+   */
+  function CognitoUserPool(data, wrapRefreshSessionCallback) {
+    var _ref = data || {},
+        UserPoolId = _ref.UserPoolId,
+        ClientId = _ref.ClientId,
+        endpoint = _ref.endpoint,
+        fetchOptions = _ref.fetchOptions,
+        AdvancedSecurityDataCollectionFlag = _ref.AdvancedSecurityDataCollectionFlag;
+
+    if (!UserPoolId || !ClientId) {
+      throw new Error('Both UserPoolId and ClientId are required.');
+    }
+
+    if (!/^[\w-]+_.+$/.test(UserPoolId)) {
+      throw new Error('Invalid UserPoolId format.');
+    }
+
+    var region = UserPoolId.split('_')[0];
+    this.userPoolId = UserPoolId;
+    this.clientId = ClientId;
+    this.client = new Client(region, endpoint, fetchOptions);
+    /**
+     * By default, AdvancedSecurityDataCollectionFlag is set to true,
+     * if no input value is provided.
+     */
+
+    this.advancedSecurityDataCollectionFlag = AdvancedSecurityDataCollectionFlag !== false;
+    this.storage = data.Storage || new StorageHelper().getStorage();
+
+    if (wrapRefreshSessionCallback) {
+      this.wrapRefreshSessionCallback = wrapRefreshSessionCallback;
+    }
+  }
+  /**
+   * @returns {string} the user pool id
+   */
+
+
+  var _proto = CognitoUserPool.prototype;
+
+  _proto.getUserPoolId = function getUserPoolId() {
+    return this.userPoolId;
+  }
+  /**
+   * @returns {string} the client id
+   */
+  ;
+
+  _proto.getClientId = function getClientId() {
+    return this.clientId;
+  }
+  /**
+   * @typedef {object} SignUpResult
+   * @property {CognitoUser} user New user.
+   * @property {bool} userConfirmed If the user is already confirmed.
+   */
+
+  /**
+   * method for signing up a user
+   * @param {string} username User's username.
+   * @param {string} password Plain-text initial password entered by user.
+   * @param {(AttributeArg[])=} userAttributes New user attributes.
+   * @param {(AttributeArg[])=} validationData Application metadata.
+   * @param {(AttributeArg[])=} clientMetadata Client metadata.
+   * @param {nodeCallback<SignUpResult>} callback Called on error or with the new user.
+   * @param {ClientMetadata} clientMetadata object which is passed from client to Cognito Lambda trigger
+   * @returns {void}
+   */
+  ;
+
+  _proto.signUp = function signUp(username, password, userAttributes, validationData, callback, clientMetadata) {
+    var _this = this;
+
+    var jsonReq = {
+      ClientId: this.clientId,
+      Username: username,
+      Password: password,
+      UserAttributes: userAttributes,
+      ValidationData: validationData,
+      ClientMetadata: clientMetadata
+    };
+
+    if (this.getUserContextData(username)) {
+      jsonReq.UserContextData = this.getUserContextData(username);
+    }
+
+    this.client.request('SignUp', jsonReq, function (err, data) {
+      if (err) {
+        return callback(err, null);
+      }
+
+      var cognitoUser = {
+        Username: username,
+        Pool: _this,
+        Storage: _this.storage
+      };
+      var returnData = {
+        user: new CognitoUser(cognitoUser),
+        userConfirmed: data.UserConfirmed,
+        userSub: data.UserSub,
+        codeDeliveryDetails: data.CodeDeliveryDetails
+      };
+      return callback(null, returnData);
+    });
+  }
+  /**
+   * method for getting the current user of the application from the local storage
+   *
+   * @returns {CognitoUser} the user retrieved from storage
+   */
+  ;
+
+  _proto.getCurrentUser = function getCurrentUser() {
+    var lastUserKey = "CognitoIdentityServiceProvider." + this.clientId + ".LastAuthUser";
+    var lastAuthUser = this.storage.getItem(lastUserKey);
+
+    if (lastAuthUser) {
+      var cognitoUser = {
+        Username: lastAuthUser,
+        Pool: this,
+        Storage: this.storage
+      };
+      return new CognitoUser(cognitoUser);
+    }
+
+    return null;
+  }
+  /**
+   * This method returns the encoded data string used for cognito advanced security feature.
+   * This would be generated only when developer has included the JS used for collecting the
+   * data on their client. Please refer to documentation to know more about using AdvancedSecurity
+   * features
+   * @param {string} username the username for the context data
+   * @returns {string} the user context data
+   **/
+  ;
+
+  _proto.getUserContextData = function getUserContextData(username) {
+    if (typeof AmazonCognitoAdvancedSecurityData === 'undefined') {
+      return undefined;
+    }
+    /* eslint-disable */
+
+
+    var amazonCognitoAdvancedSecurityDataConst = AmazonCognitoAdvancedSecurityData;
+    /* eslint-enable */
+
+    if (this.advancedSecurityDataCollectionFlag) {
+      var advancedSecurityData = amazonCognitoAdvancedSecurityDataConst.getData(username, this.userPoolId, this.clientId);
+
+      if (advancedSecurityData) {
+        var userContextData = {
+          EncodedData: advancedSecurityData
+        };
+        return userContextData;
+      }
+    }
+
+    return {};
+  };
+
+  return CognitoUserPool;
+}();
+
+
+// EXTERNAL MODULE: ./node_modules/js-cookie/src/js.cookie.js
+var js_cookie = __webpack_require__(808);
+;// CONCATENATED MODULE: ./node_modules/amazon-cognito-identity-js/es/CookieStorage.js
+
+/** @class */
+
+var CookieStorage = /*#__PURE__*/function () {
+  /**
+   * Constructs a new CookieStorage object
+   * @param {object} data Creation options.
+   * @param {string} data.domain Cookies domain (mandatory).
+   * @param {string} data.path Cookies path (default: '/')
+   * @param {integer} data.expires Cookie expiration (in days, default: 365)
+   * @param {boolean} data.secure Cookie secure flag (default: true)
+   * @param {string} data.sameSite Cookie request behaviour (default: null)
+   */
+  function CookieStorage(data) {
+    if (data.domain) {
+      this.domain = data.domain;
+    } else {
+      throw new Error('The domain of cookieStorage can not be undefined.');
+    }
+
+    if (data.path) {
+      this.path = data.path;
+    } else {
+      this.path = '/';
+    }
+
+    if (Object.prototype.hasOwnProperty.call(data, 'expires')) {
+      this.expires = data.expires;
+    } else {
+      this.expires = 365;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(data, 'secure')) {
+      this.secure = data.secure;
+    } else {
+      this.secure = true;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(data, 'sameSite')) {
+      if (!['strict', 'lax', 'none'].includes(data.sameSite)) {
+        throw new Error('The sameSite value of cookieStorage must be "lax", "strict" or "none".');
+      }
+
+      if (data.sameSite === 'none' && !this.secure) {
+        throw new Error('sameSite = None requires the Secure attribute in latest browser versions.');
+      }
+
+      this.sameSite = data.sameSite;
+    } else {
+      this.sameSite = null;
+    }
+  }
+  /**
+   * This is used to set a specific item in storage
+   * @param {string} key - the key for the item
+   * @param {object} value - the value
+   * @returns {string} value that was set
+   */
+
+
+  var _proto = CookieStorage.prototype;
+
+  _proto.setItem = function setItem(key, value) {
+    var options = {
+      path: this.path,
+      expires: this.expires,
+      domain: this.domain,
+      secure: this.secure
+    };
+
+    if (this.sameSite) {
+      options.sameSite = this.sameSite;
+    }
+
+    js_cookie.set(key, value, options);
+    return js_cookie.get(key);
+  }
+  /**
+   * This is used to get a specific key from storage
+   * @param {string} key - the key for the item
+   * This is used to clear the storage
+   * @returns {string} the data item
+   */
+  ;
+
+  _proto.getItem = function getItem(key) {
+    return js_cookie.get(key);
+  }
+  /**
+   * This is used to remove an item from storage
+   * @param {string} key - the key being set
+   * @returns {string} value - value that was deleted
+   */
+  ;
+
+  _proto.removeItem = function removeItem(key) {
+    var options = {
+      path: this.path,
+      expires: this.expires,
+      domain: this.domain,
+      secure: this.secure
+    };
+
+    if (this.sameSite) {
+      options.sameSite = this.sameSite;
+    }
+
+    return js_cookie.remove(key, options);
+  }
+  /**
+   * This is used to clear the storage of optional
+   * items that were previously set
+   * @returns {} an empty object
+   */
+  ;
+
+  _proto.clear = function clear() {
+    var cookies = js_cookie.get();
+    var numKeys = Object.keys(cookies).length;
+
+    for (var index = 0; index < numKeys; ++index) {
+      this.removeItem(Object.keys(cookies)[index]);
+    }
+
+    return {};
+  };
+
+  return CookieStorage;
+}();
+
+
+;// CONCATENATED MODULE: ./node_modules/amazon-cognito-identity-js/es/index.js
+/*!
+ * Copyright 2016 Amazon.com,
+ * Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Amazon Software License (the "License").
+ * You may not use this file except in compliance with the
+ * License. A copy of the License is located at
+ *
+ *     http://aws.amazon.com/asl/
+ *
+ * or in the "license" file accompanying this file. This file is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, express or implied. See the License
+ * for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/***/ }),
+
+/***/ 249:
+/***/ (function(module, exports, __webpack_require__) {
+
+;(function (root, factory) {
+	if (true) {
+		// CommonJS
+		module.exports = exports = factory();
+	}
+	else {}
+}(this, function () {
+
+	/*globals window, global, require*/
+
+	/**
+	 * CryptoJS core components.
+	 */
+	var CryptoJS = CryptoJS || (function (Math, undefined) {
+
+	    var crypto;
+
+	    // Native crypto from window (Browser)
+	    if (typeof window !== 'undefined' && window.crypto) {
+	        crypto = window.crypto;
+	    }
+
+	    // Native (experimental IE 11) crypto from window (Browser)
+	    if (!crypto && typeof window !== 'undefined' && window.msCrypto) {
+	        crypto = window.msCrypto;
+	    }
+
+	    // Native crypto from global (NodeJS)
+	    if (!crypto && typeof global !== 'undefined' && global.crypto) {
+	        crypto = global.crypto;
+	    }
+
+	    // Native crypto import via require (NodeJS)
+	    if (!crypto && "function" === 'function') {
+	        try {
+	            crypto = __webpack_require__(417);
+	        } catch (err) {}
+	    }
+
+	    /*
+	     * Cryptographically secure pseudorandom number generator
+	     *
+	     * As Math.random() is cryptographically not safe to use
+	     */
+	    var cryptoSecureRandomInt = function () {
+	        if (crypto) {
+	            // Use getRandomValues method (Browser)
+	            if (typeof crypto.getRandomValues === 'function') {
+	                try {
+	                    return crypto.getRandomValues(new Uint32Array(1))[0];
+	                } catch (err) {}
+	            }
+
+	            // Use randomBytes method (NodeJS)
+	            if (typeof crypto.randomBytes === 'function') {
+	                try {
+	                    return crypto.randomBytes(4).readInt32LE();
+	                } catch (err) {}
+	            }
+	        }
+
+	        throw new Error('Native crypto module could not be used to get secure random number.');
+	    };
+
+	    /*
+	     * Local polyfill of Object.create
+
+	     */
+	    var create = Object.create || (function () {
+	        function F() {}
+
+	        return function (obj) {
+	            var subtype;
+
+	            F.prototype = obj;
+
+	            subtype = new F();
+
+	            F.prototype = null;
+
+	            return subtype;
+	        };
+	    }())
+
+	    /**
+	     * CryptoJS namespace.
+	     */
+	    var C = {};
+
+	    /**
+	     * Library namespace.
+	     */
+	    var C_lib = C.lib = {};
+
+	    /**
+	     * Base object for prototypal inheritance.
+	     */
+	    var Base = C_lib.Base = (function () {
+
+
+	        return {
+	            /**
+	             * Creates a new object that inherits from this object.
+	             *
+	             * @param {Object} overrides Properties to copy into the new object.
+	             *
+	             * @return {Object} The new object.
+	             *
+	             * @static
+	             *
+	             * @example
+	             *
+	             *     var MyType = CryptoJS.lib.Base.extend({
+	             *         field: 'value',
+	             *
+	             *         method: function () {
+	             *         }
+	             *     });
+	             */
+	            extend: function (overrides) {
+	                // Spawn
+	                var subtype = create(this);
+
+	                // Augment
+	                if (overrides) {
+	                    subtype.mixIn(overrides);
+	                }
+
+	                // Create default initializer
+	                if (!subtype.hasOwnProperty('init') || this.init === subtype.init) {
+	                    subtype.init = function () {
+	                        subtype.$super.init.apply(this, arguments);
+	                    };
+	                }
+
+	                // Initializer's prototype is the subtype object
+	                subtype.init.prototype = subtype;
+
+	                // Reference supertype
+	                subtype.$super = this;
+
+	                return subtype;
+	            },
+
+	            /**
+	             * Extends this object and runs the init method.
+	             * Arguments to create() will be passed to init().
+	             *
+	             * @return {Object} The new object.
+	             *
+	             * @static
+	             *
+	             * @example
+	             *
+	             *     var instance = MyType.create();
+	             */
+	            create: function () {
+	                var instance = this.extend();
+	                instance.init.apply(instance, arguments);
+
+	                return instance;
+	            },
+
+	            /**
+	             * Initializes a newly created object.
+	             * Override this method to add some logic when your objects are created.
+	             *
+	             * @example
+	             *
+	             *     var MyType = CryptoJS.lib.Base.extend({
+	             *         init: function () {
+	             *             // ...
+	             *         }
+	             *     });
+	             */
+	            init: function () {
+	            },
+
+	            /**
+	             * Copies properties into this object.
+	             *
+	             * @param {Object} properties The properties to mix in.
+	             *
+	             * @example
+	             *
+	             *     MyType.mixIn({
+	             *         field: 'value'
+	             *     });
+	             */
+	            mixIn: function (properties) {
+	                for (var propertyName in properties) {
+	                    if (properties.hasOwnProperty(propertyName)) {
+	                        this[propertyName] = properties[propertyName];
+	                    }
+	                }
+
+	                // IE won't copy toString using the loop above
+	                if (properties.hasOwnProperty('toString')) {
+	                    this.toString = properties.toString;
+	                }
+	            },
+
+	            /**
+	             * Creates a copy of this object.
+	             *
+	             * @return {Object} The clone.
+	             *
+	             * @example
+	             *
+	             *     var clone = instance.clone();
+	             */
+	            clone: function () {
+	                return this.init.prototype.extend(this);
+	            }
+	        };
+	    }());
+
+	    /**
+	     * An array of 32-bit words.
+	     *
+	     * @property {Array} words The array of 32-bit words.
+	     * @property {number} sigBytes The number of significant bytes in this word array.
+	     */
+	    var WordArray = C_lib.WordArray = Base.extend({
+	        /**
+	         * Initializes a newly created word array.
+	         *
+	         * @param {Array} words (Optional) An array of 32-bit words.
+	         * @param {number} sigBytes (Optional) The number of significant bytes in the words.
+	         *
+	         * @example
+	         *
+	         *     var wordArray = CryptoJS.lib.WordArray.create();
+	         *     var wordArray = CryptoJS.lib.WordArray.create([0x00010203, 0x04050607]);
+	         *     var wordArray = CryptoJS.lib.WordArray.create([0x00010203, 0x04050607], 6);
+	         */
+	        init: function (words, sigBytes) {
+	            words = this.words = words || [];
+
+	            if (sigBytes != undefined) {
+	                this.sigBytes = sigBytes;
+	            } else {
+	                this.sigBytes = words.length * 4;
+	            }
+	        },
+
+	        /**
+	         * Converts this word array to a string.
+	         *
+	         * @param {Encoder} encoder (Optional) The encoding strategy to use. Default: CryptoJS.enc.Hex
+	         *
+	         * @return {string} The stringified word array.
+	         *
+	         * @example
+	         *
+	         *     var string = wordArray + '';
+	         *     var string = wordArray.toString();
+	         *     var string = wordArray.toString(CryptoJS.enc.Utf8);
+	         */
+	        toString: function (encoder) {
+	            return (encoder || Hex).stringify(this);
+	        },
+
+	        /**
+	         * Concatenates a word array to this word array.
+	         *
+	         * @param {WordArray} wordArray The word array to append.
+	         *
+	         * @return {WordArray} This word array.
+	         *
+	         * @example
+	         *
+	         *     wordArray1.concat(wordArray2);
+	         */
+	        concat: function (wordArray) {
+	            // Shortcuts
+	            var thisWords = this.words;
+	            var thatWords = wordArray.words;
+	            var thisSigBytes = this.sigBytes;
+	            var thatSigBytes = wordArray.sigBytes;
+
+	            // Clamp excess bits
+	            this.clamp();
+
+	            // Concat
+	            if (thisSigBytes % 4) {
+	                // Copy one byte at a time
+	                for (var i = 0; i < thatSigBytes; i++) {
+	                    var thatByte = (thatWords[i >>> 2] >>> (24 - (i % 4) * 8)) & 0xff;
+	                    thisWords[(thisSigBytes + i) >>> 2] |= thatByte << (24 - ((thisSigBytes + i) % 4) * 8);
+	                }
+	            } else {
+	                // Copy one word at a time
+	                for (var i = 0; i < thatSigBytes; i += 4) {
+	                    thisWords[(thisSigBytes + i) >>> 2] = thatWords[i >>> 2];
+	                }
+	            }
+	            this.sigBytes += thatSigBytes;
+
+	            // Chainable
+	            return this;
+	        },
+
+	        /**
+	         * Removes insignificant bits.
+	         *
+	         * @example
+	         *
+	         *     wordArray.clamp();
+	         */
+	        clamp: function () {
+	            // Shortcuts
+	            var words = this.words;
+	            var sigBytes = this.sigBytes;
+
+	            // Clamp
+	            words[sigBytes >>> 2] &= 0xffffffff << (32 - (sigBytes % 4) * 8);
+	            words.length = Math.ceil(sigBytes / 4);
+	        },
+
+	        /**
+	         * Creates a copy of this word array.
+	         *
+	         * @return {WordArray} The clone.
+	         *
+	         * @example
+	         *
+	         *     var clone = wordArray.clone();
+	         */
+	        clone: function () {
+	            var clone = Base.clone.call(this);
+	            clone.words = this.words.slice(0);
+
+	            return clone;
+	        },
+
+	        /**
+	         * Creates a word array filled with random bytes.
+	         *
+	         * @param {number} nBytes The number of random bytes to generate.
+	         *
+	         * @return {WordArray} The random word array.
+	         *
+	         * @static
+	         *
+	         * @example
+	         *
+	         *     var wordArray = CryptoJS.lib.WordArray.random(16);
+	         */
+	        random: function (nBytes) {
+	            var words = [];
+
+	            for (var i = 0; i < nBytes; i += 4) {
+	                words.push(cryptoSecureRandomInt());
+	            }
+
+	            return new WordArray.init(words, nBytes);
+	        }
+	    });
+
+	    /**
+	     * Encoder namespace.
+	     */
+	    var C_enc = C.enc = {};
+
+	    /**
+	     * Hex encoding strategy.
+	     */
+	    var Hex = C_enc.Hex = {
+	        /**
+	         * Converts a word array to a hex string.
+	         *
+	         * @param {WordArray} wordArray The word array.
+	         *
+	         * @return {string} The hex string.
+	         *
+	         * @static
+	         *
+	         * @example
+	         *
+	         *     var hexString = CryptoJS.enc.Hex.stringify(wordArray);
+	         */
+	        stringify: function (wordArray) {
+	            // Shortcuts
+	            var words = wordArray.words;
+	            var sigBytes = wordArray.sigBytes;
+
+	            // Convert
+	            var hexChars = [];
+	            for (var i = 0; i < sigBytes; i++) {
+	                var bite = (words[i >>> 2] >>> (24 - (i % 4) * 8)) & 0xff;
+	                hexChars.push((bite >>> 4).toString(16));
+	                hexChars.push((bite & 0x0f).toString(16));
+	            }
+
+	            return hexChars.join('');
+	        },
+
+	        /**
+	         * Converts a hex string to a word array.
+	         *
+	         * @param {string} hexStr The hex string.
+	         *
+	         * @return {WordArray} The word array.
+	         *
+	         * @static
+	         *
+	         * @example
+	         *
+	         *     var wordArray = CryptoJS.enc.Hex.parse(hexString);
+	         */
+	        parse: function (hexStr) {
+	            // Shortcut
+	            var hexStrLength = hexStr.length;
+
+	            // Convert
+	            var words = [];
+	            for (var i = 0; i < hexStrLength; i += 2) {
+	                words[i >>> 3] |= parseInt(hexStr.substr(i, 2), 16) << (24 - (i % 8) * 4);
+	            }
+
+	            return new WordArray.init(words, hexStrLength / 2);
+	        }
+	    };
+
+	    /**
+	     * Latin1 encoding strategy.
+	     */
+	    var Latin1 = C_enc.Latin1 = {
+	        /**
+	         * Converts a word array to a Latin1 string.
+	         *
+	         * @param {WordArray} wordArray The word array.
+	         *
+	         * @return {string} The Latin1 string.
+	         *
+	         * @static
+	         *
+	         * @example
+	         *
+	         *     var latin1String = CryptoJS.enc.Latin1.stringify(wordArray);
+	         */
+	        stringify: function (wordArray) {
+	            // Shortcuts
+	            var words = wordArray.words;
+	            var sigBytes = wordArray.sigBytes;
+
+	            // Convert
+	            var latin1Chars = [];
+	            for (var i = 0; i < sigBytes; i++) {
+	                var bite = (words[i >>> 2] >>> (24 - (i % 4) * 8)) & 0xff;
+	                latin1Chars.push(String.fromCharCode(bite));
+	            }
+
+	            return latin1Chars.join('');
+	        },
+
+	        /**
+	         * Converts a Latin1 string to a word array.
+	         *
+	         * @param {string} latin1Str The Latin1 string.
+	         *
+	         * @return {WordArray} The word array.
+	         *
+	         * @static
+	         *
+	         * @example
+	         *
+	         *     var wordArray = CryptoJS.enc.Latin1.parse(latin1String);
+	         */
+	        parse: function (latin1Str) {
+	            // Shortcut
+	            var latin1StrLength = latin1Str.length;
+
+	            // Convert
+	            var words = [];
+	            for (var i = 0; i < latin1StrLength; i++) {
+	                words[i >>> 2] |= (latin1Str.charCodeAt(i) & 0xff) << (24 - (i % 4) * 8);
+	            }
+
+	            return new WordArray.init(words, latin1StrLength);
+	        }
+	    };
+
+	    /**
+	     * UTF-8 encoding strategy.
+	     */
+	    var Utf8 = C_enc.Utf8 = {
+	        /**
+	         * Converts a word array to a UTF-8 string.
+	         *
+	         * @param {WordArray} wordArray The word array.
+	         *
+	         * @return {string} The UTF-8 string.
+	         *
+	         * @static
+	         *
+	         * @example
+	         *
+	         *     var utf8String = CryptoJS.enc.Utf8.stringify(wordArray);
+	         */
+	        stringify: function (wordArray) {
+	            try {
+	                return decodeURIComponent(escape(Latin1.stringify(wordArray)));
+	            } catch (e) {
+	                throw new Error('Malformed UTF-8 data');
+	            }
+	        },
+
+	        /**
+	         * Converts a UTF-8 string to a word array.
+	         *
+	         * @param {string} utf8Str The UTF-8 string.
+	         *
+	         * @return {WordArray} The word array.
+	         *
+	         * @static
+	         *
+	         * @example
+	         *
+	         *     var wordArray = CryptoJS.enc.Utf8.parse(utf8String);
+	         */
+	        parse: function (utf8Str) {
+	            return Latin1.parse(unescape(encodeURIComponent(utf8Str)));
+	        }
+	    };
+
+	    /**
+	     * Abstract buffered block algorithm template.
+	     *
+	     * The property blockSize must be implemented in a concrete subtype.
+	     *
+	     * @property {number} _minBufferSize The number of blocks that should be kept unprocessed in the buffer. Default: 0
+	     */
+	    var BufferedBlockAlgorithm = C_lib.BufferedBlockAlgorithm = Base.extend({
+	        /**
+	         * Resets this block algorithm's data buffer to its initial state.
+	         *
+	         * @example
+	         *
+	         *     bufferedBlockAlgorithm.reset();
+	         */
+	        reset: function () {
+	            // Initial values
+	            this._data = new WordArray.init();
+	            this._nDataBytes = 0;
+	        },
+
+	        /**
+	         * Adds new data to this block algorithm's buffer.
+	         *
+	         * @param {WordArray|string} data The data to append. Strings are converted to a WordArray using UTF-8.
+	         *
+	         * @example
+	         *
+	         *     bufferedBlockAlgorithm._append('data');
+	         *     bufferedBlockAlgorithm._append(wordArray);
+	         */
+	        _append: function (data) {
+	            // Convert string to WordArray, else assume WordArray already
+	            if (typeof data == 'string') {
+	                data = Utf8.parse(data);
+	            }
+
+	            // Append
+	            this._data.concat(data);
+	            this._nDataBytes += data.sigBytes;
+	        },
+
+	        /**
+	         * Processes available data blocks.
+	         *
+	         * This method invokes _doProcessBlock(offset), which must be implemented by a concrete subtype.
+	         *
+	         * @param {boolean} doFlush Whether all blocks and partial blocks should be processed.
+	         *
+	         * @return {WordArray} The processed data.
+	         *
+	         * @example
+	         *
+	         *     var processedData = bufferedBlockAlgorithm._process();
+	         *     var processedData = bufferedBlockAlgorithm._process(!!'flush');
+	         */
+	        _process: function (doFlush) {
+	            var processedWords;
+
+	            // Shortcuts
+	            var data = this._data;
+	            var dataWords = data.words;
+	            var dataSigBytes = data.sigBytes;
+	            var blockSize = this.blockSize;
+	            var blockSizeBytes = blockSize * 4;
+
+	            // Count blocks ready
+	            var nBlocksReady = dataSigBytes / blockSizeBytes;
+	            if (doFlush) {
+	                // Round up to include partial blocks
+	                nBlocksReady = Math.ceil(nBlocksReady);
+	            } else {
+	                // Round down to include only full blocks,
+	                // less the number of blocks that must remain in the buffer
+	                nBlocksReady = Math.max((nBlocksReady | 0) - this._minBufferSize, 0);
+	            }
+
+	            // Count words ready
+	            var nWordsReady = nBlocksReady * blockSize;
+
+	            // Count bytes ready
+	            var nBytesReady = Math.min(nWordsReady * 4, dataSigBytes);
+
+	            // Process blocks
+	            if (nWordsReady) {
+	                for (var offset = 0; offset < nWordsReady; offset += blockSize) {
+	                    // Perform concrete-algorithm logic
+	                    this._doProcessBlock(dataWords, offset);
+	                }
+
+	                // Remove processed words
+	                processedWords = dataWords.splice(0, nWordsReady);
+	                data.sigBytes -= nBytesReady;
+	            }
+
+	            // Return processed words
+	            return new WordArray.init(processedWords, nBytesReady);
+	        },
+
+	        /**
+	         * Creates a copy of this object.
+	         *
+	         * @return {Object} The clone.
+	         *
+	         * @example
+	         *
+	         *     var clone = bufferedBlockAlgorithm.clone();
+	         */
+	        clone: function () {
+	            var clone = Base.clone.call(this);
+	            clone._data = this._data.clone();
+
+	            return clone;
+	        },
+
+	        _minBufferSize: 0
+	    });
+
+	    /**
+	     * Abstract hasher template.
+	     *
+	     * @property {number} blockSize The number of 32-bit words this hasher operates on. Default: 16 (512 bits)
+	     */
+	    var Hasher = C_lib.Hasher = BufferedBlockAlgorithm.extend({
+	        /**
+	         * Configuration options.
+	         */
+	        cfg: Base.extend(),
+
+	        /**
+	         * Initializes a newly created hasher.
+	         *
+	         * @param {Object} cfg (Optional) The configuration options to use for this hash computation.
+	         *
+	         * @example
+	         *
+	         *     var hasher = CryptoJS.algo.SHA256.create();
+	         */
+	        init: function (cfg) {
+	            // Apply config defaults
+	            this.cfg = this.cfg.extend(cfg);
+
+	            // Set initial values
+	            this.reset();
+	        },
+
+	        /**
+	         * Resets this hasher to its initial state.
+	         *
+	         * @example
+	         *
+	         *     hasher.reset();
+	         */
+	        reset: function () {
+	            // Reset data buffer
+	            BufferedBlockAlgorithm.reset.call(this);
+
+	            // Perform concrete-hasher logic
+	            this._doReset();
+	        },
+
+	        /**
+	         * Updates this hasher with a message.
+	         *
+	         * @param {WordArray|string} messageUpdate The message to append.
+	         *
+	         * @return {Hasher} This hasher.
+	         *
+	         * @example
+	         *
+	         *     hasher.update('message');
+	         *     hasher.update(wordArray);
+	         */
+	        update: function (messageUpdate) {
+	            // Append
+	            this._append(messageUpdate);
+
+	            // Update the hash
+	            this._process();
+
+	            // Chainable
+	            return this;
+	        },
+
+	        /**
+	         * Finalizes the hash computation.
+	         * Note that the finalize operation is effectively a destructive, read-once operation.
+	         *
+	         * @param {WordArray|string} messageUpdate (Optional) A final message update.
+	         *
+	         * @return {WordArray} The hash.
+	         *
+	         * @example
+	         *
+	         *     var hash = hasher.finalize();
+	         *     var hash = hasher.finalize('message');
+	         *     var hash = hasher.finalize(wordArray);
+	         */
+	        finalize: function (messageUpdate) {
+	            // Final message update
+	            if (messageUpdate) {
+	                this._append(messageUpdate);
+	            }
+
+	            // Perform concrete-hasher logic
+	            var hash = this._doFinalize();
+
+	            return hash;
+	        },
+
+	        blockSize: 512/32,
+
+	        /**
+	         * Creates a shortcut function to a hasher's object interface.
+	         *
+	         * @param {Hasher} hasher The hasher to create a helper for.
+	         *
+	         * @return {Function} The shortcut function.
+	         *
+	         * @static
+	         *
+	         * @example
+	         *
+	         *     var SHA256 = CryptoJS.lib.Hasher._createHelper(CryptoJS.algo.SHA256);
+	         */
+	        _createHelper: function (hasher) {
+	            return function (message, cfg) {
+	                return new hasher.init(cfg).finalize(message);
+	            };
+	        },
+
+	        /**
+	         * Creates a shortcut function to the HMAC's object interface.
+	         *
+	         * @param {Hasher} hasher The hasher to use in this HMAC helper.
+	         *
+	         * @return {Function} The shortcut function.
+	         *
+	         * @static
+	         *
+	         * @example
+	         *
+	         *     var HmacSHA256 = CryptoJS.lib.Hasher._createHmacHelper(CryptoJS.algo.SHA256);
+	         */
+	        _createHmacHelper: function (hasher) {
+	            return function (message, key) {
+	                return new C_algo.HMAC.init(hasher, key).finalize(message);
+	            };
+	        }
+	    });
+
+	    /**
+	     * Algorithm namespace.
+	     */
+	    var C_algo = C.algo = {};
+
+	    return C;
+	}(Math));
+
+
+	return CryptoJS;
+
+}));
+
+/***/ }),
+
+/***/ 269:
+/***/ (function(module, exports, __webpack_require__) {
+
+;(function (root, factory) {
+	if (true) {
+		// CommonJS
+		module.exports = exports = factory(__webpack_require__(249));
+	}
+	else {}
+}(this, function (CryptoJS) {
+
+	(function () {
+	    // Shortcuts
+	    var C = CryptoJS;
+	    var C_lib = C.lib;
+	    var WordArray = C_lib.WordArray;
+	    var C_enc = C.enc;
+
+	    /**
+	     * Base64 encoding strategy.
+	     */
+	    var Base64 = C_enc.Base64 = {
+	        /**
+	         * Converts a word array to a Base64 string.
+	         *
+	         * @param {WordArray} wordArray The word array.
+	         *
+	         * @return {string} The Base64 string.
+	         *
+	         * @static
+	         *
+	         * @example
+	         *
+	         *     var base64String = CryptoJS.enc.Base64.stringify(wordArray);
+	         */
+	        stringify: function (wordArray) {
+	            // Shortcuts
+	            var words = wordArray.words;
+	            var sigBytes = wordArray.sigBytes;
+	            var map = this._map;
+
+	            // Clamp excess bits
+	            wordArray.clamp();
+
+	            // Convert
+	            var base64Chars = [];
+	            for (var i = 0; i < sigBytes; i += 3) {
+	                var byte1 = (words[i >>> 2]       >>> (24 - (i % 4) * 8))       & 0xff;
+	                var byte2 = (words[(i + 1) >>> 2] >>> (24 - ((i + 1) % 4) * 8)) & 0xff;
+	                var byte3 = (words[(i + 2) >>> 2] >>> (24 - ((i + 2) % 4) * 8)) & 0xff;
+
+	                var triplet = (byte1 << 16) | (byte2 << 8) | byte3;
+
+	                for (var j = 0; (j < 4) && (i + j * 0.75 < sigBytes); j++) {
+	                    base64Chars.push(map.charAt((triplet >>> (6 * (3 - j))) & 0x3f));
+	                }
+	            }
+
+	            // Add padding
+	            var paddingChar = map.charAt(64);
+	            if (paddingChar) {
+	                while (base64Chars.length % 4) {
+	                    base64Chars.push(paddingChar);
+	                }
+	            }
+
+	            return base64Chars.join('');
+	        },
+
+	        /**
+	         * Converts a Base64 string to a word array.
+	         *
+	         * @param {string} base64Str The Base64 string.
+	         *
+	         * @return {WordArray} The word array.
+	         *
+	         * @static
+	         *
+	         * @example
+	         *
+	         *     var wordArray = CryptoJS.enc.Base64.parse(base64String);
+	         */
+	        parse: function (base64Str) {
+	            // Shortcuts
+	            var base64StrLength = base64Str.length;
+	            var map = this._map;
+	            var reverseMap = this._reverseMap;
+
+	            if (!reverseMap) {
+	                    reverseMap = this._reverseMap = [];
+	                    for (var j = 0; j < map.length; j++) {
+	                        reverseMap[map.charCodeAt(j)] = j;
+	                    }
+	            }
+
+	            // Ignore padding
+	            var paddingChar = map.charAt(64);
+	            if (paddingChar) {
+	                var paddingIndex = base64Str.indexOf(paddingChar);
+	                if (paddingIndex !== -1) {
+	                    base64StrLength = paddingIndex;
+	                }
+	            }
+
+	            // Convert
+	            return parseLoop(base64Str, base64StrLength, reverseMap);
+
+	        },
+
+	        _map: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
+	    };
+
+	    function parseLoop(base64Str, base64StrLength, reverseMap) {
+	      var words = [];
+	      var nBytes = 0;
+	      for (var i = 0; i < base64StrLength; i++) {
+	          if (i % 4) {
+	              var bits1 = reverseMap[base64Str.charCodeAt(i - 1)] << ((i % 4) * 2);
+	              var bits2 = reverseMap[base64Str.charCodeAt(i)] >>> (6 - (i % 4) * 2);
+	              var bitsCombined = bits1 | bits2;
+	              words[nBytes >>> 2] |= bitsCombined << (24 - (nBytes % 4) * 8);
+	              nBytes++;
+	          }
+	      }
+	      return WordArray.create(words, nBytes);
+	    }
+	}());
+
+
+	return CryptoJS.enc.Base64;
+
+}));
+
+/***/ }),
+
+/***/ 10:
+/***/ (function(module, exports, __webpack_require__) {
+
+;(function (root, factory, undef) {
+	if (true) {
+		// CommonJS
+		module.exports = exports = factory(__webpack_require__(249), __webpack_require__(153), __webpack_require__(824));
+	}
+	else {}
+}(this, function (CryptoJS) {
+
+	return CryptoJS.HmacSHA256;
+
+}));
+
+/***/ }),
+
+/***/ 824:
+/***/ (function(module, exports, __webpack_require__) {
+
+;(function (root, factory) {
+	if (true) {
+		// CommonJS
+		module.exports = exports = factory(__webpack_require__(249));
+	}
+	else {}
+}(this, function (CryptoJS) {
+
+	(function () {
+	    // Shortcuts
+	    var C = CryptoJS;
+	    var C_lib = C.lib;
+	    var Base = C_lib.Base;
+	    var C_enc = C.enc;
+	    var Utf8 = C_enc.Utf8;
+	    var C_algo = C.algo;
+
+	    /**
+	     * HMAC algorithm.
+	     */
+	    var HMAC = C_algo.HMAC = Base.extend({
+	        /**
+	         * Initializes a newly created HMAC.
+	         *
+	         * @param {Hasher} hasher The hash algorithm to use.
+	         * @param {WordArray|string} key The secret key.
+	         *
+	         * @example
+	         *
+	         *     var hmacHasher = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, key);
+	         */
+	        init: function (hasher, key) {
+	            // Init hasher
+	            hasher = this._hasher = new hasher.init();
+
+	            // Convert string to WordArray, else assume WordArray already
+	            if (typeof key == 'string') {
+	                key = Utf8.parse(key);
+	            }
+
+	            // Shortcuts
+	            var hasherBlockSize = hasher.blockSize;
+	            var hasherBlockSizeBytes = hasherBlockSize * 4;
+
+	            // Allow arbitrary length keys
+	            if (key.sigBytes > hasherBlockSizeBytes) {
+	                key = hasher.finalize(key);
+	            }
+
+	            // Clamp excess bits
+	            key.clamp();
+
+	            // Clone key for inner and outer pads
+	            var oKey = this._oKey = key.clone();
+	            var iKey = this._iKey = key.clone();
+
+	            // Shortcuts
+	            var oKeyWords = oKey.words;
+	            var iKeyWords = iKey.words;
+
+	            // XOR keys with pad constants
+	            for (var i = 0; i < hasherBlockSize; i++) {
+	                oKeyWords[i] ^= 0x5c5c5c5c;
+	                iKeyWords[i] ^= 0x36363636;
+	            }
+	            oKey.sigBytes = iKey.sigBytes = hasherBlockSizeBytes;
+
+	            // Set initial values
+	            this.reset();
+	        },
+
+	        /**
+	         * Resets this HMAC to its initial state.
+	         *
+	         * @example
+	         *
+	         *     hmacHasher.reset();
+	         */
+	        reset: function () {
+	            // Shortcut
+	            var hasher = this._hasher;
+
+	            // Reset
+	            hasher.reset();
+	            hasher.update(this._iKey);
+	        },
+
+	        /**
+	         * Updates this HMAC with a message.
+	         *
+	         * @param {WordArray|string} messageUpdate The message to append.
+	         *
+	         * @return {HMAC} This HMAC instance.
+	         *
+	         * @example
+	         *
+	         *     hmacHasher.update('message');
+	         *     hmacHasher.update(wordArray);
+	         */
+	        update: function (messageUpdate) {
+	            this._hasher.update(messageUpdate);
+
+	            // Chainable
+	            return this;
+	        },
+
+	        /**
+	         * Finalizes the HMAC computation.
+	         * Note that the finalize operation is effectively a destructive, read-once operation.
+	         *
+	         * @param {WordArray|string} messageUpdate (Optional) A final message update.
+	         *
+	         * @return {WordArray} The HMAC.
+	         *
+	         * @example
+	         *
+	         *     var hmac = hmacHasher.finalize();
+	         *     var hmac = hmacHasher.finalize('message');
+	         *     var hmac = hmacHasher.finalize(wordArray);
+	         */
+	        finalize: function (messageUpdate) {
+	            // Shortcut
+	            var hasher = this._hasher;
+
+	            // Compute HMAC
+	            var innerHash = hasher.finalize(messageUpdate);
+	            hasher.reset();
+	            var hmac = hasher.finalize(this._oKey.clone().concat(innerHash));
+
+	            return hmac;
+	        }
+	    });
+	}());
+
+
+}));
+
+/***/ }),
+
+/***/ 433:
+/***/ (function(module, exports, __webpack_require__) {
+
+;(function (root, factory) {
+	if (true) {
+		// CommonJS
+		module.exports = exports = factory(__webpack_require__(249));
+	}
+	else {}
+}(this, function (CryptoJS) {
+
+	(function () {
+	    // Check if typed arrays are supported
+	    if (typeof ArrayBuffer != 'function') {
+	        return;
+	    }
+
+	    // Shortcuts
+	    var C = CryptoJS;
+	    var C_lib = C.lib;
+	    var WordArray = C_lib.WordArray;
+
+	    // Reference original init
+	    var superInit = WordArray.init;
+
+	    // Augment WordArray.init to handle typed arrays
+	    var subInit = WordArray.init = function (typedArray) {
+	        // Convert buffers to uint8
+	        if (typedArray instanceof ArrayBuffer) {
+	            typedArray = new Uint8Array(typedArray);
+	        }
+
+	        // Convert other array views to uint8
+	        if (
+	            typedArray instanceof Int8Array ||
+	            (typeof Uint8ClampedArray !== "undefined" && typedArray instanceof Uint8ClampedArray) ||
+	            typedArray instanceof Int16Array ||
+	            typedArray instanceof Uint16Array ||
+	            typedArray instanceof Int32Array ||
+	            typedArray instanceof Uint32Array ||
+	            typedArray instanceof Float32Array ||
+	            typedArray instanceof Float64Array
+	        ) {
+	            typedArray = new Uint8Array(typedArray.buffer, typedArray.byteOffset, typedArray.byteLength);
+	        }
+
+	        // Handle Uint8Array
+	        if (typedArray instanceof Uint8Array) {
+	            // Shortcut
+	            var typedArrayByteLength = typedArray.byteLength;
+
+	            // Extract bytes
+	            var words = [];
+	            for (var i = 0; i < typedArrayByteLength; i++) {
+	                words[i >>> 2] |= typedArray[i] << (24 - (i % 4) * 8);
+	            }
+
+	            // Initialize this word array
+	            superInit.call(this, words, typedArrayByteLength);
+	        } else {
+	            // Else call normal init
+	            superInit.apply(this, arguments);
+	        }
+	    };
+
+	    subInit.prototype = WordArray;
+	}());
+
+
+	return CryptoJS.lib.WordArray;
+
+}));
+
+/***/ }),
+
+/***/ 153:
+/***/ (function(module, exports, __webpack_require__) {
+
+;(function (root, factory) {
+	if (true) {
+		// CommonJS
+		module.exports = exports = factory(__webpack_require__(249));
+	}
+	else {}
+}(this, function (CryptoJS) {
+
+	(function (Math) {
+	    // Shortcuts
+	    var C = CryptoJS;
+	    var C_lib = C.lib;
+	    var WordArray = C_lib.WordArray;
+	    var Hasher = C_lib.Hasher;
+	    var C_algo = C.algo;
+
+	    // Initialization and round constants tables
+	    var H = [];
+	    var K = [];
+
+	    // Compute constants
+	    (function () {
+	        function isPrime(n) {
+	            var sqrtN = Math.sqrt(n);
+	            for (var factor = 2; factor <= sqrtN; factor++) {
+	                if (!(n % factor)) {
+	                    return false;
+	                }
+	            }
+
+	            return true;
+	        }
+
+	        function getFractionalBits(n) {
+	            return ((n - (n | 0)) * 0x100000000) | 0;
+	        }
+
+	        var n = 2;
+	        var nPrime = 0;
+	        while (nPrime < 64) {
+	            if (isPrime(n)) {
+	                if (nPrime < 8) {
+	                    H[nPrime] = getFractionalBits(Math.pow(n, 1 / 2));
+	                }
+	                K[nPrime] = getFractionalBits(Math.pow(n, 1 / 3));
+
+	                nPrime++;
+	            }
+
+	            n++;
+	        }
+	    }());
+
+	    // Reusable object
+	    var W = [];
+
+	    /**
+	     * SHA-256 hash algorithm.
+	     */
+	    var SHA256 = C_algo.SHA256 = Hasher.extend({
+	        _doReset: function () {
+	            this._hash = new WordArray.init(H.slice(0));
+	        },
+
+	        _doProcessBlock: function (M, offset) {
+	            // Shortcut
+	            var H = this._hash.words;
+
+	            // Working variables
+	            var a = H[0];
+	            var b = H[1];
+	            var c = H[2];
+	            var d = H[3];
+	            var e = H[4];
+	            var f = H[5];
+	            var g = H[6];
+	            var h = H[7];
+
+	            // Computation
+	            for (var i = 0; i < 64; i++) {
+	                if (i < 16) {
+	                    W[i] = M[offset + i] | 0;
+	                } else {
+	                    var gamma0x = W[i - 15];
+	                    var gamma0  = ((gamma0x << 25) | (gamma0x >>> 7))  ^
+	                                  ((gamma0x << 14) | (gamma0x >>> 18)) ^
+	                                   (gamma0x >>> 3);
+
+	                    var gamma1x = W[i - 2];
+	                    var gamma1  = ((gamma1x << 15) | (gamma1x >>> 17)) ^
+	                                  ((gamma1x << 13) | (gamma1x >>> 19)) ^
+	                                   (gamma1x >>> 10);
+
+	                    W[i] = gamma0 + W[i - 7] + gamma1 + W[i - 16];
+	                }
+
+	                var ch  = (e & f) ^ (~e & g);
+	                var maj = (a & b) ^ (a & c) ^ (b & c);
+
+	                var sigma0 = ((a << 30) | (a >>> 2)) ^ ((a << 19) | (a >>> 13)) ^ ((a << 10) | (a >>> 22));
+	                var sigma1 = ((e << 26) | (e >>> 6)) ^ ((e << 21) | (e >>> 11)) ^ ((e << 7)  | (e >>> 25));
+
+	                var t1 = h + sigma1 + ch + K[i] + W[i];
+	                var t2 = sigma0 + maj;
+
+	                h = g;
+	                g = f;
+	                f = e;
+	                e = (d + t1) | 0;
+	                d = c;
+	                c = b;
+	                b = a;
+	                a = (t1 + t2) | 0;
+	            }
+
+	            // Intermediate hash value
+	            H[0] = (H[0] + a) | 0;
+	            H[1] = (H[1] + b) | 0;
+	            H[2] = (H[2] + c) | 0;
+	            H[3] = (H[3] + d) | 0;
+	            H[4] = (H[4] + e) | 0;
+	            H[5] = (H[5] + f) | 0;
+	            H[6] = (H[6] + g) | 0;
+	            H[7] = (H[7] + h) | 0;
+	        },
+
+	        _doFinalize: function () {
+	            // Shortcuts
+	            var data = this._data;
+	            var dataWords = data.words;
+
+	            var nBitsTotal = this._nDataBytes * 8;
+	            var nBitsLeft = data.sigBytes * 8;
+
+	            // Add padding
+	            dataWords[nBitsLeft >>> 5] |= 0x80 << (24 - nBitsLeft % 32);
+	            dataWords[(((nBitsLeft + 64) >>> 9) << 4) + 14] = Math.floor(nBitsTotal / 0x100000000);
+	            dataWords[(((nBitsLeft + 64) >>> 9) << 4) + 15] = nBitsTotal;
+	            data.sigBytes = dataWords.length * 4;
+
+	            // Hash final blocks
+	            this._process();
+
+	            // Return final computed hash
+	            return this._hash;
+	        },
+
+	        clone: function () {
+	            var clone = Hasher.clone.call(this);
+	            clone._hash = this._hash.clone();
+
+	            return clone;
+	        }
+	    });
+
+	    /**
+	     * Shortcut function to the hasher's object interface.
+	     *
+	     * @param {WordArray|string} message The message to hash.
+	     *
+	     * @return {WordArray} The hash.
+	     *
+	     * @static
+	     *
+	     * @example
+	     *
+	     *     var hash = CryptoJS.SHA256('message');
+	     *     var hash = CryptoJS.SHA256(wordArray);
+	     */
+	    C.SHA256 = Hasher._createHelper(SHA256);
+
+	    /**
+	     * Shortcut function to the HMAC's object interface.
+	     *
+	     * @param {WordArray|string} message The message to hash.
+	     * @param {WordArray|string} key The secret key.
+	     *
+	     * @return {WordArray} The HMAC.
+	     *
+	     * @static
+	     *
+	     * @example
+	     *
+	     *     var hmac = CryptoJS.HmacSHA256(message, key);
+	     */
+	    C.HmacSHA256 = Hasher._createHmacHelper(SHA256);
+	}(Math));
+
+
+	return CryptoJS.SHA256;
+
+}));
+
+/***/ }),
+
+/***/ 79:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+function r(m){return m && m.default || m;}
+module.exports = global.fetch = global.fetch || (
+	typeof process=='undefined' ? r(__webpack_require__(869)) : (function(url, opts) {
+		return r(__webpack_require__(854))(String(url).replace(/^\/\//g,'https://'), opts);
+	})
+);
+
+
+/***/ }),
+
+/***/ 808:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+ * JavaScript Cookie v2.2.1
+ * https://github.com/js-cookie/js-cookie
+ *
+ * Copyright 2006, 2015 Klaus Hartl & Fagner Brack
+ * Released under the MIT license
+ */
+;(function (factory) {
+	var registeredInModuleLoader;
+	if (true) {
+		!(__WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+		(__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) :
+		__WEBPACK_AMD_DEFINE_FACTORY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		registeredInModuleLoader = true;
+	}
+	if (true) {
+		module.exports = factory();
+		registeredInModuleLoader = true;
+	}
+	if (!registeredInModuleLoader) {
+		var OldCookies = window.Cookies;
+		var api = window.Cookies = factory();
+		api.noConflict = function () {
+			window.Cookies = OldCookies;
+			return api;
+		};
+	}
+}(function () {
+	function extend () {
+		var i = 0;
+		var result = {};
+		for (; i < arguments.length; i++) {
+			var attributes = arguments[ i ];
+			for (var key in attributes) {
+				result[key] = attributes[key];
+			}
+		}
+		return result;
+	}
+
+	function decode (s) {
+		return s.replace(/(%[0-9A-Z]{2})+/g, decodeURIComponent);
+	}
+
+	function init (converter) {
+		function api() {}
+
+		function set (key, value, attributes) {
+			if (typeof document === 'undefined') {
+				return;
+			}
+
+			attributes = extend({
+				path: '/'
+			}, api.defaults, attributes);
+
+			if (typeof attributes.expires === 'number') {
+				attributes.expires = new Date(new Date() * 1 + attributes.expires * 864e+5);
+			}
+
+			// We're using "expires" because "max-age" is not supported by IE
+			attributes.expires = attributes.expires ? attributes.expires.toUTCString() : '';
+
+			try {
+				var result = JSON.stringify(value);
+				if (/^[\{\[]/.test(result)) {
+					value = result;
+				}
+			} catch (e) {}
+
+			value = converter.write ?
+				converter.write(value, key) :
+				encodeURIComponent(String(value))
+					.replace(/%(23|24|26|2B|3A|3C|3E|3D|2F|3F|40|5B|5D|5E|60|7B|7D|7C)/g, decodeURIComponent);
+
+			key = encodeURIComponent(String(key))
+				.replace(/%(23|24|26|2B|5E|60|7C)/g, decodeURIComponent)
+				.replace(/[\(\)]/g, escape);
+
+			var stringifiedAttributes = '';
+			for (var attributeName in attributes) {
+				if (!attributes[attributeName]) {
+					continue;
+				}
+				stringifiedAttributes += '; ' + attributeName;
+				if (attributes[attributeName] === true) {
+					continue;
+				}
+
+				// Considers RFC 6265 section 5.2:
+				// ...
+				// 3.  If the remaining unparsed-attributes contains a %x3B (";")
+				//     character:
+				// Consume the characters of the unparsed-attributes up to,
+				// not including, the first %x3B (";") character.
+				// ...
+				stringifiedAttributes += '=' + attributes[attributeName].split(';')[0];
+			}
+
+			return (document.cookie = key + '=' + value + stringifiedAttributes);
+		}
+
+		function get (key, json) {
+			if (typeof document === 'undefined') {
+				return;
+			}
+
+			var jar = {};
+			// To prevent the for loop in the first place assign an empty array
+			// in case there are no cookies at all.
+			var cookies = document.cookie ? document.cookie.split('; ') : [];
+			var i = 0;
+
+			for (; i < cookies.length; i++) {
+				var parts = cookies[i].split('=');
+				var cookie = parts.slice(1).join('=');
+
+				if (!json && cookie.charAt(0) === '"') {
+					cookie = cookie.slice(1, -1);
+				}
+
+				try {
+					var name = decode(parts[0]);
+					cookie = (converter.read || converter)(cookie, name) ||
+						decode(cookie);
+
+					if (json) {
+						try {
+							cookie = JSON.parse(cookie);
+						} catch (e) {}
+					}
+
+					jar[name] = cookie;
+
+					if (key === name) {
+						break;
+					}
+				} catch (e) {}
+			}
+
+			return key ? jar[key] : jar;
+		}
+
+		api.set = set;
+		api.get = function (key) {
+			return get(key, false /* read as raw */);
+		};
+		api.getJSON = function (key) {
+			return get(key, true /* read as json */);
+		};
+		api.remove = function (key, attributes) {
+			set(key, '', extend(attributes, {
+				expires: -1
+			}));
+		};
+
+		api.defaults = {};
+
+		api.withConverter = init;
+
+		return api;
+	}
+
+	return init(function () {});
+}));
+
+
+/***/ }),
+
+/***/ 854:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+// ESM COMPAT FLAG
+__webpack_require__.r(__webpack_exports__);
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  "FetchError": () => (/* binding */ FetchError),
+  "Headers": () => (/* binding */ Headers),
+  "Request": () => (/* binding */ Request),
+  "Response": () => (/* binding */ Response),
+  "default": () => (/* binding */ lib)
+});
+
+;// CONCATENATED MODULE: external "stream"
+const external_stream_namespaceObject = require("stream");;
+;// CONCATENATED MODULE: external "http"
+const external_http_namespaceObject = require("http");;
+;// CONCATENATED MODULE: external "url"
+const external_url_namespaceObject = require("url");;
+;// CONCATENATED MODULE: external "https"
+const external_https_namespaceObject = require("https");;
+;// CONCATENATED MODULE: external "zlib"
+const external_zlib_namespaceObject = require("zlib");;
+;// CONCATENATED MODULE: ./node_modules/node-fetch/lib/index.mjs
+
+
+
+
+
+
+// Based on https://github.com/tmpvar/jsdom/blob/aa85b2abf07766ff7bf5c1f6daafb3726f2f2db5/lib/jsdom/living/blob.js
+
+// fix for "Readable" isn't a named export issue
+const Readable = external_stream_namespaceObject.Readable;
+
+const BUFFER = Symbol('buffer');
+const TYPE = Symbol('type');
+
+class Blob {
+	constructor() {
+		this[TYPE] = '';
+
+		const blobParts = arguments[0];
+		const options = arguments[1];
+
+		const buffers = [];
+		let size = 0;
+
+		if (blobParts) {
+			const a = blobParts;
+			const length = Number(a.length);
+			for (let i = 0; i < length; i++) {
+				const element = a[i];
+				let buffer;
+				if (element instanceof Buffer) {
+					buffer = element;
+				} else if (ArrayBuffer.isView(element)) {
+					buffer = Buffer.from(element.buffer, element.byteOffset, element.byteLength);
+				} else if (element instanceof ArrayBuffer) {
+					buffer = Buffer.from(element);
+				} else if (element instanceof Blob) {
+					buffer = element[BUFFER];
+				} else {
+					buffer = Buffer.from(typeof element === 'string' ? element : String(element));
+				}
+				size += buffer.length;
+				buffers.push(buffer);
+			}
+		}
+
+		this[BUFFER] = Buffer.concat(buffers);
+
+		let type = options && options.type !== undefined && String(options.type).toLowerCase();
+		if (type && !/[^\u0020-\u007E]/.test(type)) {
+			this[TYPE] = type;
+		}
+	}
+	get size() {
+		return this[BUFFER].length;
+	}
+	get type() {
+		return this[TYPE];
+	}
+	text() {
+		return Promise.resolve(this[BUFFER].toString());
+	}
+	arrayBuffer() {
+		const buf = this[BUFFER];
+		const ab = buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
+		return Promise.resolve(ab);
+	}
+	stream() {
+		const readable = new Readable();
+		readable._read = function () {};
+		readable.push(this[BUFFER]);
+		readable.push(null);
+		return readable;
+	}
+	toString() {
+		return '[object Blob]';
+	}
+	slice() {
+		const size = this.size;
+
+		const start = arguments[0];
+		const end = arguments[1];
+		let relativeStart, relativeEnd;
+		if (start === undefined) {
+			relativeStart = 0;
+		} else if (start < 0) {
+			relativeStart = Math.max(size + start, 0);
+		} else {
+			relativeStart = Math.min(start, size);
+		}
+		if (end === undefined) {
+			relativeEnd = size;
+		} else if (end < 0) {
+			relativeEnd = Math.max(size + end, 0);
+		} else {
+			relativeEnd = Math.min(end, size);
+		}
+		const span = Math.max(relativeEnd - relativeStart, 0);
+
+		const buffer = this[BUFFER];
+		const slicedBuffer = buffer.slice(relativeStart, relativeStart + span);
+		const blob = new Blob([], { type: arguments[2] });
+		blob[BUFFER] = slicedBuffer;
+		return blob;
+	}
+}
+
+Object.defineProperties(Blob.prototype, {
+	size: { enumerable: true },
+	type: { enumerable: true },
+	slice: { enumerable: true }
+});
+
+Object.defineProperty(Blob.prototype, Symbol.toStringTag, {
+	value: 'Blob',
+	writable: false,
+	enumerable: false,
+	configurable: true
+});
+
+/**
+ * fetch-error.js
+ *
+ * FetchError interface for operational errors
+ */
+
+/**
+ * Create FetchError instance
+ *
+ * @param   String      message      Error message for human
+ * @param   String      type         Error type for machine
+ * @param   String      systemError  For Node.js system error
+ * @return  FetchError
+ */
+function FetchError(message, type, systemError) {
+  Error.call(this, message);
+
+  this.message = message;
+  this.type = type;
+
+  // when err.type is `system`, err.code contains system error code
+  if (systemError) {
+    this.code = this.errno = systemError.code;
+  }
+
+  // hide custom error implementation details from end-users
+  Error.captureStackTrace(this, this.constructor);
+}
+
+FetchError.prototype = Object.create(Error.prototype);
+FetchError.prototype.constructor = FetchError;
+FetchError.prototype.name = 'FetchError';
+
+let convert;
+try {
+	convert = require('encoding').convert;
+} catch (e) {}
+
+const INTERNALS = Symbol('Body internals');
+
+// fix an issue where "PassThrough" isn't a named export for node <10
+const PassThrough = external_stream_namespaceObject.PassThrough;
+
+/**
+ * Body mixin
+ *
+ * Ref: https://fetch.spec.whatwg.org/#body
+ *
+ * @param   Stream  body  Readable stream
+ * @param   Object  opts  Response options
+ * @return  Void
+ */
+function Body(body) {
+	var _this = this;
+
+	var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+	    _ref$size = _ref.size;
+
+	let size = _ref$size === undefined ? 0 : _ref$size;
+	var _ref$timeout = _ref.timeout;
+	let timeout = _ref$timeout === undefined ? 0 : _ref$timeout;
+
+	if (body == null) {
+		// body is undefined or null
+		body = null;
+	} else if (isURLSearchParams(body)) {
+		// body is a URLSearchParams
+		body = Buffer.from(body.toString());
+	} else if (isBlob(body)) ; else if (Buffer.isBuffer(body)) ; else if (Object.prototype.toString.call(body) === '[object ArrayBuffer]') {
+		// body is ArrayBuffer
+		body = Buffer.from(body);
+	} else if (ArrayBuffer.isView(body)) {
+		// body is ArrayBufferView
+		body = Buffer.from(body.buffer, body.byteOffset, body.byteLength);
+	} else if (body instanceof external_stream_namespaceObject) ; else {
+		// none of the above
+		// coerce to string then buffer
+		body = Buffer.from(String(body));
+	}
+	this[INTERNALS] = {
+		body,
+		disturbed: false,
+		error: null
+	};
+	this.size = size;
+	this.timeout = timeout;
+
+	if (body instanceof external_stream_namespaceObject) {
+		body.on('error', function (err) {
+			const error = err.name === 'AbortError' ? err : new FetchError(`Invalid response body while trying to fetch ${_this.url}: ${err.message}`, 'system', err);
+			_this[INTERNALS].error = error;
+		});
+	}
+}
+
+Body.prototype = {
+	get body() {
+		return this[INTERNALS].body;
+	},
+
+	get bodyUsed() {
+		return this[INTERNALS].disturbed;
+	},
+
+	/**
+  * Decode response as ArrayBuffer
+  *
+  * @return  Promise
+  */
+	arrayBuffer() {
+		return consumeBody.call(this).then(function (buf) {
+			return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
+		});
+	},
+
+	/**
+  * Return raw response as Blob
+  *
+  * @return Promise
+  */
+	blob() {
+		let ct = this.headers && this.headers.get('content-type') || '';
+		return consumeBody.call(this).then(function (buf) {
+			return Object.assign(
+			// Prevent copying
+			new Blob([], {
+				type: ct.toLowerCase()
+			}), {
+				[BUFFER]: buf
+			});
+		});
+	},
+
+	/**
+  * Decode response as json
+  *
+  * @return  Promise
+  */
+	json() {
+		var _this2 = this;
+
+		return consumeBody.call(this).then(function (buffer) {
+			try {
+				return JSON.parse(buffer.toString());
+			} catch (err) {
+				return Body.Promise.reject(new FetchError(`invalid json response body at ${_this2.url} reason: ${err.message}`, 'invalid-json'));
+			}
+		});
+	},
+
+	/**
+  * Decode response as text
+  *
+  * @return  Promise
+  */
+	text() {
+		return consumeBody.call(this).then(function (buffer) {
+			return buffer.toString();
+		});
+	},
+
+	/**
+  * Decode response as buffer (non-spec api)
+  *
+  * @return  Promise
+  */
+	buffer() {
+		return consumeBody.call(this);
+	},
+
+	/**
+  * Decode response as text, while automatically detecting the encoding and
+  * trying to decode to UTF-8 (non-spec api)
+  *
+  * @return  Promise
+  */
+	textConverted() {
+		var _this3 = this;
+
+		return consumeBody.call(this).then(function (buffer) {
+			return convertBody(buffer, _this3.headers);
+		});
+	}
+};
+
+// In browsers, all properties are enumerable.
+Object.defineProperties(Body.prototype, {
+	body: { enumerable: true },
+	bodyUsed: { enumerable: true },
+	arrayBuffer: { enumerable: true },
+	blob: { enumerable: true },
+	json: { enumerable: true },
+	text: { enumerable: true }
+});
+
+Body.mixIn = function (proto) {
+	for (const name of Object.getOwnPropertyNames(Body.prototype)) {
+		// istanbul ignore else: future proof
+		if (!(name in proto)) {
+			const desc = Object.getOwnPropertyDescriptor(Body.prototype, name);
+			Object.defineProperty(proto, name, desc);
+		}
+	}
+};
+
+/**
+ * Consume and convert an entire Body to a Buffer.
+ *
+ * Ref: https://fetch.spec.whatwg.org/#concept-body-consume-body
+ *
+ * @return  Promise
+ */
+function consumeBody() {
+	var _this4 = this;
+
+	if (this[INTERNALS].disturbed) {
+		return Body.Promise.reject(new TypeError(`body used already for: ${this.url}`));
+	}
+
+	this[INTERNALS].disturbed = true;
+
+	if (this[INTERNALS].error) {
+		return Body.Promise.reject(this[INTERNALS].error);
+	}
+
+	let body = this.body;
+
+	// body is null
+	if (body === null) {
+		return Body.Promise.resolve(Buffer.alloc(0));
+	}
+
+	// body is blob
+	if (isBlob(body)) {
+		body = body.stream();
+	}
+
+	// body is buffer
+	if (Buffer.isBuffer(body)) {
+		return Body.Promise.resolve(body);
+	}
+
+	// istanbul ignore if: should never happen
+	if (!(body instanceof external_stream_namespaceObject)) {
+		return Body.Promise.resolve(Buffer.alloc(0));
+	}
+
+	// body is stream
+	// get ready to actually consume the body
+	let accum = [];
+	let accumBytes = 0;
+	let abort = false;
+
+	return new Body.Promise(function (resolve, reject) {
+		let resTimeout;
+
+		// allow timeout on slow response body
+		if (_this4.timeout) {
+			resTimeout = setTimeout(function () {
+				abort = true;
+				reject(new FetchError(`Response timeout while trying to fetch ${_this4.url} (over ${_this4.timeout}ms)`, 'body-timeout'));
+			}, _this4.timeout);
+		}
+
+		// handle stream errors
+		body.on('error', function (err) {
+			if (err.name === 'AbortError') {
+				// if the request was aborted, reject with this Error
+				abort = true;
+				reject(err);
+			} else {
+				// other errors, such as incorrect content-encoding
+				reject(new FetchError(`Invalid response body while trying to fetch ${_this4.url}: ${err.message}`, 'system', err));
+			}
+		});
+
+		body.on('data', function (chunk) {
+			if (abort || chunk === null) {
+				return;
+			}
+
+			if (_this4.size && accumBytes + chunk.length > _this4.size) {
+				abort = true;
+				reject(new FetchError(`content size at ${_this4.url} over limit: ${_this4.size}`, 'max-size'));
+				return;
+			}
+
+			accumBytes += chunk.length;
+			accum.push(chunk);
+		});
+
+		body.on('end', function () {
+			if (abort) {
+				return;
+			}
+
+			clearTimeout(resTimeout);
+
+			try {
+				resolve(Buffer.concat(accum, accumBytes));
+			} catch (err) {
+				// handle streams that have accumulated too much data (issue #414)
+				reject(new FetchError(`Could not create Buffer from response body for ${_this4.url}: ${err.message}`, 'system', err));
+			}
+		});
+	});
+}
+
+/**
+ * Detect buffer encoding and convert to target encoding
+ * ref: http://www.w3.org/TR/2011/WD-html5-20110113/parsing.html#determining-the-character-encoding
+ *
+ * @param   Buffer  buffer    Incoming buffer
+ * @param   String  encoding  Target encoding
+ * @return  String
+ */
+function convertBody(buffer, headers) {
+	if (typeof convert !== 'function') {
+		throw new Error('The package `encoding` must be installed to use the textConverted() function');
+	}
+
+	const ct = headers.get('content-type');
+	let charset = 'utf-8';
+	let res, str;
+
+	// header
+	if (ct) {
+		res = /charset=([^;]*)/i.exec(ct);
+	}
+
+	// no charset in content type, peek at response body for at most 1024 bytes
+	str = buffer.slice(0, 1024).toString();
+
+	// html5
+	if (!res && str) {
+		res = /<meta.+?charset=(['"])(.+?)\1/i.exec(str);
+	}
+
+	// html4
+	if (!res && str) {
+		res = /<meta[\s]+?http-equiv=(['"])content-type\1[\s]+?content=(['"])(.+?)\2/i.exec(str);
+		if (!res) {
+			res = /<meta[\s]+?content=(['"])(.+?)\1[\s]+?http-equiv=(['"])content-type\3/i.exec(str);
+			if (res) {
+				res.pop(); // drop last quote
+			}
+		}
+
+		if (res) {
+			res = /charset=(.*)/i.exec(res.pop());
+		}
+	}
+
+	// xml
+	if (!res && str) {
+		res = /<\?xml.+?encoding=(['"])(.+?)\1/i.exec(str);
+	}
+
+	// found charset
+	if (res) {
+		charset = res.pop();
+
+		// prevent decode issues when sites use incorrect encoding
+		// ref: https://hsivonen.fi/encoding-menu/
+		if (charset === 'gb2312' || charset === 'gbk') {
+			charset = 'gb18030';
+		}
+	}
+
+	// turn raw buffers into a single utf-8 buffer
+	return convert(buffer, 'UTF-8', charset).toString();
+}
+
+/**
+ * Detect a URLSearchParams object
+ * ref: https://github.com/bitinn/node-fetch/issues/296#issuecomment-307598143
+ *
+ * @param   Object  obj     Object to detect by type or brand
+ * @return  String
+ */
+function isURLSearchParams(obj) {
+	// Duck-typing as a necessary condition.
+	if (typeof obj !== 'object' || typeof obj.append !== 'function' || typeof obj.delete !== 'function' || typeof obj.get !== 'function' || typeof obj.getAll !== 'function' || typeof obj.has !== 'function' || typeof obj.set !== 'function') {
+		return false;
+	}
+
+	// Brand-checking and more duck-typing as optional condition.
+	return obj.constructor.name === 'URLSearchParams' || Object.prototype.toString.call(obj) === '[object URLSearchParams]' || typeof obj.sort === 'function';
+}
+
+/**
+ * Check if `obj` is a W3C `Blob` object (which `File` inherits from)
+ * @param  {*} obj
+ * @return {boolean}
+ */
+function isBlob(obj) {
+	return typeof obj === 'object' && typeof obj.arrayBuffer === 'function' && typeof obj.type === 'string' && typeof obj.stream === 'function' && typeof obj.constructor === 'function' && typeof obj.constructor.name === 'string' && /^(Blob|File)$/.test(obj.constructor.name) && /^(Blob|File)$/.test(obj[Symbol.toStringTag]);
+}
+
+/**
+ * Clone body given Res/Req instance
+ *
+ * @param   Mixed  instance  Response or Request instance
+ * @return  Mixed
+ */
+function clone(instance) {
+	let p1, p2;
+	let body = instance.body;
+
+	// don't allow cloning a used body
+	if (instance.bodyUsed) {
+		throw new Error('cannot clone body after it is used');
+	}
+
+	// check that body is a stream and not form-data object
+	// note: we can't clone the form-data object without having it as a dependency
+	if (body instanceof external_stream_namespaceObject && typeof body.getBoundary !== 'function') {
+		// tee instance body
+		p1 = new PassThrough();
+		p2 = new PassThrough();
+		body.pipe(p1);
+		body.pipe(p2);
+		// set instance body to teed body and return the other teed body
+		instance[INTERNALS].body = p1;
+		body = p2;
+	}
+
+	return body;
+}
+
+/**
+ * Performs the operation "extract a `Content-Type` value from |object|" as
+ * specified in the specification:
+ * https://fetch.spec.whatwg.org/#concept-bodyinit-extract
+ *
+ * This function assumes that instance.body is present.
+ *
+ * @param   Mixed  instance  Any options.body input
+ */
+function extractContentType(body) {
+	if (body === null) {
+		// body is null
+		return null;
+	} else if (typeof body === 'string') {
+		// body is string
+		return 'text/plain;charset=UTF-8';
+	} else if (isURLSearchParams(body)) {
+		// body is a URLSearchParams
+		return 'application/x-www-form-urlencoded;charset=UTF-8';
+	} else if (isBlob(body)) {
+		// body is blob
+		return body.type || null;
+	} else if (Buffer.isBuffer(body)) {
+		// body is buffer
+		return null;
+	} else if (Object.prototype.toString.call(body) === '[object ArrayBuffer]') {
+		// body is ArrayBuffer
+		return null;
+	} else if (ArrayBuffer.isView(body)) {
+		// body is ArrayBufferView
+		return null;
+	} else if (typeof body.getBoundary === 'function') {
+		// detect form data input from form-data module
+		return `multipart/form-data;boundary=${body.getBoundary()}`;
+	} else if (body instanceof external_stream_namespaceObject) {
+		// body is stream
+		// can't really do much about this
+		return null;
+	} else {
+		// Body constructor defaults other things to string
+		return 'text/plain;charset=UTF-8';
+	}
+}
+
+/**
+ * The Fetch Standard treats this as if "total bytes" is a property on the body.
+ * For us, we have to explicitly get it with a function.
+ *
+ * ref: https://fetch.spec.whatwg.org/#concept-body-total-bytes
+ *
+ * @param   Body    instance   Instance of Body
+ * @return  Number?            Number of bytes, or null if not possible
+ */
+function getTotalBytes(instance) {
+	const body = instance.body;
+
+
+	if (body === null) {
+		// body is null
+		return 0;
+	} else if (isBlob(body)) {
+		return body.size;
+	} else if (Buffer.isBuffer(body)) {
+		// body is buffer
+		return body.length;
+	} else if (body && typeof body.getLengthSync === 'function') {
+		// detect form data input from form-data module
+		if (body._lengthRetrievers && body._lengthRetrievers.length == 0 || // 1.x
+		body.hasKnownLength && body.hasKnownLength()) {
+			// 2.x
+			return body.getLengthSync();
+		}
+		return null;
+	} else {
+		// body is stream
+		return null;
+	}
+}
+
+/**
+ * Write a Body to a Node.js WritableStream (e.g. http.Request) object.
+ *
+ * @param   Body    instance   Instance of Body
+ * @return  Void
+ */
+function writeToStream(dest, instance) {
+	const body = instance.body;
+
+
+	if (body === null) {
+		// body is null
+		dest.end();
+	} else if (isBlob(body)) {
+		body.stream().pipe(dest);
+	} else if (Buffer.isBuffer(body)) {
+		// body is buffer
+		dest.write(body);
+		dest.end();
+	} else {
+		// body is stream
+		body.pipe(dest);
+	}
+}
+
+// expose Promise
+Body.Promise = global.Promise;
+
+/**
+ * headers.js
+ *
+ * Headers class offers convenient helpers
+ */
+
+const invalidTokenRegex = /[^\^_`a-zA-Z\-0-9!#$%&'*+.|~]/;
+const invalidHeaderCharRegex = /[^\t\x20-\x7e\x80-\xff]/;
+
+function validateName(name) {
+	name = `${name}`;
+	if (invalidTokenRegex.test(name) || name === '') {
+		throw new TypeError(`${name} is not a legal HTTP header name`);
+	}
+}
+
+function validateValue(value) {
+	value = `${value}`;
+	if (invalidHeaderCharRegex.test(value)) {
+		throw new TypeError(`${value} is not a legal HTTP header value`);
+	}
+}
+
+/**
+ * Find the key in the map object given a header name.
+ *
+ * Returns undefined if not found.
+ *
+ * @param   String  name  Header name
+ * @return  String|Undefined
+ */
+function find(map, name) {
+	name = name.toLowerCase();
+	for (const key in map) {
+		if (key.toLowerCase() === name) {
+			return key;
+		}
+	}
+	return undefined;
+}
+
+const MAP = Symbol('map');
+class Headers {
+	/**
+  * Headers class
+  *
+  * @param   Object  headers  Response headers
+  * @return  Void
+  */
+	constructor() {
+		let init = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
+		this[MAP] = Object.create(null);
+
+		if (init instanceof Headers) {
+			const rawHeaders = init.raw();
+			const headerNames = Object.keys(rawHeaders);
+
+			for (const headerName of headerNames) {
+				for (const value of rawHeaders[headerName]) {
+					this.append(headerName, value);
+				}
+			}
+
+			return;
+		}
+
+		// We don't worry about converting prop to ByteString here as append()
+		// will handle it.
+		if (init == null) ; else if (typeof init === 'object') {
+			const method = init[Symbol.iterator];
+			if (method != null) {
+				if (typeof method !== 'function') {
+					throw new TypeError('Header pairs must be iterable');
+				}
+
+				// sequence<sequence<ByteString>>
+				// Note: per spec we have to first exhaust the lists then process them
+				const pairs = [];
+				for (const pair of init) {
+					if (typeof pair !== 'object' || typeof pair[Symbol.iterator] !== 'function') {
+						throw new TypeError('Each header pair must be iterable');
+					}
+					pairs.push(Array.from(pair));
+				}
+
+				for (const pair of pairs) {
+					if (pair.length !== 2) {
+						throw new TypeError('Each header pair must be a name/value tuple');
+					}
+					this.append(pair[0], pair[1]);
+				}
+			} else {
+				// record<ByteString, ByteString>
+				for (const key of Object.keys(init)) {
+					const value = init[key];
+					this.append(key, value);
+				}
+			}
+		} else {
+			throw new TypeError('Provided initializer must be an object');
+		}
+	}
+
+	/**
+  * Return combined header value given name
+  *
+  * @param   String  name  Header name
+  * @return  Mixed
+  */
+	get(name) {
+		name = `${name}`;
+		validateName(name);
+		const key = find(this[MAP], name);
+		if (key === undefined) {
+			return null;
+		}
+
+		return this[MAP][key].join(', ');
+	}
+
+	/**
+  * Iterate over all headers
+  *
+  * @param   Function  callback  Executed for each item with parameters (value, name, thisArg)
+  * @param   Boolean   thisArg   `this` context for callback function
+  * @return  Void
+  */
+	forEach(callback) {
+		let thisArg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
+		let pairs = getHeaders(this);
+		let i = 0;
+		while (i < pairs.length) {
+			var _pairs$i = pairs[i];
+			const name = _pairs$i[0],
+			      value = _pairs$i[1];
+
+			callback.call(thisArg, value, name, this);
+			pairs = getHeaders(this);
+			i++;
+		}
+	}
+
+	/**
+  * Overwrite header values given name
+  *
+  * @param   String  name   Header name
+  * @param   String  value  Header value
+  * @return  Void
+  */
+	set(name, value) {
+		name = `${name}`;
+		value = `${value}`;
+		validateName(name);
+		validateValue(value);
+		const key = find(this[MAP], name);
+		this[MAP][key !== undefined ? key : name] = [value];
+	}
+
+	/**
+  * Append a value onto existing header
+  *
+  * @param   String  name   Header name
+  * @param   String  value  Header value
+  * @return  Void
+  */
+	append(name, value) {
+		name = `${name}`;
+		value = `${value}`;
+		validateName(name);
+		validateValue(value);
+		const key = find(this[MAP], name);
+		if (key !== undefined) {
+			this[MAP][key].push(value);
+		} else {
+			this[MAP][name] = [value];
+		}
+	}
+
+	/**
+  * Check for header name existence
+  *
+  * @param   String   name  Header name
+  * @return  Boolean
+  */
+	has(name) {
+		name = `${name}`;
+		validateName(name);
+		return find(this[MAP], name) !== undefined;
+	}
+
+	/**
+  * Delete all header values given name
+  *
+  * @param   String  name  Header name
+  * @return  Void
+  */
+	delete(name) {
+		name = `${name}`;
+		validateName(name);
+		const key = find(this[MAP], name);
+		if (key !== undefined) {
+			delete this[MAP][key];
+		}
+	}
+
+	/**
+  * Return raw headers (non-spec api)
+  *
+  * @return  Object
+  */
+	raw() {
+		return this[MAP];
+	}
+
+	/**
+  * Get an iterator on keys.
+  *
+  * @return  Iterator
+  */
+	keys() {
+		return createHeadersIterator(this, 'key');
+	}
+
+	/**
+  * Get an iterator on values.
+  *
+  * @return  Iterator
+  */
+	values() {
+		return createHeadersIterator(this, 'value');
+	}
+
+	/**
+  * Get an iterator on entries.
+  *
+  * This is the default iterator of the Headers object.
+  *
+  * @return  Iterator
+  */
+	[Symbol.iterator]() {
+		return createHeadersIterator(this, 'key+value');
+	}
+}
+Headers.prototype.entries = Headers.prototype[Symbol.iterator];
+
+Object.defineProperty(Headers.prototype, Symbol.toStringTag, {
+	value: 'Headers',
+	writable: false,
+	enumerable: false,
+	configurable: true
+});
+
+Object.defineProperties(Headers.prototype, {
+	get: { enumerable: true },
+	forEach: { enumerable: true },
+	set: { enumerable: true },
+	append: { enumerable: true },
+	has: { enumerable: true },
+	delete: { enumerable: true },
+	keys: { enumerable: true },
+	values: { enumerable: true },
+	entries: { enumerable: true }
+});
+
+function getHeaders(headers) {
+	let kind = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'key+value';
+
+	const keys = Object.keys(headers[MAP]).sort();
+	return keys.map(kind === 'key' ? function (k) {
+		return k.toLowerCase();
+	} : kind === 'value' ? function (k) {
+		return headers[MAP][k].join(', ');
+	} : function (k) {
+		return [k.toLowerCase(), headers[MAP][k].join(', ')];
+	});
+}
+
+const INTERNAL = Symbol('internal');
+
+function createHeadersIterator(target, kind) {
+	const iterator = Object.create(HeadersIteratorPrototype);
+	iterator[INTERNAL] = {
+		target,
+		kind,
+		index: 0
+	};
+	return iterator;
+}
+
+const HeadersIteratorPrototype = Object.setPrototypeOf({
+	next() {
+		// istanbul ignore if
+		if (!this || Object.getPrototypeOf(this) !== HeadersIteratorPrototype) {
+			throw new TypeError('Value of `this` is not a HeadersIterator');
+		}
+
+		var _INTERNAL = this[INTERNAL];
+		const target = _INTERNAL.target,
+		      kind = _INTERNAL.kind,
+		      index = _INTERNAL.index;
+
+		const values = getHeaders(target, kind);
+		const len = values.length;
+		if (index >= len) {
+			return {
+				value: undefined,
+				done: true
+			};
+		}
+
+		this[INTERNAL].index = index + 1;
+
+		return {
+			value: values[index],
+			done: false
+		};
+	}
+}, Object.getPrototypeOf(Object.getPrototypeOf([][Symbol.iterator]())));
+
+Object.defineProperty(HeadersIteratorPrototype, Symbol.toStringTag, {
+	value: 'HeadersIterator',
+	writable: false,
+	enumerable: false,
+	configurable: true
+});
+
+/**
+ * Export the Headers object in a form that Node.js can consume.
+ *
+ * @param   Headers  headers
+ * @return  Object
+ */
+function exportNodeCompatibleHeaders(headers) {
+	const obj = Object.assign({ __proto__: null }, headers[MAP]);
+
+	// http.request() only supports string as Host header. This hack makes
+	// specifying custom Host header possible.
+	const hostHeaderKey = find(headers[MAP], 'Host');
+	if (hostHeaderKey !== undefined) {
+		obj[hostHeaderKey] = obj[hostHeaderKey][0];
+	}
+
+	return obj;
+}
+
+/**
+ * Create a Headers object from an object of headers, ignoring those that do
+ * not conform to HTTP grammar productions.
+ *
+ * @param   Object  obj  Object of headers
+ * @return  Headers
+ */
+function createHeadersLenient(obj) {
+	const headers = new Headers();
+	for (const name of Object.keys(obj)) {
+		if (invalidTokenRegex.test(name)) {
+			continue;
+		}
+		if (Array.isArray(obj[name])) {
+			for (const val of obj[name]) {
+				if (invalidHeaderCharRegex.test(val)) {
+					continue;
+				}
+				if (headers[MAP][name] === undefined) {
+					headers[MAP][name] = [val];
+				} else {
+					headers[MAP][name].push(val);
+				}
+			}
+		} else if (!invalidHeaderCharRegex.test(obj[name])) {
+			headers[MAP][name] = [obj[name]];
+		}
+	}
+	return headers;
+}
+
+const INTERNALS$1 = Symbol('Response internals');
+
+// fix an issue where "STATUS_CODES" aren't a named export for node <10
+const STATUS_CODES = external_http_namespaceObject.STATUS_CODES;
+
+/**
+ * Response class
+ *
+ * @param   Stream  body  Readable stream
+ * @param   Object  opts  Response options
+ * @return  Void
+ */
+class Response {
+	constructor() {
+		let body = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+		let opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+		Body.call(this, body, opts);
+
+		const status = opts.status || 200;
+		const headers = new Headers(opts.headers);
+
+		if (body != null && !headers.has('Content-Type')) {
+			const contentType = extractContentType(body);
+			if (contentType) {
+				headers.append('Content-Type', contentType);
+			}
+		}
+
+		this[INTERNALS$1] = {
+			url: opts.url,
+			status,
+			statusText: opts.statusText || STATUS_CODES[status],
+			headers,
+			counter: opts.counter
+		};
+	}
+
+	get url() {
+		return this[INTERNALS$1].url || '';
+	}
+
+	get status() {
+		return this[INTERNALS$1].status;
+	}
+
+	/**
+  * Convenience property representing if the request ended normally
+  */
+	get ok() {
+		return this[INTERNALS$1].status >= 200 && this[INTERNALS$1].status < 300;
+	}
+
+	get redirected() {
+		return this[INTERNALS$1].counter > 0;
+	}
+
+	get statusText() {
+		return this[INTERNALS$1].statusText;
+	}
+
+	get headers() {
+		return this[INTERNALS$1].headers;
+	}
+
+	/**
+  * Clone this response
+  *
+  * @return  Response
+  */
+	clone() {
+		return new Response(clone(this), {
+			url: this.url,
+			status: this.status,
+			statusText: this.statusText,
+			headers: this.headers,
+			ok: this.ok,
+			redirected: this.redirected
+		});
+	}
+}
+
+Body.mixIn(Response.prototype);
+
+Object.defineProperties(Response.prototype, {
+	url: { enumerable: true },
+	status: { enumerable: true },
+	ok: { enumerable: true },
+	redirected: { enumerable: true },
+	statusText: { enumerable: true },
+	headers: { enumerable: true },
+	clone: { enumerable: true }
+});
+
+Object.defineProperty(Response.prototype, Symbol.toStringTag, {
+	value: 'Response',
+	writable: false,
+	enumerable: false,
+	configurable: true
+});
+
+const INTERNALS$2 = Symbol('Request internals');
+
+// fix an issue where "format", "parse" aren't a named export for node <10
+const parse_url = external_url_namespaceObject.parse;
+const format_url = external_url_namespaceObject.format;
+
+const streamDestructionSupported = 'destroy' in external_stream_namespaceObject.Readable.prototype;
+
+/**
+ * Check if a value is an instance of Request.
+ *
+ * @param   Mixed   input
+ * @return  Boolean
+ */
+function isRequest(input) {
+	return typeof input === 'object' && typeof input[INTERNALS$2] === 'object';
+}
+
+function isAbortSignal(signal) {
+	const proto = signal && typeof signal === 'object' && Object.getPrototypeOf(signal);
+	return !!(proto && proto.constructor.name === 'AbortSignal');
+}
+
+/**
+ * Request class
+ *
+ * @param   Mixed   input  Url or Request instance
+ * @param   Object  init   Custom options
+ * @return  Void
+ */
+class Request {
+	constructor(input) {
+		let init = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+		let parsedURL;
+
+		// normalize input
+		if (!isRequest(input)) {
+			if (input && input.href) {
+				// in order to support Node.js' Url objects; though WHATWG's URL objects
+				// will fall into this branch also (since their `toString()` will return
+				// `href` property anyway)
+				parsedURL = parse_url(input.href);
+			} else {
+				// coerce input to a string before attempting to parse
+				parsedURL = parse_url(`${input}`);
+			}
+			input = {};
+		} else {
+			parsedURL = parse_url(input.url);
+		}
+
+		let method = init.method || input.method || 'GET';
+		method = method.toUpperCase();
+
+		if ((init.body != null || isRequest(input) && input.body !== null) && (method === 'GET' || method === 'HEAD')) {
+			throw new TypeError('Request with GET/HEAD method cannot have body');
+		}
+
+		let inputBody = init.body != null ? init.body : isRequest(input) && input.body !== null ? clone(input) : null;
+
+		Body.call(this, inputBody, {
+			timeout: init.timeout || input.timeout || 0,
+			size: init.size || input.size || 0
+		});
+
+		const headers = new Headers(init.headers || input.headers || {});
+
+		if (inputBody != null && !headers.has('Content-Type')) {
+			const contentType = extractContentType(inputBody);
+			if (contentType) {
+				headers.append('Content-Type', contentType);
+			}
+		}
+
+		let signal = isRequest(input) ? input.signal : null;
+		if ('signal' in init) signal = init.signal;
+
+		if (signal != null && !isAbortSignal(signal)) {
+			throw new TypeError('Expected signal to be an instanceof AbortSignal');
+		}
+
+		this[INTERNALS$2] = {
+			method,
+			redirect: init.redirect || input.redirect || 'follow',
+			headers,
+			parsedURL,
+			signal
+		};
+
+		// node-fetch-only options
+		this.follow = init.follow !== undefined ? init.follow : input.follow !== undefined ? input.follow : 20;
+		this.compress = init.compress !== undefined ? init.compress : input.compress !== undefined ? input.compress : true;
+		this.counter = init.counter || input.counter || 0;
+		this.agent = init.agent || input.agent;
+	}
+
+	get method() {
+		return this[INTERNALS$2].method;
+	}
+
+	get url() {
+		return format_url(this[INTERNALS$2].parsedURL);
+	}
+
+	get headers() {
+		return this[INTERNALS$2].headers;
+	}
+
+	get redirect() {
+		return this[INTERNALS$2].redirect;
+	}
+
+	get signal() {
+		return this[INTERNALS$2].signal;
+	}
+
+	/**
+  * Clone this request
+  *
+  * @return  Request
+  */
+	clone() {
+		return new Request(this);
+	}
+}
+
+Body.mixIn(Request.prototype);
+
+Object.defineProperty(Request.prototype, Symbol.toStringTag, {
+	value: 'Request',
+	writable: false,
+	enumerable: false,
+	configurable: true
+});
+
+Object.defineProperties(Request.prototype, {
+	method: { enumerable: true },
+	url: { enumerable: true },
+	headers: { enumerable: true },
+	redirect: { enumerable: true },
+	clone: { enumerable: true },
+	signal: { enumerable: true }
+});
+
+/**
+ * Convert a Request to Node.js http request options.
+ *
+ * @param   Request  A Request instance
+ * @return  Object   The options object to be passed to http.request
+ */
+function getNodeRequestOptions(request) {
+	const parsedURL = request[INTERNALS$2].parsedURL;
+	const headers = new Headers(request[INTERNALS$2].headers);
+
+	// fetch step 1.3
+	if (!headers.has('Accept')) {
+		headers.set('Accept', '*/*');
+	}
+
+	// Basic fetch
+	if (!parsedURL.protocol || !parsedURL.hostname) {
+		throw new TypeError('Only absolute URLs are supported');
+	}
+
+	if (!/^https?:$/.test(parsedURL.protocol)) {
+		throw new TypeError('Only HTTP(S) protocols are supported');
+	}
+
+	if (request.signal && request.body instanceof external_stream_namespaceObject.Readable && !streamDestructionSupported) {
+		throw new Error('Cancellation of streamed requests with AbortSignal is not supported in node < 8');
+	}
+
+	// HTTP-network-or-cache fetch steps 2.4-2.7
+	let contentLengthValue = null;
+	if (request.body == null && /^(POST|PUT)$/i.test(request.method)) {
+		contentLengthValue = '0';
+	}
+	if (request.body != null) {
+		const totalBytes = getTotalBytes(request);
+		if (typeof totalBytes === 'number') {
+			contentLengthValue = String(totalBytes);
+		}
+	}
+	if (contentLengthValue) {
+		headers.set('Content-Length', contentLengthValue);
+	}
+
+	// HTTP-network-or-cache fetch step 2.11
+	if (!headers.has('User-Agent')) {
+		headers.set('User-Agent', 'node-fetch/1.0 (+https://github.com/bitinn/node-fetch)');
+	}
+
+	// HTTP-network-or-cache fetch step 2.15
+	if (request.compress && !headers.has('Accept-Encoding')) {
+		headers.set('Accept-Encoding', 'gzip,deflate');
+	}
+
+	let agent = request.agent;
+	if (typeof agent === 'function') {
+		agent = agent(parsedURL);
+	}
+
+	if (!headers.has('Connection') && !agent) {
+		headers.set('Connection', 'close');
+	}
+
+	// HTTP-network fetch step 4.2
+	// chunked encoding is handled by Node.js
+
+	return Object.assign({}, parsedURL, {
+		method: request.method,
+		headers: exportNodeCompatibleHeaders(headers),
+		agent
+	});
+}
+
+/**
+ * abort-error.js
+ *
+ * AbortError interface for cancelled requests
+ */
+
+/**
+ * Create AbortError instance
+ *
+ * @param   String      message      Error message for human
+ * @return  AbortError
+ */
+function AbortError(message) {
+  Error.call(this, message);
+
+  this.type = 'aborted';
+  this.message = message;
+
+  // hide custom error implementation details from end-users
+  Error.captureStackTrace(this, this.constructor);
+}
+
+AbortError.prototype = Object.create(Error.prototype);
+AbortError.prototype.constructor = AbortError;
+AbortError.prototype.name = 'AbortError';
+
+// fix an issue where "PassThrough", "resolve" aren't a named export for node <10
+const PassThrough$1 = external_stream_namespaceObject.PassThrough;
+const resolve_url = external_url_namespaceObject.resolve;
+
+/**
+ * Fetch function
+ *
+ * @param   Mixed    url   Absolute url or Request instance
+ * @param   Object   opts  Fetch options
+ * @return  Promise
+ */
+function fetch(url, opts) {
+
+	// allow custom promise
+	if (!fetch.Promise) {
+		throw new Error('native promise missing, set fetch.Promise to your favorite alternative');
+	}
+
+	Body.Promise = fetch.Promise;
+
+	// wrap http.request into fetch
+	return new fetch.Promise(function (resolve, reject) {
+		// build request object
+		const request = new Request(url, opts);
+		const options = getNodeRequestOptions(request);
+
+		const send = (options.protocol === 'https:' ? external_https_namespaceObject : external_http_namespaceObject).request;
+		const signal = request.signal;
+
+		let response = null;
+
+		const abort = function abort() {
+			let error = new AbortError('The user aborted a request.');
+			reject(error);
+			if (request.body && request.body instanceof external_stream_namespaceObject.Readable) {
+				request.body.destroy(error);
+			}
+			if (!response || !response.body) return;
+			response.body.emit('error', error);
+		};
+
+		if (signal && signal.aborted) {
+			abort();
+			return;
+		}
+
+		const abortAndFinalize = function abortAndFinalize() {
+			abort();
+			finalize();
+		};
+
+		// send request
+		const req = send(options);
+		let reqTimeout;
+
+		if (signal) {
+			signal.addEventListener('abort', abortAndFinalize);
+		}
+
+		function finalize() {
+			req.abort();
+			if (signal) signal.removeEventListener('abort', abortAndFinalize);
+			clearTimeout(reqTimeout);
+		}
+
+		if (request.timeout) {
+			req.once('socket', function (socket) {
+				reqTimeout = setTimeout(function () {
+					reject(new FetchError(`network timeout at: ${request.url}`, 'request-timeout'));
+					finalize();
+				}, request.timeout);
+			});
+		}
+
+		req.on('error', function (err) {
+			reject(new FetchError(`request to ${request.url} failed, reason: ${err.message}`, 'system', err));
+			finalize();
+		});
+
+		req.on('response', function (res) {
+			clearTimeout(reqTimeout);
+
+			const headers = createHeadersLenient(res.headers);
+
+			// HTTP fetch step 5
+			if (fetch.isRedirect(res.statusCode)) {
+				// HTTP fetch step 5.2
+				const location = headers.get('Location');
+
+				// HTTP fetch step 5.3
+				const locationURL = location === null ? null : resolve_url(request.url, location);
+
+				// HTTP fetch step 5.5
+				switch (request.redirect) {
+					case 'error':
+						reject(new FetchError(`uri requested responds with a redirect, redirect mode is set to error: ${request.url}`, 'no-redirect'));
+						finalize();
+						return;
+					case 'manual':
+						// node-fetch-specific step: make manual redirect a bit easier to use by setting the Location header value to the resolved URL.
+						if (locationURL !== null) {
+							// handle corrupted header
+							try {
+								headers.set('Location', locationURL);
+							} catch (err) {
+								// istanbul ignore next: nodejs server prevent invalid response headers, we can't test this through normal request
+								reject(err);
+							}
+						}
+						break;
+					case 'follow':
+						// HTTP-redirect fetch step 2
+						if (locationURL === null) {
+							break;
+						}
+
+						// HTTP-redirect fetch step 5
+						if (request.counter >= request.follow) {
+							reject(new FetchError(`maximum redirect reached at: ${request.url}`, 'max-redirect'));
+							finalize();
+							return;
+						}
+
+						// HTTP-redirect fetch step 6 (counter increment)
+						// Create a new Request object.
+						const requestOpts = {
+							headers: new Headers(request.headers),
+							follow: request.follow,
+							counter: request.counter + 1,
+							agent: request.agent,
+							compress: request.compress,
+							method: request.method,
+							body: request.body,
+							signal: request.signal,
+							timeout: request.timeout,
+							size: request.size
+						};
+
+						// HTTP-redirect fetch step 9
+						if (res.statusCode !== 303 && request.body && getTotalBytes(request) === null) {
+							reject(new FetchError('Cannot follow redirect with body being a readable stream', 'unsupported-redirect'));
+							finalize();
+							return;
+						}
+
+						// HTTP-redirect fetch step 11
+						if (res.statusCode === 303 || (res.statusCode === 301 || res.statusCode === 302) && request.method === 'POST') {
+							requestOpts.method = 'GET';
+							requestOpts.body = undefined;
+							requestOpts.headers.delete('content-length');
+						}
+
+						// HTTP-redirect fetch step 15
+						resolve(fetch(new Request(locationURL, requestOpts)));
+						finalize();
+						return;
+				}
+			}
+
+			// prepare response
+			res.once('end', function () {
+				if (signal) signal.removeEventListener('abort', abortAndFinalize);
+			});
+			let body = res.pipe(new PassThrough$1());
+
+			const response_options = {
+				url: request.url,
+				status: res.statusCode,
+				statusText: res.statusMessage,
+				headers: headers,
+				size: request.size,
+				timeout: request.timeout,
+				counter: request.counter
+			};
+
+			// HTTP-network fetch step 12.1.1.3
+			const codings = headers.get('Content-Encoding');
+
+			// HTTP-network fetch step 12.1.1.4: handle content codings
+
+			// in following scenarios we ignore compression support
+			// 1. compression support is disabled
+			// 2. HEAD request
+			// 3. no Content-Encoding header
+			// 4. no content response (204)
+			// 5. content not modified response (304)
+			if (!request.compress || request.method === 'HEAD' || codings === null || res.statusCode === 204 || res.statusCode === 304) {
+				response = new Response(body, response_options);
+				resolve(response);
+				return;
+			}
+
+			// For Node v6+
+			// Be less strict when decoding compressed responses, since sometimes
+			// servers send slightly invalid responses that are still accepted
+			// by common browsers.
+			// Always using Z_SYNC_FLUSH is what cURL does.
+			const zlibOptions = {
+				flush: external_zlib_namespaceObject.Z_SYNC_FLUSH,
+				finishFlush: external_zlib_namespaceObject.Z_SYNC_FLUSH
+			};
+
+			// for gzip
+			if (codings == 'gzip' || codings == 'x-gzip') {
+				body = body.pipe(external_zlib_namespaceObject.createGunzip(zlibOptions));
+				response = new Response(body, response_options);
+				resolve(response);
+				return;
+			}
+
+			// for deflate
+			if (codings == 'deflate' || codings == 'x-deflate') {
+				// handle the infamous raw deflate response from old servers
+				// a hack for old IIS and Apache servers
+				const raw = res.pipe(new PassThrough$1());
+				raw.once('data', function (chunk) {
+					// see http://stackoverflow.com/questions/37519828
+					if ((chunk[0] & 0x0F) === 0x08) {
+						body = body.pipe(external_zlib_namespaceObject.createInflate());
+					} else {
+						body = body.pipe(external_zlib_namespaceObject.createInflateRaw());
+					}
+					response = new Response(body, response_options);
+					resolve(response);
+				});
+				return;
+			}
+
+			// for br
+			if (codings == 'br' && typeof external_zlib_namespaceObject.createBrotliDecompress === 'function') {
+				body = body.pipe(external_zlib_namespaceObject.createBrotliDecompress());
+				response = new Response(body, response_options);
+				resolve(response);
+				return;
+			}
+
+			// otherwise, use response as-is
+			response = new Response(body, response_options);
+			resolve(response);
+		});
+
+		writeToStream(req, request);
+	});
+}
+/**
+ * Redirect code matching
+ *
+ * @param   Number   code  Status code
+ * @return  Boolean
+ */
+fetch.isRedirect = function (code) {
+	return code === 301 || code === 302 || code === 303 || code === 307 || code === 308;
+};
+
+// expose Promise
+fetch.Promise = global.Promise;
+
+/* harmony default export */ const lib = (fetch);
+
+
+
+/***/ }),
+
+/***/ 525:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.HttpStatusCode = void 0;
+var HttpStatusCode;
+(function (HttpStatusCode) {
+    HttpStatusCode[HttpStatusCode["Ok"] = 200] = "Ok";
+    HttpStatusCode[HttpStatusCode["BadRequest"] = 400] = "BadRequest";
+})(HttpStatusCode = exports.HttpStatusCode || (exports.HttpStatusCode = {}));
+
+
+/***/ }),
+
+/***/ 869:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* export default binding */ __WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ function __WEBPACK_DEFAULT_EXPORT__(e,n){return n=n||{},new Promise(function(t,r){var s=new XMLHttpRequest,o=[],u=[],i={},a=function(){return{ok:2==(s.status/100|0),statusText:s.statusText,status:s.status,url:s.responseURL,text:function(){return Promise.resolve(s.responseText)},json:function(){return Promise.resolve(s.responseText).then(JSON.parse)},blob:function(){return Promise.resolve(new Blob([s.response]))},clone:a,headers:{keys:function(){return o},entries:function(){return u},get:function(e){return i[e.toLowerCase()]},has:function(e){return e.toLowerCase()in i}}}};for(var l in s.open(n.method||"get",e,!0),s.onload=function(){s.getAllResponseHeaders().replace(/^(.*?):[^\S\n]*([\s\S]*?)$/gm,function(e,n,t){o.push(n=n.toLowerCase()),u.push([n,t]),i[n]=i[n]?i[n]+","+t:t}),t(a())},s.onerror=r,s.withCredentials="include"==n.credentials,n.headers)s.setRequestHeader(l,n.headers[l]);s.send(n.body||null)})}
+//# sourceMappingURL=unfetch.module.js.map
+
+
+/***/ }),
+
+/***/ 417:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("crypto");;
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+(() => {
+"use strict";
+var exports = __webpack_exports__;
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.signUpNewUserHandler = void 0;
+const httpStatusCode_1 = __webpack_require__(525);
+const amazon_cognito_identity_js_1 = __webpack_require__(4);
+const poolData = {
+    UserPoolId: "us-east-1_etBRMChzv",
+    ClientId: "espsfilvarkr44put09u8e17l", // Your client id here
+};
+const userPool = new amazon_cognito_identity_js_1.CognitoUserPool(poolData);
+/**
+ * The purpose of this function is just to sign up new users (i.e. never have been added to the system). If
+ * a user would like to create another company and already exists on a company, the user will need to
+ * be authenticated so that we don't have to verify the passwords match.
+ */
+const signUpNewUserHandler = async (event) => {
+    if (!event.body) {
+        const noBodyResponse = JSON.stringify({
+            message: "No Body On Request",
+        });
+        return {
+            statusCode: httpStatusCode_1.HttpStatusCode.BadRequest,
+            body: noBodyResponse,
+        };
+    }
+    console.log("body exists");
+    try {
+        JSON.parse(event.body);
+    }
+    catch {
+        const bodyMustBeAnObjectResponse = JSON.stringify({
+            message: "Body must be an object",
+        });
+        return {
+            statusCode: httpStatusCode_1.HttpStatusCode.BadRequest,
+            body: bodyMustBeAnObjectResponse,
+        };
+    }
+    console.log("body is an object");
+    const { companyName, email, password, name } = JSON.parse(event.body);
+    if (!companyName || !email || !password || !name) {
+        const requiredFieldsNotProvidedResponse = JSON.stringify({
+            message: "companyName, email, name, and password are required fields",
+        });
+        return {
+            statusCode: httpStatusCode_1.HttpStatusCode.BadRequest,
+            body: requiredFieldsNotProvidedResponse,
+        };
+    }
+    console.log("all required fields are provided");
+    const attributeList = [];
+    attributeList.push(new amazon_cognito_identity_js_1.CognitoUserAttribute({
+        Name: "name",
+        Value: name,
+    }));
+    let userSignUpResponse = null;
+    let signUpResultFromCallback;
+    let callbackComplete = false;
+    const callback = (error, signUpResult) => {
+        if (error) {
+            userSignUpResponse = {
+                statusCode: httpStatusCode_1.HttpStatusCode.BadRequest,
+                body: JSON.stringify({
+                    message: error.message,
+                }),
+            };
+        }
+        signUpResultFromCallback = signUpResult;
+        callbackComplete = true;
+    };
+    userPool.signUp(email, password, attributeList, [], callback);
+    while (!callbackComplete) {
+        await new Promise((resolve) => {
+            setTimeout(() => {
+                resolve();
+            }, 20);
+        });
+    }
+    console.log("sign up completed successfully");
+    if (userSignUpResponse !== null) {
+        console.log("issue with user signup: ", userSignUpResponse.body);
+        return userSignUpResponse;
+    }
+    return {
+        statusCode: httpStatusCode_1.HttpStatusCode.Ok,
+        body: JSON.stringify({
+            message: "Got pretty far on this one right?",
+        }),
+    };
+    // if they are successfully created, go ahead and create the company and the user in dynamo db
+};
+exports.signUpNewUserHandler = signUpNewUserHandler;
+
+})();
+
+/******/ 	return __webpack_exports__;
+/******/ })()
+;
+});
