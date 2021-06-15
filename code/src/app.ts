@@ -1,12 +1,17 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { HttpStatusCode } from "./models/httpStatusCode";
-import * as AWSCognitoIdentity from "amazon-cognito-identity-js";
+import {
+    CognitoUserPool,
+    CognitoUserAttribute,
+    ISignUpResult,
+    NodeCallback,
+} from "amazon-cognito-identity-js";
 
 const poolData = {
     UserPoolId: "us-east-1_etBRMChzv", // Your user pool id here
     ClientId: "espsfilvarkr44put09u8e17l", // Your client id here
 };
-const userPool = new AWSCognitoIdentity.CognitoUserPool(poolData);
+const userPool = new CognitoUserPool(poolData);
 
 /**
  * The purpose of this function is just to sign up new users (i.e. never have been added to the system). If
@@ -59,20 +64,20 @@ export const signUpNewUserHandler = async (
 
     const attributeList = [];
     attributeList.push(
-        new AWSCognitoIdentity.CognitoUserAttribute({
+        new CognitoUserAttribute({
             Name: "name",
             Value: name,
         })
     );
 
     let userSignUpResponse: null | APIGatewayProxyResult = null;
-    let signUpResultFromCallback: AWSCognitoIdentity.ISignUpResult;
+    let signUpResultFromCallback: ISignUpResult;
     let callbackComplete = false;
 
-    const callback: AWSCognitoIdentity.NodeCallback<
-        Error,
-        AWSCognitoIdentity.ISignUpResult
-    > = (error, signUpResult) => {
+    const callback: NodeCallback<Error, ISignUpResult> = (
+        error,
+        signUpResult
+    ) => {
         if (error) {
             userSignUpResponse = {
                 statusCode: HttpStatusCode.BadRequest,

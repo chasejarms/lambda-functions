@@ -1,6 +1,9 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: Functions for the elastic project management application.
+Globals:
+    Function:
+        CodeUri: code/built
 Resources:
     ProdPubliclyAccessibleApi:
         Type: AWS::Serverless::Api
@@ -20,6 +23,7 @@ Resources:
                             Ref: ProdPubliclyAccessibleApi
             Runtime: nodejs14.x
             Handler: app.signUpNewUserHandler
+            FunctionName: SignUpNewUser
 Outputs:
     SignUpNewUserApi:
         Description: "API Gateway endpoint URL for Prod"
