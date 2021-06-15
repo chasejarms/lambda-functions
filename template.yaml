@@ -7,7 +7,6 @@ Resources:
         Properties:
             StageName: Prod
             Name: Prod Publicly Accessible Api
-            Cors: "'*'"
     ApiFunction:
         Type: AWS::Serverless::Function
         Properties:

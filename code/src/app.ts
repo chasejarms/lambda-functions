@@ -26,6 +26,7 @@ export const signUpNewUserHandler = async (
             body: noBodyResponse,
         };
     }
+    console.log("body exists");
 
     try {
         JSON.parse(event.body);
@@ -39,6 +40,7 @@ export const signUpNewUserHandler = async (
             body: bodyMustBeAnObjectResponse,
         };
     }
+    console.log("body is an object");
 
     const { companyName, email, password, name } = JSON.parse(event.body);
 
@@ -53,6 +55,7 @@ export const signUpNewUserHandler = async (
             body: requiredFieldsNotProvidedResponse,
         };
     }
+    console.log("all required fields are provided");
 
     const attributeList = [];
     attributeList.push(
@@ -92,8 +95,10 @@ export const signUpNewUserHandler = async (
             }, 20);
         });
     }
+    console.log("sign up completed successfully");
 
     if (userSignUpResponse !== null) {
+        console.log("issue with user signup: ", userSignUpResponse.body);
         return userSignUpResponse;
     }
 
