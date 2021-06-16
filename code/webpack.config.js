@@ -2,9 +2,15 @@ const path = require("path");
 const glob = require("glob");
 
 module.exports = {
-    entry: "./src/functions/index.ts",
+    entry: glob.sync("./src/functions/**/index.ts").reduce((acc, path) => {
+        const pathSplitOnBackslashes = path.split("/");
+        const secondToLastIndex = pathSplitOnBackslashes.length - 2;
+        const fileName = pathSplitOnBackslashes[secondToLastIndex];
+        acc[fileName] = path;
+        return acc;
+    }, {}),
     output: {
-        filename: "app.js",
+        filename: "./[name].js",
         path: path.resolve(__dirname, "built"),
         clean: true,
         libraryTarget: "umd",

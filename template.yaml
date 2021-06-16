@@ -22,7 +22,7 @@ Resources:
                         RestApiId:
                             Ref: ProdPubliclyAccessibleApi
             Runtime: nodejs14.x
-            Handler: app.signUpNewUserHandler
+            Handler: signUpNewUser.signUpNewUser
             FunctionName: SignUpNewUser
 Outputs:
     SignUpNewUserApi:

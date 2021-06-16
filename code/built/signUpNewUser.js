@@ -8100,106 +8100,6 @@ fetch.Promise = global.Promise;
 
 /***/ }),
 
-/***/ 938:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.signUpNewUser = void 0;
-const httpStatusCode_1 = __webpack_require__(525);
-const amazon_cognito_identity_js_1 = __webpack_require__(4);
-const poolData = {
-    UserPoolId: "us-east-1_etBRMChzv",
-    ClientId: "espsfilvarkr44put09u8e17l", // Your client id here
-};
-const userPool = new amazon_cognito_identity_js_1.CognitoUserPool(poolData);
-/**
- * The purpose of this function is just to sign up new users (i.e. never have been added to the system). If
- * a user would like to create another company and already exists on a company, the user will need to
- * be authenticated so that we don't have to verify the passwords match.
- */
-const signUpNewUser = async (event) => {
-    if (!event.body) {
-        const noBodyResponse = JSON.stringify({
-            message: "No Body On Request",
-        });
-        return {
-            statusCode: httpStatusCode_1.HttpStatusCode.BadRequest,
-            body: noBodyResponse,
-        };
-    }
-    console.log("body exists");
-    try {
-        JSON.parse(event.body);
-    }
-    catch {
-        const bodyMustBeAnObjectResponse = JSON.stringify({
-            message: "Body must be an object",
-        });
-        return {
-            statusCode: httpStatusCode_1.HttpStatusCode.BadRequest,
-            body: bodyMustBeAnObjectResponse,
-        };
-    }
-    console.log("body is an object");
-    const { companyName, email, password, name } = JSON.parse(event.body);
-    if (!companyName || !email || !password || !name) {
-        const requiredFieldsNotProvidedResponse = JSON.stringify({
-            message: "companyName, email, name, and password are required fields",
-        });
-        return {
-            statusCode: httpStatusCode_1.HttpStatusCode.BadRequest,
-            body: requiredFieldsNotProvidedResponse,
-        };
-    }
-    console.log("all required fields are provided");
-    const attributeList = [];
-    attributeList.push(new amazon_cognito_identity_js_1.CognitoUserAttribute({
-        Name: "name",
-        Value: name,
-    }));
-    let userSignUpResponse = null;
-    let signUpResultFromCallback;
-    let callbackComplete = false;
-    const callback = (error, signUpResult) => {
-        if (error) {
-            userSignUpResponse = {
-                statusCode: httpStatusCode_1.HttpStatusCode.BadRequest,
-                body: JSON.stringify({
-                    message: error.message,
-                }),
-            };
-        }
-        signUpResultFromCallback = signUpResult;
-        callbackComplete = true;
-    };
-    userPool.signUp(email, password, attributeList, [], callback);
-    while (!callbackComplete) {
-        await new Promise((resolve) => {
-            setTimeout(() => {
-                resolve();
-            }, 20);
-        });
-    }
-    console.log("sign up completed successfully");
-    if (userSignUpResponse !== null) {
-        console.log("issue with user signup: ", userSignUpResponse.body);
-        return userSignUpResponse;
-    }
-    return {
-        statusCode: httpStatusCode_1.HttpStatusCode.Ok,
-        body: JSON.stringify({
-            message: "Got pretty far on this one right?",
-        }),
-    };
-    // if they are successfully created, go ahead and create the company and the user in dynamo db
-};
-exports.signUpNewUser = signUpNewUser;
-
-
-/***/ }),
-
 /***/ 525:
 /***/ ((__unused_webpack_module, exports) => {
 
@@ -8313,9 +8213,96 @@ var __webpack_exports__ = {};
 var exports = __webpack_exports__;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.signUpNewUserHandler = void 0;
-const signUpNewUser_1 = __webpack_require__(938);
-exports.signUpNewUserHandler = signUpNewUser_1.signUpNewUser;
+exports.signUpNewUser = void 0;
+const httpStatusCode_1 = __webpack_require__(525);
+const amazon_cognito_identity_js_1 = __webpack_require__(4);
+const poolData = {
+    UserPoolId: "us-east-1_etBRMChzv",
+    ClientId: "espsfilvarkr44put09u8e17l", // Your client id here
+};
+const userPool = new amazon_cognito_identity_js_1.CognitoUserPool(poolData);
+/**
+ * The purpose of this function is just to sign up new users (i.e. never have been added to the system). If
+ * a user would like to create another company and already exists on a company, the user will need to
+ * be authenticated so that we don't have to verify the passwords match.
+ */
+const signUpNewUser = async (event) => {
+    if (!event.body) {
+        const noBodyResponse = JSON.stringify({
+            message: "No Body On Request",
+        });
+        return {
+            statusCode: httpStatusCode_1.HttpStatusCode.BadRequest,
+            body: noBodyResponse,
+        };
+    }
+    console.log("body exists");
+    try {
+        JSON.parse(event.body);
+    }
+    catch {
+        const bodyMustBeAnObjectResponse = JSON.stringify({
+            message: "Body must be an object",
+        });
+        return {
+            statusCode: httpStatusCode_1.HttpStatusCode.BadRequest,
+            body: bodyMustBeAnObjectResponse,
+        };
+    }
+    console.log("body is an object");
+    const { companyName, email, password, name } = JSON.parse(event.body);
+    if (!companyName || !email || !password || !name) {
+        const requiredFieldsNotProvidedResponse = JSON.stringify({
+            message: "companyName, email, name, and password are required fields",
+        });
+        return {
+            statusCode: httpStatusCode_1.HttpStatusCode.BadRequest,
+            body: requiredFieldsNotProvidedResponse,
+        };
+    }
+    console.log("all required fields are provided");
+    const attributeList = [];
+    attributeList.push(new amazon_cognito_identity_js_1.CognitoUserAttribute({
+        Name: "name",
+        Value: name,
+    }));
+    let userSignUpResponse = null;
+    let signUpResultFromCallback;
+    let callbackComplete = false;
+    const callback = (error, signUpResult) => {
+        if (error) {
+            userSignUpResponse = {
+                statusCode: httpStatusCode_1.HttpStatusCode.BadRequest,
+                body: JSON.stringify({
+                    message: error.message,
+                }),
+            };
+        }
+        signUpResultFromCallback = signUpResult;
+        callbackComplete = true;
+    };
+    userPool.signUp(email, password, attributeList, [], callback);
+    while (!callbackComplete) {
+        await new Promise((resolve) => {
+            setTimeout(() => {
+                resolve();
+            }, 20);
+        });
+    }
+    console.log("sign up completed successfully");
+    if (userSignUpResponse !== null) {
+        console.log("issue with user signup: ", userSignUpResponse.body);
+        return userSignUpResponse;
+    }
+    return {
+        statusCode: httpStatusCode_1.HttpStatusCode.Ok,
+        body: JSON.stringify({
+            message: "Got pretty far on this one right?",
+        }),
+    };
+    // if they are successfully created, go ahead and create the company and the user in dynamo db
+};
+exports.signUpNewUser = signUpNewUser;
 
 })();
 
