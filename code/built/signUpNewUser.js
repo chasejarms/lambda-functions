@@ -8218,7 +8218,7 @@ const httpStatusCode_1 = __webpack_require__(525);
 const amazon_cognito_identity_js_1 = __webpack_require__(4);
 const poolData = {
     UserPoolId: "us-east-1_etBRMChzv",
-    ClientId: "espsfilvarkr44put09u8e17l", // Your client id here
+    ClientId: "5qi8l41f3comtq810u0b573i2q", // Your client id here
 };
 const userPool = new amazon_cognito_identity_js_1.CognitoUserPool(poolData);
 /**
@@ -8228,6 +8228,7 @@ const userPool = new amazon_cognito_identity_js_1.CognitoUserPool(poolData);
  */
 const signUpNewUser = async (event) => {
     if (!event.body) {
+        console.log("there is no body");
         const noBodyResponse = JSON.stringify({
             message: "No Body On Request",
         });
@@ -8236,11 +8237,11 @@ const signUpNewUser = async (event) => {
             body: noBodyResponse,
         };
     }
-    console.log("body exists");
     try {
         JSON.parse(event.body);
     }
     catch {
+        console.log("the body is not an object");
         const bodyMustBeAnObjectResponse = JSON.stringify({
             message: "Body must be an object",
         });
@@ -8249,9 +8250,9 @@ const signUpNewUser = async (event) => {
             body: bodyMustBeAnObjectResponse,
         };
     }
-    console.log("body is an object");
     const { companyName, email, password, name } = JSON.parse(event.body);
     if (!companyName || !email || !password || !name) {
+        console.log("not all required fields are provided");
         const requiredFieldsNotProvidedResponse = JSON.stringify({
             message: "companyName, email, name, and password are required fields",
         });
@@ -8260,7 +8261,6 @@ const signUpNewUser = async (event) => {
             body: requiredFieldsNotProvidedResponse,
         };
     }
-    console.log("all required fields are provided");
     const attributeList = [];
     attributeList.push(new amazon_cognito_identity_js_1.CognitoUserAttribute({
         Name: "name",
@@ -8289,7 +8289,6 @@ const signUpNewUser = async (event) => {
             }, 20);
         });
     }
-    console.log("sign up completed successfully");
     if (userSignUpResponse !== null) {
         console.log("issue with user signup: ", userSignUpResponse.body);
         return userSignUpResponse;
