@@ -151,6 +151,9 @@ Resources:
                   Projection:
                       ProjectionType: "ALL"
 Outputs:
-    SignUpNewUserApi:
-        Description: "API Gateway endpoint URL for Prod"
-        Value: !Sub "https://${ProdPubliclyAccessibleApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/sign-up-new-user/"
+    ProdPubliclyAccessibleApi:
+        Description: "Public API Gateway endpoint URL for Prod"
+        Value: !Sub "https://${ProdPubliclyAccessibleApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+    ProdAuthenticatedOnlyApi:
+        Description: "Authenticated API Gateway endpoint URL for Prod"
+        Value: !Sub "https://${ProdAuthenticatedOnlyApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
