@@ -73,6 +73,22 @@ Resources:
         Properties:
             Domain: elastic-project-management
             UserPoolId: !Ref ProdCognitoUserPool
+    ProdWebAppClient:
+        Type: AWS::Cognito::UserPoolClient
+        Properties:
+            ClientName: ElasticProjectManagementWebClient
+            GenerateSecret: false
+            UserPoolId: !Ref ProdCognitoUserPool
+            AccessTokenValidity: 3600
+            IdTokenValidity: 3600
+            RefreshTokenValidity: 2592000
+            TokenValidityUnits:
+                AccessToken: seconds
+                IdToken: seconds
+                RefreshToken: seconds
+            ExplicitAuthFlows:
+                - ALLOW_USER_PASSWORD_AUTH
+                - ALLOW_REFRESH_TOKEN_AUTH
     ProdAuthenticatedOnlyApi:
         Type: AWS::Serverless::Api
         Properties:
