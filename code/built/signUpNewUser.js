@@ -8330,13 +8330,21 @@ const signUpNewUser = async (event) => {
     // if they are successfully created, go ahead and create the company and the user in dynamo db
     const dynamoClient = new AWS.DynamoDB.DocumentClient();
     let companyIdAttempts = 0;
-    let successfullyCreatedData = false;
+    let outputData = null;
+    let dynamoDBError = null;
     const companyNamePutTogether = companyName
         .split(" ")
         .join("")
         .toUpperCase();
-    while (companyIdAttempts < 3 && !successfullyCreatedData) {
+    const fullNamePutTogether = name.split(" ").join("").toUpperCase();
+    while (companyIdAttempts < 3 &&
+        outputData === null &&
+        dynamoDBError == null) {
         const uniqueCompanyId = generateUniqueId_1.generateUniqueId();
+        let resolveCallback;
+        const promise = new Promise((resolve) => {
+            resolveCallback = resolve;
+        });
         dynamoClient.transactWrite({
             TransactItems: [
                 {
@@ -8355,13 +8363,33 @@ const signUpNewUser = async (event) => {
                     Put: {
                         TableName: "primaryTableOne",
                         Item: {
-                            ItemId: `USER_USERID_${signUpResultFromCallback}`,
+                            ItemId: `USER_USERID_${signUpResultFromCallback.userSub}`,
+                            BelongsTo: `COMPANY_${uniqueCompanyId}`,
+                            GSISortKey: `USER_ALPHABETICAL_${fullNamePutTogether}`,
+                            Name: name,
                         },
                         ConditionExpression: "attribute_not_exists(ItemId)",
                     },
                 },
             ],
+        }, (error, data) => {
+            if (error) {
+                dynamoDBError = error;
+            }
+            else {
+                outputData = data;
+            }
+            resolveCallback();
         });
+        await promise;
+    }
+    if (dynamoDBError) {
+        return {
+            statusCode: dynamoDBError.statusCode,
+            body: JSON.stringify({
+                message: dynamoDBError.message,
+            }),
+        };
     }
     return {
         statusCode: httpStatusCode_1.HttpStatusCode.Ok,

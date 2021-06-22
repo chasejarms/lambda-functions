@@ -24,6 +24,8 @@ Resources:
             Runtime: nodejs14.x
             Handler: signUpNewUser.signUpNewUser
             FunctionName: SignUpNewUser
+            Policies:
+                - AmazonDynamoDBFullAccess
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:

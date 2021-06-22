@@ -118,15 +118,26 @@ export const signUpNewUser = async (
     const dynamoClient = new AWS.DynamoDB.DocumentClient();
 
     let companyIdAttempts = 0;
-    let successfullyCreatedData = false;
-    let dynamoTransationCallbackCompletions = 0;
+    let outputData: AWS.DynamoDB.DocumentClient.TransactWriteItemsOutput | null = null;
+    let dynamoDBError: AWS.AWSError | null = null;
 
     const companyNamePutTogether = companyName
         .split(" ")
         .join("")
         .toUpperCase();
-    while (companyIdAttempts < 3 && !successfullyCreatedData) {
+
+    const fullNamePutTogether = name.split(" ").join("").toUpperCase();
+
+    while (
+        companyIdAttempts < 3 &&
+        outputData === null &&
+        dynamoDBError == null
+    ) {
         const uniqueCompanyId = generateUniqueId();
+        let resolveCallback: (value?: unknown) => void;
+        const promise = new Promise((resolve) => {
+            resolveCallback = resolve;
+        });
 
         dynamoClient.transactWrite(
             {
@@ -147,7 +158,10 @@ export const signUpNewUser = async (
                         Put: {
                             TableName: "primaryTableOne",
                             Item: {
-                                ItemId: `USER_USERID_${signUpResultFromCallback}`,
+                                ItemId: `USER_USERID_${signUpResultFromCallback.userSub}`,
+                                BelongsTo: `COMPANY_${uniqueCompanyId}`,
+                                GSISortKey: `USER_ALPHABETICAL_${fullNamePutTogether}`,
+                                Name: name,
                             },
                             ConditionExpression: "attribute_not_exists(ItemId)",
                         },
@@ -156,11 +170,23 @@ export const signUpNewUser = async (
             },
             (error, data) => {
                 if (error) {
-                    console.log("error writing to dynamo: ", error.message);
+                    dynamoDBError = error;
+                } else {
+                    outputData = data;
                 }
-                dynamoTransationCallbackCompletions += 1;
+                resolveCallback();
             }
         );
+        await promise;
+    }
+
+    if (dynamoDBError) {
+        return {
+            statusCode: dynamoDBError.statusCode,
+            body: JSON.stringify({
+                message: dynamoDBError.message,
+            }),
+        };
     }
 
     return {
