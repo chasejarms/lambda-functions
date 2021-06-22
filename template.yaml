@@ -26,6 +26,33 @@ Resources:
             FunctionName: SignUpNewUser
             Policies:
                 - AmazonDynamoDBFullAccess
+    ProdAuthenticatedOnlyApi:
+        Type: AWS::Serverless::Api
+        Properties:
+            StageName: Prod
+            Name: Prod Authenticated Only Api
+            Auth:
+              DefaultAuthorizer: MyCognitoAuthorizer
+              Authorizers:
+                MyCognitoAuthorizer:
+                  UserPoolArn:
+                    Fn::GetAtt: [MyCognitoUserPool, Arn]
+    ApiFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /companies
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: getCompaniesForUser.getCompaniesForUser
+            FunctionName: GetCompaniesForUser
+            Policies:
+                - AmazonDynamoDBFullAccess
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:
