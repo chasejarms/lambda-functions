@@ -10,7 +10,7 @@ Resources:
         Properties:
             StageName: Prod
             Name: Prod Publicly Accessible Api
-    ApiFunction:
+    SignUpNewUserFunction:
         Type: AWS::Serverless::Function
         Properties:
             Events:
@@ -26,18 +26,49 @@ Resources:
             FunctionName: SignUpNewUser
             Policies:
                 - AmazonDynamoDBFullAccess
+    ProdCognitoUserPool:
+        Type: AWS::Cognito::UserPool
+        Properties:
+            AdminCreateUserConfig:
+                AllowAdminCreateUserOnly: false
+                InviteMessageTemplate:
+                    EmailMessage: "Welcome to Elastic Project Management. Your username is {username} and temporary password is {####}. Visit elasticprojectmanagement.com/sign-in to sign in."
+                    EmailSubject: "Elastic Project Management - Temporary Credentials"
+            EmailConfiguration:
+                SourceArn: arn:aws:ses:us-east-1:454305280052:identity/chasejarms@gmail.com
+                EmailSendingAccount: DEVELOPER
+                From: chasejarms@gmail.com
+                ReplyToEmailAddress: chasejarms@gmail.com
+            Policies:
+                PasswordPolicy:
+                    MinimumLength: 8
+                    RequireLowercase: false
+                    RequireNumbers: false
+                    RequireSymbols: false
+                    RequireUppercase: false
+                    TemporaryPasswordValidityDays: 7
+            AccountRecoverySetting:
+                RecoveryMechanisms:
+                    - Name: verified_email
+                      Priority: 1
+            UsernameConfiguration:
+                CaseSensitive: false
+            VerificationMessageTemplate:
+                DefaultEmailOption: CONFIRM_WITH_LINK
+                EmailMessageByLink: "Welcome to Elastic Project Management. Please click the following link to verify your email: {##Verify Email##}"
+                EmailSubjectByLink: "Elastic Project Management - Verification Link"
     ProdAuthenticatedOnlyApi:
         Type: AWS::Serverless::Api
         Properties:
             StageName: Prod
             Name: Prod Authenticated Only Api
             Auth:
-              DefaultAuthorizer: MyCognitoAuthorizer
-              Authorizers:
-                MyCognitoAuthorizer:
-                  UserPoolArn:
-                    Fn::GetAtt: [MyCognitoUserPool, Arn]
-    ApiFunction:
+                DefaultAuthorizer: ProdCognitoUserPool
+                Authorizers:
+                    ProdCognitoUserPool:
+                        UserPoolArn:
+                            Fn::GetAtt: [ProdCognitoUserPool, Arn]
+    GetCompaniesForUserFunction:
         Type: AWS::Serverless::Function
         Properties:
             Events:
