@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
+		module.exports = factory(require("aws-sdk"));
 	else if(typeof define === 'function' && define.amd)
-		define([], factory);
+		define(["aws-sdk"], factory);
 	else {
-		var a = factory();
+		var a = typeof exports === 'object' ? factory(require("aws-sdk")) : factory(root["aws-sdk"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(global, function() {
+})(global, function(__WEBPACK_EXTERNAL_MODULE__480__) {
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -8116,6 +8116,30 @@ var HttpStatusCode;
 
 /***/ }),
 
+/***/ 386:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.generateUniqueId = void 0;
+function generateUniqueId(numberOfFourCharacterSequences = 3) {
+    const s4 = () => {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    };
+    const sequences = [];
+    for (let i = 0; i < numberOfFourCharacterSequences; i++) {
+        sequences.push(s4());
+    }
+    return sequences.join("-");
+}
+exports.generateUniqueId = generateUniqueId;
+
+
+/***/ }),
+
 /***/ 869:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -8127,6 +8151,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ function __WEBPACK_DEFAULT_EXPORT__(e,n){return n=n||{},new Promise(function(t,r){var s=new XMLHttpRequest,o=[],u=[],i={},a=function(){return{ok:2==(s.status/100|0),statusText:s.statusText,status:s.status,url:s.responseURL,text:function(){return Promise.resolve(s.responseText)},json:function(){return Promise.resolve(s.responseText).then(JSON.parse)},blob:function(){return Promise.resolve(new Blob([s.response]))},clone:a,headers:{keys:function(){return o},entries:function(){return u},get:function(e){return i[e.toLowerCase()]},has:function(e){return e.toLowerCase()in i}}}};for(var l in s.open(n.method||"get",e,!0),s.onload=function(){s.getAllResponseHeaders().replace(/^(.*?):[^\S\n]*([\s\S]*?)$/gm,function(e,n,t){o.push(n=n.toLowerCase()),u.push([n,t]),i[n]=i[n]?i[n]+","+t:t}),t(a())},s.onerror=r,s.withCredentials="include"==n.credentials,n.headers)s.setRequestHeader(l,n.headers[l]);s.send(n.body||null)})}
 //# sourceMappingURL=unfetch.module.js.map
 
+
+/***/ }),
+
+/***/ 480:
+/***/ ((module) => {
+
+"use strict";
+module.exports = __WEBPACK_EXTERNAL_MODULE__480__;
 
 /***/ }),
 
@@ -8214,8 +8246,10 @@ var exports = __webpack_exports__;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.signUpNewUser = void 0;
+const AWS = __webpack_require__(480);
 const httpStatusCode_1 = __webpack_require__(525);
 const amazon_cognito_identity_js_1 = __webpack_require__(4);
+const generateUniqueId_1 = __webpack_require__(386);
 const poolData = {
     UserPoolId: "us-east-1_etBRMChzv",
     ClientId: "5qi8l41f3comtq810u0b573i2q", // Your client id here
@@ -8293,13 +8327,48 @@ const signUpNewUser = async (event) => {
         console.log("issue with user signup: ", userSignUpResponse.body);
         return userSignUpResponse;
     }
+    // if they are successfully created, go ahead and create the company and the user in dynamo db
+    const dynamoClient = new AWS.DynamoDB.DocumentClient();
+    let companyIdAttempts = 0;
+    let successfullyCreatedData = false;
+    const companyNamePutTogether = companyName
+        .split(" ")
+        .join("")
+        .toUpperCase();
+    while (companyIdAttempts < 3 && !successfullyCreatedData) {
+        const uniqueCompanyId = generateUniqueId_1.generateUniqueId();
+        dynamoClient.transactWrite({
+            TransactItems: [
+                {
+                    Put: {
+                        TableName: "primaryTableOne",
+                        Item: {
+                            ItemId: `COMPANY_INFORMATION_COMPANYID_${uniqueCompanyId}`,
+                            BelongsTo: `COMPANY_${uniqueCompanyId}`,
+                            GSISortKey: `COMPANYINFORMATION_ALPHABETICAL_${companyNamePutTogether}`,
+                            companyName,
+                        },
+                        ConditionExpression: "attribute_not_exists(ItemId)",
+                    },
+                },
+                {
+                    Put: {
+                        TableName: "primaryTableOne",
+                        Item: {
+                            ItemId: `USER_USERID_${signUpResultFromCallback}`,
+                        },
+                        ConditionExpression: "attribute_not_exists(ItemId)",
+                    },
+                },
+            ],
+        });
+    }
     return {
         statusCode: httpStatusCode_1.HttpStatusCode.Ok,
         body: JSON.stringify({
             message: "Got pretty far on this one right?",
         }),
     };
-    // if they are successfully created, go ahead and create the company and the user in dynamo db
 };
 exports.signUpNewUser = signUpNewUser;
 

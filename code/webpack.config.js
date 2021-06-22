@@ -30,4 +30,7 @@ module.exports = {
     target: "node",
     mode: "production",
     optimization: { minimize: false },
+    externals: {
+        "aws-sdk": "aws-sdk",
+    },
 };

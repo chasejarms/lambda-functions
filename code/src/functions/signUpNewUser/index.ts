@@ -1,4 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+import * as AWS from "aws-sdk";
 import { HttpStatusCode } from "../../models/httpStatusCode";
 import {
     CognitoUserPool,
@@ -6,6 +7,7 @@ import {
     ISignUpResult,
     NodeCallback,
 } from "amazon-cognito-identity-js";
+import { generateUniqueId } from "../../utils/generateUniqueId";
 
 const poolData = {
     UserPoolId: "us-east-1_etBRMChzv", // Your user pool id here
@@ -47,7 +49,12 @@ export const signUpNewUser = async (
         };
     }
 
-    const { companyName, email, password, name } = JSON.parse(event.body);
+    const { companyName, email, password, name } = JSON.parse(event.body) as {
+        companyName: string;
+        email: string;
+        password: string;
+        name: string;
+    };
 
     if (!companyName || !email || !password || !name) {
         console.log("not all required fields are provided");
@@ -106,11 +113,60 @@ export const signUpNewUser = async (
         return userSignUpResponse;
     }
 
+    // if they are successfully created, go ahead and create the company and the user in dynamo db
+
+    const dynamoClient = new AWS.DynamoDB.DocumentClient();
+
+    let companyIdAttempts = 0;
+    let successfullyCreatedData = false;
+    let dynamoTransationCallbackCompletions = 0;
+
+    const companyNamePutTogether = companyName
+        .split(" ")
+        .join("")
+        .toUpperCase();
+    while (companyIdAttempts < 3 && !successfullyCreatedData) {
+        const uniqueCompanyId = generateUniqueId();
+
+        dynamoClient.transactWrite(
+            {
+                TransactItems: [
+                    {
+                        Put: {
+                            TableName: "primaryTableOne",
+                            Item: {
+                                ItemId: `COMPANY_INFORMATION_COMPANYID_${uniqueCompanyId}`,
+                                BelongsTo: `COMPANY_${uniqueCompanyId}`,
+                                GSISortKey: `COMPANYINFORMATION_ALPHABETICAL_${companyNamePutTogether}`,
+                                companyName,
+                            },
+                            ConditionExpression: "attribute_not_exists(ItemId)",
+                        },
+                    },
+                    {
+                        Put: {
+                            TableName: "primaryTableOne",
+                            Item: {
+                                ItemId: `USER_USERID_${signUpResultFromCallback}`,
+                            },
+                            ConditionExpression: "attribute_not_exists(ItemId)",
+                        },
+                    },
+                ],
+            },
+            (error, data) => {
+                if (error) {
+                    console.log("error writing to dynamo: ", error.message);
+                }
+                dynamoTransationCallbackCompletions += 1;
+            }
+        );
+    }
+
     return {
         statusCode: HttpStatusCode.Ok,
         body: JSON.stringify({
             message: "Got pretty far on this one right?",
         }),
     };
-    // if they are successfully created, go ahead and create the company and the user in dynamo db
 };

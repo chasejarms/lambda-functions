@@ -24,6 +24,40 @@ Resources:
             Runtime: nodejs14.x
             Handler: signUpNewUser.signUpNewUser
             FunctionName: SignUpNewUser
+    ProdDynamoDBTable:
+        Type: AWS::DynamoDB::Table
+        Properties:
+            BillingMode: "PAY_PER_REQUEST"
+            AttributeDefinitions:
+                - AttributeName: "ItemId"
+                  AttributeType: "S"
+                - AttributeName: "BelongsTo"
+                  AttributeType: "S"
+                - AttributeName: "GSISortKey"
+                  AttributeType: "S"
+            KeySchema:
+                - AttributeName: "ItemId"
+                  KeyType: "HASH"
+                - AttributeName: "BelongsTo"
+                  KeyType: "RANGE"
+            TableName: "primaryTableOne"
+            GlobalSecondaryIndexes:
+                - IndexName: "parentToChild"
+                  KeySchema:
+                      - AttributeName: "BelongsTo"
+                        KeyType: "HASH"
+                      - AttributeName: "ItemId"
+                        KeyType: "RANGE"
+                  Projection:
+                      ProjectionType: "ALL"
+                - IndexName: "parentWithSortedChild"
+                  KeySchema:
+                      - AttributeName: "BelongsTo"
+                        KeyType: "HASH"
+                      - AttributeName: "GSISortKey"
+                        KeyType: "RANGE"
+                  Projection:
+                      ProjectionType: "ALL"
 Outputs:
     SignUpNewUserApi:
         Description: "API Gateway endpoint URL for Prod"
