@@ -6,14 +6,9 @@ import {
     CognitoUserAttribute,
     ISignUpResult,
     NodeCallback,
+    ICognitoUserPoolData,
 } from "amazon-cognito-identity-js";
 import { generateUniqueId } from "../../utils/generateUniqueId";
-
-const poolData = {
-    UserPoolId: "us-east-1_etBRMChzv", // Your user pool id here
-    ClientId: "5qi8l41f3comtq810u0b573i2q", // Your client id here
-};
-const userPool = new CognitoUserPool(poolData);
 
 /**
  * The purpose of this function is just to sign up new users (i.e. never have been added to the system). If
@@ -68,6 +63,12 @@ export const signUpNewUser = async (
             body: requiredFieldsNotProvidedResponse,
         };
     }
+
+    const poolData: ICognitoUserPoolData = {
+        UserPoolId: "us-east-1_rXA6mH0CY", // Your user pool id here
+        ClientId: "63qoafbc0o0sig2nb23prj88fd", // Your client id here
+    };
+    const userPool = new CognitoUserPool(poolData);
 
     let userSignUpResponse: null | APIGatewayProxyResult = null;
     let signUpResultFromCallback: ISignUpResult;

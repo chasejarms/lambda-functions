@@ -8250,11 +8250,6 @@ const AWS = __webpack_require__(480);
 const httpStatusCode_1 = __webpack_require__(525);
 const amazon_cognito_identity_js_1 = __webpack_require__(4);
 const generateUniqueId_1 = __webpack_require__(386);
-const poolData = {
-    UserPoolId: "us-east-1_etBRMChzv",
-    ClientId: "5qi8l41f3comtq810u0b573i2q", // Your client id here
-};
-const userPool = new amazon_cognito_identity_js_1.CognitoUserPool(poolData);
 /**
  * The purpose of this function is just to sign up new users (i.e. never have been added to the system). If
  * a user would like to create another company and already exists on a company, the user will need to
@@ -8295,6 +8290,11 @@ const signUpNewUser = async (event) => {
             body: requiredFieldsNotProvidedResponse,
         };
     }
+    const poolData = {
+        UserPoolId: "us-east-1_rXA6mH0CY",
+        ClientId: "63qoafbc0o0sig2nb23prj88fd", // Your client id here
+    };
+    const userPool = new amazon_cognito_identity_js_1.CognitoUserPool(poolData);
     let userSignUpResponse = null;
     let signUpResultFromCallback;
     let callbackComplete = false;
