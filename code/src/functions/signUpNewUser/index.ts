@@ -69,14 +69,6 @@ export const signUpNewUser = async (
         };
     }
 
-    const attributeList = [];
-    attributeList.push(
-        new CognitoUserAttribute({
-            Name: "name",
-            Value: name,
-        })
-    );
-
     let userSignUpResponse: null | APIGatewayProxyResult = null;
     let signUpResultFromCallback: ISignUpResult;
     let callbackComplete = false;
@@ -98,7 +90,7 @@ export const signUpNewUser = async (
         callbackComplete = true;
     };
 
-    userPool.signUp(email, password, attributeList, [], callback);
+    userPool.signUp(email, password, [], [], callback);
 
     while (!callbackComplete) {
         await new Promise<void>((resolve) => {

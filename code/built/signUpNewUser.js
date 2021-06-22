@@ -8295,11 +8295,6 @@ const signUpNewUser = async (event) => {
             body: requiredFieldsNotProvidedResponse,
         };
     }
-    const attributeList = [];
-    attributeList.push(new amazon_cognito_identity_js_1.CognitoUserAttribute({
-        Name: "name",
-        Value: name,
-    }));
     let userSignUpResponse = null;
     let signUpResultFromCallback;
     let callbackComplete = false;
@@ -8315,7 +8310,7 @@ const signUpNewUser = async (event) => {
         signUpResultFromCallback = signUpResult;
         callbackComplete = true;
     };
-    userPool.signUp(email, password, attributeList, [], callback);
+    userPool.signUp(email, password, [], [], callback);
     while (!callbackComplete) {
         await new Promise((resolve) => {
             setTimeout(() => {

@@ -42,10 +42,10 @@ Resources:
             Policies:
                 PasswordPolicy:
                     MinimumLength: 8
-                    RequireLowercase: false
-                    RequireNumbers: false
+                    RequireLowercase: true
+                    RequireNumbers: true
                     RequireSymbols: false
-                    RequireUppercase: false
+                    RequireUppercase: true
                     TemporaryPasswordValidityDays: 7
             AccountRecoverySetting:
                 RecoveryMechanisms:
@@ -53,10 +53,45 @@ Resources:
                       Priority: 1
             UsernameConfiguration:
                 CaseSensitive: false
+            UsernameAttributes:
+                - email
             VerificationMessageTemplate:
                 DefaultEmailOption: CONFIRM_WITH_LINK
                 EmailMessageByLink: "Welcome to Elastic Project Management. Please click the following link to verify your email: {##Verify Email##}"
                 EmailSubjectByLink: "Elastic Project Management - Verification Link"
+            AutoVerifiedAttributes:
+                - email
+            UserPoolName: ProdElasticProjectManagement
+    ProdBackendAppClient:
+        Type: AWS::Cognito::UserPoolClient
+        Properties:
+            AllowedOAuthFlows:
+                - implicit
+            AllowedOAuthFlowsUserPoolClient: true
+            AllowedOAuthScopes:
+                - phone
+            ClientName: ElasticProjectManagementBackendClient
+            EnableTokenRevocation: true
+            ExplicitAuthFlows:
+                - ALLOW_ADMIN_USER_PASSWORD_AUTH
+                - ALLOW_CUSTOM_AUTH
+                - ALLOW_USER_PASSWORD_AUTH
+                - ALLOW_USER_SRP_AUTH
+                - ALLOW_REFRESH_TOKEN_AUTH
+            GenerateSecret: false
+            PreventUserExistenceErrors: ENABLED
+            ReadAttributes:
+                - email
+            WriteAttributes:
+                - email
+            AccessTokenValidity: 3600
+            IdTokenValidity: 3600
+            RefreshTokenValidity: 2592000
+            TokenValidityUnits:
+                AccessToken: "seconds"
+                IdToken: "seconds"
+                RefreshToken: "seconds"
+            UserPoolId: !Ref ProdCognitoUserPool
     ProdAuthenticatedOnlyApi:
         Type: AWS::Serverless::Api
         Properties:
