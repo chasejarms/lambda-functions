@@ -9,6 +9,7 @@ import {
     ICognitoUserPoolData,
 } from "amazon-cognito-identity-js";
 import { generateUniqueId } from "../../utils/generateUniqueId";
+import { primaryTableName } from "../../constants/primaryTableName";
 
 /**
  * The purpose of this function is just to sign up new users (i.e. never have been added to the system). If
@@ -127,50 +128,46 @@ export const signUpNewUser = async (
         dynamoDBError == null
     ) {
         const uniqueCompanyId = generateUniqueId();
-        let resolveCallback: (value?: unknown) => void;
-        const promise = new Promise((resolve) => {
-            resolveCallback = resolve;
-        });
-
-        dynamoClient.transactWrite(
-            {
-                TransactItems: [
-                    {
-                        Put: {
-                            TableName: "primaryTableOne",
-                            Item: {
-                                ItemId: `COMPANY_INFORMATION_COMPANYID_${uniqueCompanyId}`,
-                                BelongsTo: `COMPANY_${uniqueCompanyId}`,
-                                GSISortKey: `COMPANYINFORMATION_ALPHABETICAL_${companyNamePutTogether}`,
-                                companyName,
+        await dynamoClient
+            .transactWrite(
+                {
+                    TransactItems: [
+                        {
+                            Put: {
+                                TableName: primaryTableName,
+                                Item: {
+                                    ItemId: `COMPANYINFORMATION_COMPANY.${uniqueCompanyId}`,
+                                    BelongsTo: `COMPANY.${uniqueCompanyId}`,
+                                    Name: companyName,
+                                },
+                                ConditionExpression:
+                                    "attribute_not_exists(ItemId)",
                             },
-                            ConditionExpression: "attribute_not_exists(ItemId)",
                         },
-                    },
-                    {
-                        Put: {
-                            TableName: "primaryTableOne",
-                            Item: {
-                                ItemId: `USER_USERID_${signUpResultFromCallback.userSub}`,
-                                BelongsTo: `COMPANY_${uniqueCompanyId}`,
-                                GSISortKey: `USER_ALPHABETICAL_${fullNamePutTogether}`,
-                                Name: name,
+                        {
+                            Put: {
+                                TableName: primaryTableName,
+                                Item: {
+                                    ItemId: `COMPANYUSER.${signUpResultFromCallback.userSub}`,
+                                    BelongsTo: `COMPANY.${uniqueCompanyId}`,
+                                    GSISortKey: `COMPANYUSER_ALPHABETICAL_${fullNamePutTogether}`,
+                                    Name: name,
+                                },
+                                ConditionExpression:
+                                    "attribute_not_exists(ItemId)",
                             },
-                            ConditionExpression: "attribute_not_exists(ItemId)",
                         },
-                    },
-                ],
-            },
-            (error, data) => {
-                if (error) {
-                    dynamoDBError = error;
-                } else {
-                    outputData = data;
+                    ],
+                },
+                (error, data) => {
+                    if (error) {
+                        dynamoDBError = error;
+                    } else {
+                        outputData = data;
+                    }
                 }
-                resolveCallback();
-            }
-        );
-        await promise;
+            )
+            .promise();
     }
 
     if (dynamoDBError) {

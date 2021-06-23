@@ -2,7 +2,7 @@ import { APIGatewayProxyEvent } from "aws-lambda";
 import jwt_decode, { JwtPayload } from "jwt-decode";
 
 export function userSubFromEvent(event: APIGatewayProxyEvent) {
-    const authHeader = event.headers.AuthHeader;
+    const authHeader = event.headers.authheader;
 
     if (!authHeader) {
         console.log("userSubFromEvent: auth header is not present on request");
