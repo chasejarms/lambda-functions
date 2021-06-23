@@ -151,6 +151,7 @@ export const signUpNewUser = async (
                                     ItemId: `COMPANYUSER.${signUpResultFromCallback.userSub}`,
                                     BelongsTo: `COMPANY.${uniqueCompanyId}`,
                                     GSISortKey: `COMPANYUSER_ALPHABETICAL_${fullNamePutTogether}`,
+                                    IsCompanyAdmin: true,
                                     Name: name,
                                 },
                                 ConditionExpression:
