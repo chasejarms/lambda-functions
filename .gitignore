@@ -8,7 +8,7 @@
 .fuse_hidden*
 
 # Built files
-built/*
+code/built/*
 
 # KDE directory preferences
 .directory
