@@ -62,12 +62,12 @@ var exports = __webpack_exports__;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getCompaniesForUser = void 0;
 const httpStatusCode_1 = __webpack_require__(525);
-const getCompaniesForUser = (event) => {
+const getCompaniesForUser = async (event) => {
     return {
         statusCode: httpStatusCode_1.HttpStatusCode.Ok,
-        body: {
+        body: JSON.stringify({
             message: "We got past the guards",
-        },
+        }),
     };
 };
 exports.getCompaniesForUser = getCompaniesForUser;

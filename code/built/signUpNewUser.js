@@ -8389,7 +8389,7 @@ const signUpNewUser = async (event) => {
     return {
         statusCode: httpStatusCode_1.HttpStatusCode.Ok,
         body: JSON.stringify({
-            message: "Got pretty far on this one right?",
+            message: "Sign Up Successful",
         }),
     };
 };

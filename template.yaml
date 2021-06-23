@@ -98,6 +98,8 @@ Resources:
                 DefaultAuthorizer: ProdCognitoUserPool
                 Authorizers:
                     ProdCognitoUserPool:
+                        Identity:
+                            Header: AuthHeader
                         UserPoolArn:
                             Fn::GetAtt: [ProdCognitoUserPool, Arn]
     GetCompaniesForUserFunction:

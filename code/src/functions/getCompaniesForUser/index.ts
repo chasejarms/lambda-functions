@@ -1,11 +1,13 @@
-import { APIGatewayProxyEvent } from "aws-lambda";
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { HttpStatusCode } from "../../models/httpStatusCode";
 
-export const getCompaniesForUser = (event: APIGatewayProxyEvent) => {
+export const getCompaniesForUser = async (
+    event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> => {
     return {
         statusCode: HttpStatusCode.Ok,
-        body: {
+        body: JSON.stringify({
             message: "We got past the guards",
-        },
+        }),
     };
 };
