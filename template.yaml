@@ -1,9 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: Functions for the elastic project management application.
-Globals:
-    Function:
-        CodeUri: code/built
 Resources:
     ProdPubliclyAccessibleApi:
         Type: AWS::Serverless::Api
@@ -22,10 +19,11 @@ Resources:
                         RestApiId:
                             Ref: ProdPubliclyAccessibleApi
             Runtime: nodejs14.x
-            Handler: signUpNewUser.signUpNewUser
+            Handler: index.signUpNewUser
             FunctionName: SignUpNewUser
             Policies:
                 - AmazonDynamoDBFullAccess
+            CodeUri: code/built/signUpNewUser
     ProdCognitoUserPool:
         Type: AWS::Cognito::UserPool
         Properties:
@@ -114,10 +112,11 @@ Resources:
                         RestApiId:
                             Ref: ProdAuthenticatedOnlyApi
             Runtime: nodejs14.x
-            Handler: getCompaniesForUser.getCompaniesForUser
+            Handler: index.getCompaniesForUser
             FunctionName: GetCompaniesForUser
             Policies:
                 - AmazonDynamoDBFullAccess
+            CodeUri: code/built/getCompaniesForUser
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:

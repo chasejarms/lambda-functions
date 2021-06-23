@@ -10,7 +10,7 @@ module.exports = {
         return acc;
     }, {}),
     output: {
-        filename: "./[name].js",
+        filename: "./[name]/index.js",
         path: path.resolve(__dirname, "built"),
         clean: true,
         libraryTarget: "umd",
