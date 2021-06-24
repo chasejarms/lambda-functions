@@ -12,6 +12,8 @@ import { primaryTableName } from "../../constants/primaryTableName";
 import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
 import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
 import { createErrorResponse } from "../../utils/createErrorResponse";
+import { ICompanyInformation } from "../../models/companyInformation";
+import { ICompanyUser } from "../../models/companyUser";
 
 /**
  * The purpose of this function is just to sign up new users (i.e. never have been added to the system). If
@@ -102,33 +104,36 @@ export const signUpNewUser = async (
     while (companyIdAttempts < 3 && outputData === null) {
         const uniqueCompanyId = generateUniqueId();
         try {
+            const companyInformationItem: ICompanyInformation = {
+                itemId: `COMPANYINFORMATION_COMPANY.${uniqueCompanyId}`,
+                belongsTo: `COMPANY.${uniqueCompanyId}`,
+                name: companyName,
+            };
+            const companyUserItem: ICompanyUser = {
+                itemId: `COMPANYUSER.${signUpResultFromCallback.userSub}`,
+                belongsTo: `COMPANY.${uniqueCompanyId}`,
+                gsiSortKey: `COMPANYUSER_ALPHABETICAL_${fullNamePutTogether}`,
+                isCompanyAdmin: true,
+                name: name,
+            };
+
             outputData = await dynamoClient
                 .transactWrite({
                     TransactItems: [
                         {
                             Put: {
                                 TableName: primaryTableName,
-                                Item: {
-                                    ItemId: `COMPANYINFORMATION_COMPANY.${uniqueCompanyId}`,
-                                    BelongsTo: `COMPANY.${uniqueCompanyId}`,
-                                    Name: companyName,
-                                },
+                                Item: companyInformationItem,
                                 ConditionExpression:
-                                    "attribute_not_exists(ItemId)",
+                                    "attribute_not_exists(itemId)",
                             },
                         },
                         {
                             Put: {
                                 TableName: primaryTableName,
-                                Item: {
-                                    ItemId: `COMPANYUSER.${signUpResultFromCallback.userSub}`,
-                                    BelongsTo: `COMPANY.${uniqueCompanyId}`,
-                                    GSISortKey: `COMPANYUSER_ALPHABETICAL_${fullNamePutTogether}`,
-                                    IsCompanyAdmin: true,
-                                    Name: name,
-                                },
+                                Item: companyUserItem,
                                 ConditionExpression:
-                                    "attribute_not_exists(ItemId)",
+                                    "attribute_not_exists(itemId)",
                             },
                         },
                     ],

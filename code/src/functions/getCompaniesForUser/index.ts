@@ -5,6 +5,7 @@ import * as AWS from "aws-sdk";
 import { IDefaultPrimaryTableModel } from "../../models/defaultPrimaryTableModel";
 import { primaryTableName } from "../../constants/primaryTableName";
 import { ICompanyInformation } from "../../models/companyInformation";
+import { ICompanyUser } from "../../models/companyUser";
 
 export const getCompaniesForUser = async (
     event: APIGatewayProxyEvent
@@ -24,9 +25,9 @@ export const getCompaniesForUser = async (
         const getCompanyUserResults = await dynamoClient
             .query({
                 TableName: primaryTableName,
-                KeyConditionExpression: "ItemId = :ItemId",
+                KeyConditionExpression: "itemId = :itemId",
                 ExpressionAttributeValues: {
-                    ":ItemId": `COMPANYUSER.${userSub}`,
+                    ":itemId": `COMPANYUSER.${userSub}`,
                 },
             })
             .promise();
@@ -40,18 +41,19 @@ export const getCompaniesForUser = async (
             };
         }
 
-        const companyUserItems = getCompanyUserResults.Items as IDefaultPrimaryTableModel[];
+        const companyUserItems = getCompanyUserResults.Items as ICompanyUser[];
 
         const getCompanyInformationResults = await dynamoClient
             .batchGet({
                 RequestItems: {
                     [primaryTableName]: {
                         Keys: companyUserItems.map((item) => {
-                            const companyId = item.BelongsTo.split(".")[1];
-                            return {
-                                ItemId: `COMPANYINFORMATION_COMPANY.${companyId}`,
-                                BelongsTo: `COMPANY.${companyId}`,
+                            const companyId = item.belongsTo.split(".")[1];
+                            const companyInformationItem: IDefaultPrimaryTableModel = {
+                                itemId: `COMPANYINFORMATION_COMPANY.${companyId}`,
+                                belongsTo: `COMPANY.${companyId}`,
                             };
+                            return companyInformationItem;
                         }),
                     },
                 },
@@ -63,9 +65,9 @@ export const getCompaniesForUser = async (
         ] as ICompanyInformation[];
         const companyInformationItemsForResponse = companyInformationItems.map(
             (companyInformationItem) => {
-                const companyId = companyInformationItem.ItemId.split(".")[1];
+                const companyId = companyInformationItem.itemId.split(".")[1];
                 return {
-                    name: companyInformationItem.Name,
+                    name: companyInformationItem.name,
                     companyId,
                 };
             }

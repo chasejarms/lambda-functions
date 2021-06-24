@@ -1,7 +1,7 @@
 import { IDefaultPrimaryTableModel } from "./defaultPrimaryTableModel";
 
 export interface ICompanyUser extends IDefaultPrimaryTableModel {
-    Name: string;
-    GSISortKey: string;
+    name: string;
+    gsiSortKey: string;
     isCompanyAdmin: boolean;
 }

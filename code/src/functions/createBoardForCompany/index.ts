@@ -8,6 +8,8 @@ import * as AWS from "aws-sdk";
 import { primaryTableName } from "../../constants/primaryTableName";
 import { generateUniqueId } from "../../utils/generateUniqueId";
 import { userSubFromEvent } from "../../utils/userSubFromEvent";
+import { IBoard } from "../../models/board";
+import { IBoardUser } from "../../models/boardUser";
 
 export const createBoardForCompany = async (
     event: APIGatewayProxyEvent
@@ -56,6 +58,19 @@ export const createBoardForCompany = async (
     while (createBoardIdAttempts < 3 && outputData === null) {
         boardId = generateUniqueId(1);
         try {
+            const boardItem: IBoard = {
+                itemId: `BOARD.${boardId}`,
+                belongsTo: `COMPANY.${companyId}`,
+                name: boardName,
+                description: boardDescription,
+            };
+
+            const boardUserItem: IBoardUser = {
+                itemId: `BOARDUSER.${userSub}_BOARD.${boardId}`,
+                belongsTo: `COMPANY.${companyId}`,
+                isBoardAdmin: true,
+            };
+
             outputData = await dynamoClient
                 .transactWrite(
                     {
@@ -63,26 +78,17 @@ export const createBoardForCompany = async (
                             {
                                 Put: {
                                     TableName: primaryTableName,
-                                    Item: {
-                                        ItemId: `BOARD.${boardId}`,
-                                        BelongsTo: `COMPANY.${companyId}`,
-                                        Name: boardName,
-                                        Description: boardDescription,
-                                    },
+                                    Item: boardItem,
                                     ConditionExpression:
-                                        "attribute_not_exists(ItemId)",
+                                        "attribute_not_exists(itemId)",
                                 },
                             },
                             {
                                 Put: {
                                     TableName: primaryTableName,
-                                    Item: {
-                                        ItemId: `BOARDUSER.${userSub}_BOARD.${boardId}`,
-                                        BelongsTo: `COMPANY.${companyId}`,
-                                        IsBoardAdmin: true,
-                                    },
+                                    Item: boardUserItem,
                                     ConditionExpression:
-                                        "attribute_not_exists(ItemId)",
+                                        "attribute_not_exists(itemId)",
                                 },
                             },
                         ],
@@ -108,14 +114,16 @@ export const createBoardForCompany = async (
         );
     }
 
-    const boardItem = outputData.ItemCollectionMetrics[primaryTableName].find(
-        (itemCollectionMetrics) => {
-            return (
-                itemCollectionMetrics.ItemCollectionKey["ItemId"] ===
-                `BOARD.${boardId}`
-            );
-        }
-    );
+    console.log(JSON.stringify(outputData));
+
+    // const boardItem = outputData.ItemCollectionMetrics[primaryTableName].find(
+    //     (itemCollectionMetrics) => {
+    //         return (
+    //             itemCollectionMetrics.ItemCollectionKey["ItemId"] ===
+    //             `BOARD.${boardId}`
+    //         );
+    //     }
+    // );
 
     return {
         statusCode: HttpStatusCode.Ok,

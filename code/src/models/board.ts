@@ -1,5 +1,6 @@
 import { IDefaultPrimaryTableModel } from "./defaultPrimaryTableModel";
 
-export interface ICompanyInformation extends IDefaultPrimaryTableModel {
+export interface IBoard extends IDefaultPrimaryTableModel {
     name: string;
+    description: string;
 }

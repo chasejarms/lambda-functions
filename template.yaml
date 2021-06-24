@@ -117,37 +117,54 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/getCompaniesForUser
+    CreateBoardForCompanyFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /board
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.createBoardForCompany
+            FunctionName: CreateBoardForCompany
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/createBoardForCompany
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:
             BillingMode: "PAY_PER_REQUEST"
             AttributeDefinitions:
-                - AttributeName: "ItemId"
+                - AttributeName: "itemId"
                   AttributeType: "S"
-                - AttributeName: "BelongsTo"
+                - AttributeName: "belongsTo"
                   AttributeType: "S"
-                - AttributeName: "GSISortKey"
+                - AttributeName: "gsiSortKey"
                   AttributeType: "S"
             KeySchema:
-                - AttributeName: "ItemId"
+                - AttributeName: "itemId"
                   KeyType: "HASH"
-                - AttributeName: "BelongsTo"
+                - AttributeName: "belongsTo"
                   KeyType: "RANGE"
             TableName: "primaryTableOne"
             GlobalSecondaryIndexes:
                 - IndexName: "parentToChild"
                   KeySchema:
-                      - AttributeName: "BelongsTo"
+                      - AttributeName: "belongsTo"
                         KeyType: "HASH"
-                      - AttributeName: "ItemId"
+                      - AttributeName: "itemId"
                         KeyType: "RANGE"
                   Projection:
                       ProjectionType: "ALL"
                 - IndexName: "parentWithSortedChild"
                   KeySchema:
-                      - AttributeName: "BelongsTo"
+                      - AttributeName: "belongsTo"
                         KeyType: "HASH"
-                      - AttributeName: "GSISortKey"
+                      - AttributeName: "gsiSortKey"
                         KeyType: "RANGE"
                   Projection:
                       ProjectionType: "ALL"
