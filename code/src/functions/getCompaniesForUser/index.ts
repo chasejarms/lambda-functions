@@ -6,18 +6,18 @@ import { IDefaultPrimaryTableModel } from "../../models/defaultPrimaryTableModel
 import { primaryTableName } from "../../constants/primaryTableName";
 import { ICompanyInformation } from "../../models/companyInformation";
 import { ICompanyUser } from "../../models/companyUser";
+import { createSuccessResponse } from "../../utils/createSuccessResponse";
+import { createErrorResponse } from "../../utils/createErrorResponse";
 
 export const getCompaniesForUser = async (
     event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
     const userSub = userSubFromEvent(event);
     if (userSub === "") {
-        return {
-            statusCode: HttpStatusCode.BadRequest,
-            body: JSON.stringify({
-                message: "Issue getting the user sub from the event",
-            }),
-        };
+        return createErrorResponse(
+            HttpStatusCode.BadRequest,
+            "Issue getting the user sub from the event"
+        );
     }
 
     const dynamoClient = new AWS.DynamoDB.DocumentClient();
@@ -33,12 +33,9 @@ export const getCompaniesForUser = async (
             .promise();
 
         if (getCompanyUserResults.Items.length === 0) {
-            return {
-                statusCode: HttpStatusCode.Ok,
-                body: JSON.stringify({
-                    items: [],
-                }),
-            };
+            return createSuccessResponse({
+                items: [],
+            });
         }
 
         const companyUserItems = getCompanyUserResults.Items as ICompanyUser[];
@@ -73,12 +70,9 @@ export const getCompaniesForUser = async (
             }
         );
 
-        return {
-            statusCode: HttpStatusCode.Ok,
-            body: JSON.stringify({
-                items: companyInformationItemsForResponse,
-            }),
-        };
+        return createSuccessResponse({
+            items: companyInformationItemsForResponse,
+        });
     } catch (error) {
         const awsError = error as AWS.AWSError;
         return {

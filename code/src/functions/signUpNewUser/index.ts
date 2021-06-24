@@ -14,6 +14,7 @@ import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { ICompanyInformation } from "../../models/companyInformation";
 import { ICompanyUser } from "../../models/companyUser";
+import { createSuccessResponse } from "../../utils/createSuccessResponse";
 
 /**
  * The purpose of this function is just to sign up new users (i.e. never have been added to the system). If
@@ -151,10 +152,7 @@ export const signUpNewUser = async (
         );
     }
 
-    return {
-        statusCode: HttpStatusCode.Ok,
-        body: JSON.stringify({
-            message: "Sign Up Successful",
-        }),
-    };
+    return createSuccessResponse({
+        message: "Sign Up Successful",
+    });
 };

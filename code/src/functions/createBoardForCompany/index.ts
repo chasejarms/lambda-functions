@@ -76,35 +76,26 @@ export const createBoardForCompany = async (
             };
 
             outputData = await dynamoClient
-                .transactWrite(
-                    {
-                        TransactItems: [
-                            {
-                                Put: {
-                                    TableName: primaryTableName,
-                                    Item: boardItem,
-                                    ConditionExpression:
-                                        "attribute_not_exists(itemId)",
-                                },
+                .transactWrite({
+                    TransactItems: [
+                        {
+                            Put: {
+                                TableName: primaryTableName,
+                                Item: boardItem,
+                                ConditionExpression:
+                                    "attribute_not_exists(itemId)",
                             },
-                            {
-                                Put: {
-                                    TableName: primaryTableName,
-                                    Item: boardUserItem,
-                                    ConditionExpression:
-                                        "attribute_not_exists(itemId)",
-                                },
+                        },
+                        {
+                            Put: {
+                                TableName: primaryTableName,
+                                Item: boardUserItem,
+                                ConditionExpression:
+                                    "attribute_not_exists(itemId)",
                             },
-                        ],
-                    },
-                    (error, data) => {
-                        if (error) {
-                            dynamoDBError = error;
-                        } else {
-                            outputData = data;
-                        }
-                    }
-                )
+                        },
+                    ],
+                })
                 .promise();
         } catch (error) {
             dynamoDBError = error;
