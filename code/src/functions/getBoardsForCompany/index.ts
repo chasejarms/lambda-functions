@@ -14,24 +14,12 @@ import { createSuccessResponse } from "../../utils/createSuccessResponse";
 export const getBoardsForCompany = async (
     event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
-    const bodyIsEmptyErrorResponse = bodyIsEmptyError(event);
-    if (bodyIsEmptyErrorResponse) {
-        return bodyIsEmptyErrorResponse;
-    }
-
-    const bodyIsNotAnObjectErrorResponse = bodyIsNotAnObjectError(event);
-    if (bodyIsNotAnObjectErrorResponse) {
-        return bodyIsNotAnObjectErrorResponse;
-    }
-
-    const { companyId } = JSON.parse(event.body) as {
-        companyId: string;
-    };
+    const { companyId } = event.queryStringParameters;
 
     if (!companyId) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
-            "companyId is a required field"
+            "companyId is a required query parameter"
         );
     }
 
@@ -40,7 +28,7 @@ export const getBoardsForCompany = async (
         companyUser = await getCompanyUser(event, companyId);
     } catch (error) {
         return createErrorResponse(
-            HttpStatusCode.BadRequest,
+            HttpStatusCode.Forbidden,
             "must be a user on the company to get boards for the company"
         );
     }
@@ -52,9 +40,9 @@ export const getBoardsForCompany = async (
                 TableName: primaryTableName,
                 IndexName: parentToChildIndexName,
                 KeyConditionExpression:
-                    "itemId = :itemId AND belongsTo begins_with :boardStartingName",
+                    "belongsTo = :companyId AND begins_with ( itemId, :boardStartingName )",
                 ExpressionAttributeValues: {
-                    ":itemId": `COMPANY.${companyId}`,
+                    ":companyId": `COMPANY.${companyId}`,
                     ":boardStartingName": "BOARD.",
                 },
             })

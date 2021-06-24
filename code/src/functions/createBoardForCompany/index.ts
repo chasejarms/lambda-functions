@@ -11,6 +11,7 @@ import { IBoard } from "../../models/board";
 import { IBoardUser } from "../../models/boardUser";
 import { getCompanyUser } from "../../utils/getCompanyUser";
 import { ICompanyUser } from "../../models/companyUser";
+import { createSuccessResponse } from "../../utils/createSuccessResponse";
 
 export const createBoardForCompany = async (
     event: APIGatewayProxyEvent
@@ -109,19 +110,9 @@ export const createBoardForCompany = async (
         );
     }
 
-    console.log(JSON.stringify(outputData));
-
-    // const boardItem = outputData.ItemCollectionMetrics[primaryTableName].find(
-    //     (itemCollectionMetrics) => {
-    //         return (
-    //             itemCollectionMetrics.ItemCollectionKey["ItemId"] ===
-    //             `BOARD.${boardId}`
-    //         );
-    //     }
-    // );
-
-    return {
-        statusCode: HttpStatusCode.Ok,
-        body: "",
-    };
+    return createSuccessResponse({
+        id: boardId,
+        name: boardName,
+        description: boardDescription,
+    });
 };
