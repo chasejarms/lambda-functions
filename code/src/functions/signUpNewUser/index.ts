@@ -48,8 +48,8 @@ export const signUpNewUser = async (
     }
 
     const poolData: ICognitoUserPoolData = {
-        UserPoolId: "us-east-1_rXA6mH0CY", // Your user pool id here
-        ClientId: "63qoafbc0o0sig2nb23prj88fd", // Your client id here
+        UserPoolId: "us-east-1_hjQ631UTC", // Your user pool id here
+        ClientId: "2aklq69d2ba12bpnlo1rsr6kvk", // Your client id here
     };
     const userPool = new CognitoUserPool(poolData);
 
