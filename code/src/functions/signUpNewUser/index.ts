@@ -3,13 +3,15 @@ import * as AWS from "aws-sdk";
 import { HttpStatusCode } from "../../models/httpStatusCode";
 import {
     CognitoUserPool,
-    CognitoUserAttribute,
     ISignUpResult,
     NodeCallback,
     ICognitoUserPoolData,
 } from "amazon-cognito-identity-js";
 import { generateUniqueId } from "../../utils/generateUniqueId";
 import { primaryTableName } from "../../constants/primaryTableName";
+import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
+import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
+import { createErrorResponse } from "../../utils/createErrorResponse";
 
 /**
  * The purpose of this function is just to sign up new users (i.e. never have been added to the system). If
@@ -19,30 +21,14 @@ import { primaryTableName } from "../../constants/primaryTableName";
 export const signUpNewUser = async (
     event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
-    if (!event.body) {
-        console.log("there is no body");
-        const noBodyResponse = JSON.stringify({
-            message: "No Body On Request",
-        });
-
-        return {
-            statusCode: HttpStatusCode.BadRequest,
-            body: noBodyResponse,
-        };
+    const bodyIsEmptyErrorResponse = bodyIsEmptyError(event);
+    if (bodyIsEmptyErrorResponse) {
+        return bodyIsEmptyErrorResponse;
     }
 
-    try {
-        JSON.parse(event.body);
-    } catch {
-        console.log("the body is not an object");
-        const bodyMustBeAnObjectResponse = JSON.stringify({
-            message: "Body must be an object",
-        });
-
-        return {
-            statusCode: HttpStatusCode.BadRequest,
-            body: bodyMustBeAnObjectResponse,
-        };
+    const bodyIsNotAnObjectErrorResponse = bodyIsNotAnObjectError(event);
+    if (bodyIsNotAnObjectErrorResponse) {
+        return bodyIsNotAnObjectErrorResponse;
     }
 
     const { companyName, email, password, name } = JSON.parse(event.body) as {
@@ -53,16 +39,10 @@ export const signUpNewUser = async (
     };
 
     if (!companyName || !email || !password || !name) {
-        console.log("not all required fields are provided");
-        const requiredFieldsNotProvidedResponse = JSON.stringify({
-            message:
-                "companyName, email, name, and password are required fields",
-        });
-
-        return {
-            statusCode: HttpStatusCode.BadRequest,
-            body: requiredFieldsNotProvidedResponse,
-        };
+        return createErrorResponse(
+            HttpStatusCode.BadRequest,
+            "companyName, email, name, and password are required fields"
+        );
     }
 
     const poolData: ICognitoUserPoolData = {
@@ -103,8 +83,10 @@ export const signUpNewUser = async (
     }
 
     if (userSignUpResponse !== null) {
-        console.log("issue with user signup: ", userSignUpResponse.body);
-        return userSignUpResponse;
+        return createErrorResponse(
+            userSignUpResponse.statusCode,
+            userSignUpResponse.body
+        );
     }
 
     // if they are successfully created, go ahead and create the company and the user in dynamo db
@@ -114,11 +96,6 @@ export const signUpNewUser = async (
     let companyIdAttempts = 0;
     let outputData: AWS.DynamoDB.DocumentClient.TransactWriteItemsOutput | null = null;
     let dynamoDBError: AWS.AWSError | null = null;
-
-    const companyNamePutTogether = companyName
-        .split(" ")
-        .join("")
-        .toUpperCase();
 
     const fullNamePutTogether = name.split(" ").join("").toUpperCase();
 
@@ -172,12 +149,10 @@ export const signUpNewUser = async (
     }
 
     if (dynamoDBError) {
-        return {
-            statusCode: dynamoDBError.statusCode,
-            body: JSON.stringify({
-                message: dynamoDBError.message,
-            }),
-        };
+        return createErrorResponse(
+            dynamoDBError.statusCode,
+            dynamoDBError.message
+        );
     }
 
     return {
