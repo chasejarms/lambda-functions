@@ -1,6 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { HttpStatusCode } from "../../models/httpStatusCode";
-import { isCompanyUserAdmin } from "../../utils/isCompanyUserAdmin";
 import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
 import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
 import { createErrorResponse } from "../../utils/createErrorResponse";
@@ -10,6 +9,8 @@ import { generateUniqueId } from "../../utils/generateUniqueId";
 import { userSubFromEvent } from "../../utils/userSubFromEvent";
 import { IBoard } from "../../models/board";
 import { IBoardUser } from "../../models/boardUser";
+import { getCompanyUser } from "../../utils/getCompanyUser";
+import { ICompanyUser } from "../../models/companyUser";
 
 export const createBoardForCompany = async (
     event: APIGatewayProxyEvent
@@ -39,8 +40,10 @@ export const createBoardForCompany = async (
         );
     }
 
-    const canCreateBoard = await isCompanyUserAdmin(event, companyId);
-    if (!canCreateBoard) {
+    let companyUser: ICompanyUser;
+    try {
+        companyUser = await getCompanyUser(event, companyId);
+    } catch (error) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
             "Insufficient permissions to create board"
@@ -69,6 +72,7 @@ export const createBoardForCompany = async (
                 itemId: `BOARDUSER.${userSub}_BOARD.${boardId}`,
                 belongsTo: `COMPANY.${companyId}`,
                 isBoardAdmin: true,
+                name: companyUser.name,
             };
 
             outputData = await dynamoClient
