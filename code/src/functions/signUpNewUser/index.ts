@@ -99,15 +99,11 @@ export const signUpNewUser = async (
 
     const fullNamePutTogether = name.split(" ").join("").toUpperCase();
 
-    while (
-        companyIdAttempts < 3 &&
-        outputData === null &&
-        dynamoDBError == null
-    ) {
+    while (companyIdAttempts < 3 && outputData === null) {
         const uniqueCompanyId = generateUniqueId();
-        await dynamoClient
-            .transactWrite(
-                {
+        try {
+            outputData = await dynamoClient
+                .transactWrite({
                     TransactItems: [
                         {
                             Put: {
@@ -136,16 +132,11 @@ export const signUpNewUser = async (
                             },
                         },
                     ],
-                },
-                (error, data) => {
-                    if (error) {
-                        dynamoDBError = error;
-                    } else {
-                        outputData = data;
-                    }
-                }
-            )
-            .promise();
+                })
+                .promise();
+        } catch (error) {
+            dynamoDBError = error;
+        }
     }
 
     if (dynamoDBError) {
