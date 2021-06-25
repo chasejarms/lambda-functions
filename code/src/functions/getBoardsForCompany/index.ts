@@ -51,9 +51,10 @@ export const getBoardsForCompany = async (
         const boardItems = getBoardResults.Items as IBoard[];
         return createSuccessResponse({
             items: boardItems.map((board) => {
+                const boardId = board.itemId.split(".")[1];
                 return {
                     name: board.name,
-                    id: board.itemId,
+                    id: boardId,
                 };
             }),
         });
