@@ -1,6 +1,18 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
 import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
+import { IBoardColumnInformation } from "../../models/boardColumnInformation";
+import { createErrorResponse } from "../../utils/createErrorResponse";
+import { HttpStatusCode } from "../../models/httpStatusCode";
+import { ICompanyUser } from "../../models/companyUser";
+import { getCompanyUser } from "../../utils/getCompanyUser";
+import { IBoardUser } from "../../models/boardUser";
+import { getBoardUser } from "../../utils/getBoardUser";
+import { generateUniqueId } from "../../utils/generateUniqueId";
+import * as AWS from "aws-sdk";
+import { primaryTableName } from "../../constants/primaryTableName";
+import { createSuccessResponse } from "../../utils/createSuccessResponse";
+import { isCompanyAdminOrBoardAdmin } from "../../utils/isCompanyAdminOrBoardAdmin";
 
 export const updateBoardColumnInformation = async (
     event: APIGatewayProxyEvent
@@ -15,93 +27,80 @@ export const updateBoardColumnInformation = async (
         return bodyIsNotAnObjectErrorResponse;
     }
 
-    const { companyId, boardName, boardDescription } = JSON.parse(
+    const { columnInformation, boardId, companyId } = JSON.parse(
         event.body
     ) as {
+        columnInformation: IBoardColumnInformation;
+        boardId: string;
         companyId: string;
-        boardName: string;
-        boardDescription: string;
     };
 
-    if (!companyId || !boardName || !boardDescription) {
+    if (!columnInformation || !boardId || !companyId) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
-            "companyId, boardName, and boardDescription are required fields."
+            "columnInformation, boardId, and companyId are required fields"
         );
     }
 
-    let companyUser: ICompanyUser;
-    try {
-        companyUser = await getCompanyUser(event, companyId);
-    } catch (error) {
+    const canUpdateBoardColumnInformation = await isCompanyAdminOrBoardAdmin(
+        event,
+        boardId,
+        companyId
+    );
+    if (!canUpdateBoardColumnInformation) {
         return createErrorResponse(
-            HttpStatusCode.BadRequest,
-            "Insufficient permissions to create board"
+            HttpStatusCode.Forbidden,
+            "Insufficient permissions to modify board column information"
         );
     }
 
-    const userSub = userSubFromEvent(event);
+    const existingColumnIds = columnInformation.columns.reduce<{
+        [id: string]: boolean;
+    }>((mapping, { id }) => {
+        mapping[id] = true;
+        return mapping;
+    }, {});
+
+    const updatedColumnInformation = columnInformation.columns.map((column) => {
+        if (column.id) {
+            return column;
+        }
+
+        let generatedIdIsUnique = false;
+        let generatedId: string;
+        while (!generatedIdIsUnique) {
+            generatedId = generateUniqueId(1);
+            generatedIdIsUnique = existingColumnIds[generatedId] === undefined;
+        }
+
+        existingColumnIds[generatedId] = true;
+
+        return {
+            id: generatedId,
+            name: column.name,
+        };
+    });
 
     const dynamoClient = new AWS.DynamoDB.DocumentClient();
-    let createBoardIdAttempts = 0;
-    let outputData: AWS.DynamoDB.DocumentClient.TransactWriteItemsOutput | null = null;
-    let dynamoDBError: AWS.AWSError | null = null;
-    let boardId: string;
 
-    while (createBoardIdAttempts < 3 && outputData === null) {
-        boardId = generateUniqueId(1);
-        try {
-            const boardItem: IBoard = {
-                itemId: `BOARD.${boardId}`,
-                belongsTo: `COMPANY.${companyId}`,
-                name: boardName,
-                description: boardDescription,
-            };
+    try {
+        await dynamoClient.put({
+            TableName: primaryTableName,
+            Item: {
+                itemId: `COLUMNINFORMATION_BOARD.${boardId}`,
+                belongsTo: `BOARD.${boardId}`,
+                updatedColumnInformation,
+            },
+        });
 
-            const boardUserItem: IBoardUser = {
-                itemId: `BOARDUSER.${userSub}_BOARD.${boardId}`,
-                belongsTo: `COMPANY.${companyId}`,
-                isBoardAdmin: true,
-                name: companyUser.name,
-            };
-
-            outputData = await dynamoClient
-                .transactWrite({
-                    TransactItems: [
-                        {
-                            Put: {
-                                TableName: primaryTableName,
-                                Item: boardItem,
-                                ConditionExpression:
-                                    "attribute_not_exists(itemId)",
-                            },
-                        },
-                        {
-                            Put: {
-                                TableName: primaryTableName,
-                                Item: boardUserItem,
-                                ConditionExpression:
-                                    "attribute_not_exists(itemId)",
-                            },
-                        },
-                    ],
-                })
-                .promise();
-        } catch (error) {
-            dynamoDBError = error;
-        }
-    }
-
-    if (dynamoDBError) {
+        return createSuccessResponse({
+            updatedColumnInformation,
+        });
+    } catch (error) {
+        const dynamoDBError = error as AWS.AWSError;
         return createErrorResponse(
             dynamoDBError.statusCode,
             dynamoDBError.message
         );
     }
-
-    return createSuccessResponse({
-        id: boardId,
-        name: boardName,
-        description: boardDescription,
-    });
 };
