@@ -1,13 +1,13 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import { HttpStatusCode } from "../../models/httpStatusCode";
+import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
 import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import * as AWS from "aws-sdk";
 import { primaryTableName } from "../../constants/primaryTableName";
-import { IBoard } from "../../models/board";
+import { IBoard } from "../../models/database/board";
 import { getCompanyUser } from "../../utils/getCompanyUser";
-import { ICompanyUser } from "../../models/companyUser";
+import { ICompanyUser } from "../../models/database/companyUser";
 import { parentToChildIndexName } from "../../constants/parentToChildIndexName";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 

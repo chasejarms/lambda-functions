@@ -152,6 +152,23 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/getBoardsForCompany
+    UpdateBoardColumnInformation:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /updateBoardColumnInformation
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.updateBoardColumnInformation
+            FunctionName: UpdateBoardColumnInformation
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/updateBoardColumnInformation
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:

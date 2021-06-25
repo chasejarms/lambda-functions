@@ -1,10 +1,10 @@
 import { APIGatewayProxyEvent } from "aws-lambda";
 import { getCompanyUser } from "../getCompanyUser";
 import { getBoardUser } from "../getBoardUser";
-import { ICompanyUser } from "../../models/companyUser";
-import { IBoardUser } from "../../models/boardUser";
+import { ICompanyUser } from "../../models/database/companyUser";
+import { IBoardUser } from "../../models/database/boardUser";
 import { createErrorResponse } from "../createErrorResponse";
-import { HttpStatusCode } from "../../models/httpStatusCode";
+import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 
 export async function isCompanyAdminOrBoardAdmin(
     event: APIGatewayProxyEvent,

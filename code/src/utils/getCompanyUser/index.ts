@@ -2,8 +2,8 @@ import { APIGatewayProxyEvent } from "aws-lambda";
 import { userSubFromEvent } from "../userSubFromEvent";
 import * as AWS from "aws-sdk";
 import { primaryTableName } from "../../constants/primaryTableName";
-import { ICompanyUser } from "../../models/companyUser";
-import { IDefaultPrimaryTableModel } from "../../models/defaultPrimaryTableModel";
+import { ICompanyUser } from "../../models/database/companyUser";
+import { IDefaultPrimaryTableModel } from "../../models/database/defaultPrimaryTableModel";
 
 export async function getCompanyUser(
     event: APIGatewayProxyEvent,

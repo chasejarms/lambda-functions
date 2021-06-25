@@ -1,11 +1,11 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import { HttpStatusCode } from "../../models/httpStatusCode";
+import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { userSubFromEvent } from "../../utils/userSubFromEvent";
 import * as AWS from "aws-sdk";
-import { IDefaultPrimaryTableModel } from "../../models/defaultPrimaryTableModel";
+import { IDefaultPrimaryTableModel } from "../../models/database/defaultPrimaryTableModel";
 import { primaryTableName } from "../../constants/primaryTableName";
-import { ICompanyInformation } from "../../models/companyInformation";
-import { ICompanyUser } from "../../models/companyUser";
+import { ICompanyInformation } from "../../models/database/companyInformation";
+import { ICompanyUser } from "../../models/database/companyUser";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 

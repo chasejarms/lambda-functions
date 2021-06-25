@@ -1,5 +1,5 @@
 import { APIGatewayProxyEvent } from "aws-lambda";
-import { HttpStatusCode } from "../../models/httpStatusCode";
+import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { createErrorResponse } from "../createErrorResponse";
 
 export function bodyIsEmptyError(event: APIGatewayProxyEvent) {

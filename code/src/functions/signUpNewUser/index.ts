@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import * as AWS from "aws-sdk";
-import { HttpStatusCode } from "../../models/httpStatusCode";
+import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import {
     CognitoUserPool,
     ISignUpResult,
@@ -12,8 +12,8 @@ import { primaryTableName } from "../../constants/primaryTableName";
 import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
 import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
 import { createErrorResponse } from "../../utils/createErrorResponse";
-import { ICompanyInformation } from "../../models/companyInformation";
-import { ICompanyUser } from "../../models/companyUser";
+import { ICompanyInformation } from "../../models/database/companyInformation";
+import { ICompanyUser } from "../../models/database/companyUser";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 
 /**

@@ -1,4 +1,4 @@
-import { HttpStatusCode } from "../../models/httpStatusCode";
+import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 
 export function createSuccessResponse(body: any) {
     return {

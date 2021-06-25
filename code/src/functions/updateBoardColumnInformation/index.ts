@@ -1,18 +1,15 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
 import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
-import { IBoardColumnInformation } from "../../models/boardColumnInformation";
+import { IBoardColumnInformationRequest } from "../../models/requests/boardColumnInformationRequest";
 import { createErrorResponse } from "../../utils/createErrorResponse";
-import { HttpStatusCode } from "../../models/httpStatusCode";
-import { ICompanyUser } from "../../models/companyUser";
-import { getCompanyUser } from "../../utils/getCompanyUser";
-import { IBoardUser } from "../../models/boardUser";
-import { getBoardUser } from "../../utils/getBoardUser";
+import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { generateUniqueId } from "../../utils/generateUniqueId";
 import * as AWS from "aws-sdk";
 import { primaryTableName } from "../../constants/primaryTableName";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { isCompanyAdminOrBoardAdmin } from "../../utils/isCompanyAdminOrBoardAdmin";
+import { IBoardColumn } from "../../models/database/boardColumns";
 
 export const updateBoardColumnInformation = async (
     event: APIGatewayProxyEvent
@@ -27,18 +24,14 @@ export const updateBoardColumnInformation = async (
         return bodyIsNotAnObjectErrorResponse;
     }
 
-    const { columnInformation, boardId, companyId } = JSON.parse(
+    const { columns, boardId, companyId } = JSON.parse(
         event.body
-    ) as {
-        columnInformation: IBoardColumnInformation;
-        boardId: string;
-        companyId: string;
-    };
+    ) as IBoardColumnInformationRequest;
 
-    if (!columnInformation || !boardId || !companyId) {
+    if (!columns || !boardId || !companyId) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
-            "columnInformation, boardId, and companyId are required fields"
+            "columns, boardId, and companyId are required fields"
         );
     }
 
@@ -54,14 +47,40 @@ export const updateBoardColumnInformation = async (
         );
     }
 
-    const existingColumnIds = columnInformation.columns.reduce<{
+    // start here tomorrow
+    let uncategorizedColumnIsValid = true;
+    let doneColumnIsValid = true;
+    let otherColumnsAreValid = true;
+    let uncategorizedColumnCount = 0;
+    let doneColumnCount = 0;
+
+    const columnModificationIsValid = columns.forEach((column) => {
+        if (column.name === "INTERNAL:Uncategorized") {
+            uncategorizedColumnIsValid = !column.canBeModified;
+            uncategorizedColumnCount++;
+        } else if (column.name === "INTERNAL:Done") {
+            doneColumnIsValid = !column.canBeModified;
+            doneColumnCount++;
+        } else if (otherColumnsAreValid) {
+            otherColumnsAreValid = column.canBeModified;
+        }
+    });
+
+    if (!uncategorizedColumnIsValid) {
+        return createErrorResponse(
+            HttpStatusCode.BadRequest,
+            "Cannot modify the "
+        );
+    }
+
+    const existingColumnIds = columns.reduce<{
         [id: string]: boolean;
     }>((mapping, { id }) => {
         mapping[id] = true;
         return mapping;
     }, {});
 
-    const updatedColumnInformation = columnInformation.columns.map((column) => {
+    const updatedColumnInformation: IBoardColumn[] = columns.map((column) => {
         if (column.id) {
             return column;
         }
@@ -78,6 +97,8 @@ export const updateBoardColumnInformation = async (
         return {
             id: generatedId,
             name: column.name,
+            canUpdateBoardColumnInformation:
+                column.canUpdateBoardColumnInformation,
         };
     });
 
