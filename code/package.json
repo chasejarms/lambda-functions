@@ -9,7 +9,8 @@
     "dependencies": {
         "amazon-cognito-identity-js": "^5.0.1",
         "axios": "^0.21.1",
-        "jwt-decode": "^3.1.2"
+        "jwt-decode": "^3.1.2",
+        "lodash": "^4.17.21"
     },
     "scripts": {
         "test": "mocha tests/unit/",
@@ -17,6 +18,7 @@
     },
     "devDependencies": {
         "@types/aws-lambda": "^8.10.77",
+        "@types/lodash": "^4.14.170",
         "@types/node": "^15.12.2",
         "aws-sdk": "^2.927.0",
         "chai": "^4.2.0",

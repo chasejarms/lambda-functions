@@ -4,12 +4,12 @@ import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
 import { IBoardColumnInformationRequest } from "../../models/requests/boardColumnInformationRequest";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
-import { generateUniqueId } from "../../utils/generateUniqueId";
 import * as AWS from "aws-sdk";
 import { primaryTableName } from "../../constants/primaryTableName";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { isCompanyAdminOrBoardAdmin } from "../../utils/isCompanyAdminOrBoardAdmin";
-import { IBoardColumn } from "../../models/database/boardColumns";
+import { columnDataErrorMessage } from "../../utils/columnDataErrorMessage";
+import { createDatabaseColumnsFromRequest } from "../../utils/createDatabaseColumnsFromRequest";
 
 export const updateBoardColumnInformation = async (
     event: APIGatewayProxyEvent
@@ -47,61 +47,16 @@ export const updateBoardColumnInformation = async (
         );
     }
 
-    // start here tomorrow
-    let uncategorizedColumnIsValid = true;
-    let doneColumnIsValid = true;
-    let otherColumnsAreValid = true;
-    let uncategorizedColumnCount = 0;
-    let doneColumnCount = 0;
+    const errorMessageForColumnData = columnDataErrorMessage(columns);
 
-    const columnModificationIsValid = columns.forEach((column) => {
-        if (column.name === "INTERNAL:Uncategorized") {
-            uncategorizedColumnIsValid = !column.canBeModified;
-            uncategorizedColumnCount++;
-        } else if (column.name === "INTERNAL:Done") {
-            doneColumnIsValid = !column.canBeModified;
-            doneColumnCount++;
-        } else if (otherColumnsAreValid) {
-            otherColumnsAreValid = column.canBeModified;
-        }
-    });
-
-    if (!uncategorizedColumnIsValid) {
+    if (errorMessageForColumnData) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
-            "Cannot modify the "
+            errorMessageForColumnData
         );
     }
 
-    const existingColumnIds = columns.reduce<{
-        [id: string]: boolean;
-    }>((mapping, { id }) => {
-        mapping[id] = true;
-        return mapping;
-    }, {});
-
-    const updatedColumnInformation: IBoardColumn[] = columns.map((column) => {
-        if (column.id) {
-            return column;
-        }
-
-        let generatedIdIsUnique = false;
-        let generatedId: string;
-        while (!generatedIdIsUnique) {
-            generatedId = generateUniqueId(1);
-            generatedIdIsUnique = existingColumnIds[generatedId] === undefined;
-        }
-
-        existingColumnIds[generatedId] = true;
-
-        return {
-            id: generatedId,
-            name: column.name,
-            canUpdateBoardColumnInformation:
-                column.canUpdateBoardColumnInformation,
-        };
-    });
-
+    const databaseColumns = createDatabaseColumnsFromRequest(columns);
     const dynamoClient = new AWS.DynamoDB.DocumentClient();
 
     try {
@@ -110,12 +65,12 @@ export const updateBoardColumnInformation = async (
             Item: {
                 itemId: `COLUMNINFORMATION_BOARD.${boardId}`,
                 belongsTo: `BOARD.${boardId}`,
-                updatedColumnInformation,
+                databaseColumns,
             },
         });
 
         return createSuccessResponse({
-            updatedColumnInformation,
+            columns: databaseColumns,
         });
     } catch (error) {
         const dynamoDBError = error as AWS.AWSError;
