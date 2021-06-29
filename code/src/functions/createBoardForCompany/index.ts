@@ -10,7 +10,7 @@ import { userSubFromEvent } from "../../utils/userSubFromEvent";
 import { IBoard } from "../../models/database/board";
 import { IBoardUser } from "../../models/database/boardUser";
 import { getCompanyUser } from "../../utils/getCompanyUser";
-import { ICompanyUser } from "../../models/database/companyUser";
+import { ICompanyUser } from "../../models/database/user";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 
 export const createBoardForCompany = async (

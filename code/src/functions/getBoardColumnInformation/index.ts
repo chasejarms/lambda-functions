@@ -1,41 +1,44 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
-import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
-import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import * as AWS from "aws-sdk";
 import { primaryTableName } from "../../constants/primaryTableName";
 import { IBoard } from "../../models/database/board";
-import { getCompanyUser } from "../../utils/getCompanyUser";
-import { ICompanyUser } from "../../models/database/user";
 import { parentToChildIndexName } from "../../constants/parentToChildIndexName";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
+import { isCompanyAdminOrBoardAdmin } from "../../utils/isCompanyUserAdminOrBoardAdmin";
+import { isCompanyUser } from "../../utils/isCompanyUser";
 
-export const getBoardsForCompany = async (
+export const getBoardColumnInformation = async (
     event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
-    const { companyId } = event.queryStringParameters;
+    const { boardId, companyId } = event.queryStringParameters;
 
-    if (!companyId) {
+    if (!companyId || !boardId) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
-            "companyId is a required query parameter"
+            "companyId and boardId are required query parameters"
         );
     }
 
-    let companyUser: ICompanyUser;
-    try {
-        companyUser = await getCompanyUser(event, companyId);
-    } catch (error) {
+    const hasSufficientRights = await isCompanyUser(
+        event,
+        companyId,
+    );
+    if (!hasSufficientRights) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,
             "must be a user on the company to get boards for the company"
         );
     }
 
+    try {
+        await 
+    }
+
     const dynamoClient = new AWS.DynamoDB.DocumentClient();
     try {
-        const getBoardResults = await dynamoClient
+        const getBoardColumnResults = await dynamoClient
             .query({
                 TableName: primaryTableName,
                 IndexName: parentToChildIndexName,

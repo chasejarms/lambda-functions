@@ -7,7 +7,7 @@ import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import * as AWS from "aws-sdk";
 import { primaryTableName } from "../../constants/primaryTableName";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
-import { isCompanyAdminOrBoardAdmin } from "../../utils/isCompanyAdminOrBoardAdmin";
+import { isCompanyAdminOrBoardAdmin } from "../../utils/isCompanyUserAdminOrBoardAdmin";
 import { columnDataErrorMessage } from "../../utils/columnDataErrorMessage";
 import { createDatabaseColumnsFromRequest } from "../../utils/createDatabaseColumnsFromRequest";
 

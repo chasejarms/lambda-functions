@@ -1,13 +1,13 @@
 import { APIGatewayProxyEvent } from "aws-lambda";
 import * as AWS from "aws-sdk";
-import { getCompanyUser } from "../getCompanyUser";
+import { getUser } from "../getUser";
 
 export async function isCompanyUserAdmin(
     event: APIGatewayProxyEvent,
     companyId: string
 ): Promise<boolean> {
     try {
-        const companyUser = await getCompanyUser(event, companyId);
+        const companyUser = await getUser(event, companyId);
 
         return companyUser.isCompanyAdmin;
     } catch (error) {

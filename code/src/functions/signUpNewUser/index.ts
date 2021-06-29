@@ -13,7 +13,7 @@ import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
 import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { ICompanyInformation } from "../../models/database/companyInformation";
-import { ICompanyUser } from "../../models/database/companyUser";
+import { ICompanyUser } from "../../models/database/user";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 
 /**

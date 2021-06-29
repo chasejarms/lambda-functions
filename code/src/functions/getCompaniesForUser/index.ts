@@ -5,7 +5,7 @@ import * as AWS from "aws-sdk";
 import { IDefaultPrimaryTableModel } from "../../models/database/defaultPrimaryTableModel";
 import { primaryTableName } from "../../constants/primaryTableName";
 import { ICompanyInformation } from "../../models/database/companyInformation";
-import { ICompanyUser } from "../../models/database/companyUser";
+import { ICompanyUser } from "../../models/database/user";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 
