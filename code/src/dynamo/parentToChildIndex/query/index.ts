@@ -1,6 +1,6 @@
 import * as AWS from "aws-sdk";
-import { primaryTableName } from "../../constants/primaryTableName";
-import { parentToChildIndexName } from "../../constants/parentToChildIndexName";
+import { primaryTableName } from "../../../constants/primaryTableName";
+import { parentToChildIndexName } from "../../../constants/parentToChildIndexName";
 
 export async function queryParentToChildIndexBeginsWith<T>(
     itemId: string,

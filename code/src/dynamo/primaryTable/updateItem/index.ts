@@ -1,6 +1,6 @@
 import * as AWS from "aws-sdk";
-import { primaryTableName } from "../../constants/primaryTableName";
-import { IDefaultPrimaryTableModel } from "../../models/database/defaultPrimaryTableModel";
+import { primaryTableName } from "../../../constants/primaryTableName";
+import { IDefaultPrimaryTableModel } from "../../../models/database/defaultPrimaryTableModel";
 
 /**
  *

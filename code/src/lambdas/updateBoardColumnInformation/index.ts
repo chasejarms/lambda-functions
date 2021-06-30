@@ -10,9 +10,9 @@ import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { columnDataErrorMessage } from "../../utils/columnDataErrorMessage";
 import { createDatabaseColumnsFromRequest } from "../../utils/createDatabaseColumnsFromRequest";
 import { isCompanyUserAdminOrBoardAdmin } from "../../utils/isCompanyUserAdminOrBoardAdmin";
-import { createBoardColumnInformationKey } from "../../utils/createBoardColumnInformationKey";
-import { createCompanyBoardsKey } from "../../utils/createCompanyBoardsKey";
-import { updateItemInPrimaryTable } from "../../utils/updateItemInPrimaryTable";
+import { createBoardColumnInformationKey } from "../../keyGeneration/createBoardColumnInformationKey";
+import { createCompanyBoardsKey } from "../../keyGeneration/createCompanyBoardsKey";
+import { updateItemInPrimaryTable } from "../../dynamo/primaryTable/updateItem";
 
 export const updateBoardColumnInformation = async (
     event: APIGatewayProxyEvent

@@ -2,7 +2,7 @@ const path = require("path");
 const glob = require("glob");
 
 module.exports = {
-    entry: glob.sync("./src/functions/**/index.ts").reduce((acc, path) => {
+    entry: glob.sync("./src/lambdas/**/index.ts").reduce((acc, path) => {
         const pathSplitOnBackslashes = path.split("/");
         const secondToLastIndex = pathSplitOnBackslashes.length - 2;
         const fileName = pathSplitOnBackslashes[secondToLastIndex];

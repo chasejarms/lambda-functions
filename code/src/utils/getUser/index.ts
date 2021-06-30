@@ -1,6 +1,6 @@
-import { createCompanyKey } from "../createCompanyKey";
-import { createUserKey } from "../createUserKey";
-import { getItemFromPrimaryTable } from "../getItemFromPrimaryTable";
+import { createCompanyKey } from "../../keyGeneration/createCompanyKey";
+import { createUserKey } from "../../keyGeneration/createUserKey";
+import { getItemFromPrimaryTable } from "../../dynamo/primaryTable/getItem";
 import { IUser } from "../../models/database/user";
 import { APIGatewayProxyEvent } from "aws-lambda";
 import { userSubFromEvent } from "../userSubFromEvent";

@@ -3,8 +3,8 @@ import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { isCompanyAdminOrBoardUser } from "../../utils/isCompanyAdminOrBoardUser";
-import { getItemFromPrimaryTable } from "../../utils/getItemFromPrimaryTable";
-import { createBoardColumnInformationKey } from "../../utils/createBoardColumnInformationKey";
+import { getItemFromPrimaryTable } from "../../dynamo/primaryTable/getItem";
+import { createBoardColumnInformationKey } from "../../keyGeneration/createBoardColumnInformationKey";
 import { IBoardColumn } from "../../models/database/boardColumn";
 
 export const getBoardColumnInformation = async (

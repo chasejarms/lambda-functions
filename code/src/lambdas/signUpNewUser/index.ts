@@ -1,5 +1,4 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import * as AWS from "aws-sdk";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import {
     CognitoUserPool,
@@ -8,13 +7,18 @@ import {
     ICognitoUserPoolData,
 } from "amazon-cognito-identity-js";
 import { generateUniqueId } from "../../utils/generateUniqueId";
-import { primaryTableName } from "../../constants/primaryTableName";
 import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
 import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { ICompanyInformation } from "../../models/database/companyInformation";
-import { ICompanyUser } from "../../models/database/user";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
+import { transacteWriteIfNotExistsInPrimaryTable } from "../../dynamo/primaryTable/transactWriteIfNotExists";
+import { createCompanyInformationKey } from "../../keyGeneration/createCompanyInformationKey";
+import { createAllCompaniesKey } from "../../keyGeneration/createAllCompaniesKey";
+import { createUserKey } from "../../keyGeneration/createUserKey";
+import { createCompanyKey } from "../../keyGeneration/createCompanyKey";
+import { createCompanyUserAlphabeticalSortKey } from "../../keyGeneration/createCompanyUserAlphabeticalSortKey";
+import { IUser } from "../../models/database/user";
 
 /**
  * The purpose of this function is just to sign up new users (i.e. never have been added to the system). If
@@ -94,61 +98,52 @@ export const signUpNewUser = async (
 
     // if they are successfully created, go ahead and create the company and the user in dynamo db
 
-    const dynamoClient = new AWS.DynamoDB.DocumentClient();
-
     let companyIdAttempts = 0;
-    let outputData: AWS.DynamoDB.DocumentClient.TransactWriteItemsOutput | null = null;
-    let dynamoDBError: AWS.AWSError | null = null;
 
-    const fullNamePutTogether = name.split(" ").join("").toUpperCase();
-
-    while (companyIdAttempts < 3 && outputData === null) {
+    while (companyIdAttempts < 3) {
         const uniqueCompanyId = generateUniqueId();
-        try {
-            const companyInformationItem: ICompanyInformation = {
-                itemId: `COMPANYINFORMATION_COMPANY.${uniqueCompanyId}`,
-                belongsTo: `COMPANY.${uniqueCompanyId}`,
-                name: companyName,
-            };
-            const companyUserItem: ICompanyUser = {
-                itemId: `COMPANYUSER.${signUpResultFromCallback.userSub}`,
-                belongsTo: `COMPANY.${uniqueCompanyId}`,
-                gsiSortKey: `COMPANYUSER_ALPHABETICAL_${fullNamePutTogether}`,
-                isCompanyAdmin: true,
-                name: name,
-            };
 
-            outputData = await dynamoClient
-                .transactWrite({
-                    TransactItems: [
-                        {
-                            Put: {
-                                TableName: primaryTableName,
-                                Item: companyInformationItem,
-                                ConditionExpression:
-                                    "attribute_not_exists(itemId)",
-                            },
-                        },
-                        {
-                            Put: {
-                                TableName: primaryTableName,
-                                Item: companyUserItem,
-                                ConditionExpression:
-                                    "attribute_not_exists(itemId)",
-                            },
-                        },
-                    ],
-                })
-                .promise();
-        } catch (error) {
-            dynamoDBError = error;
+        const companyInformationKey = createCompanyInformationKey(
+            uniqueCompanyId
+        );
+        const allCompaniesKey = createAllCompaniesKey();
+        const companyInformationItem: ICompanyInformation = {
+            itemId: companyInformationKey,
+            belongsTo: allCompaniesKey,
+            name: companyName,
+        };
+
+        const userKey = createUserKey(signUpResultFromCallback.userSub);
+        const companyKey = createCompanyKey(uniqueCompanyId);
+        const companyUserAlphabeticalSortKey = createCompanyUserAlphabeticalSortKey(
+            name,
+            signUpResultFromCallback.userSub
+        );
+        const companyUserItem: IUser = {
+            itemId: userKey,
+            belongsTo: companyKey,
+            gsiSortKey: companyUserAlphabeticalSortKey,
+            isCompanyAdmin: true,
+            boardRights: {},
+            name: name,
+        };
+
+        const transactWriteWasSuccessful = transacteWriteIfNotExistsInPrimaryTable(
+            companyInformationItem,
+            companyUserItem
+        );
+
+        if (transactWriteWasSuccessful) {
+            break;
+        } else {
+            companyIdAttempts++;
         }
     }
 
-    if (dynamoDBError) {
+    if (companyIdAttempts === 3) {
         return createErrorResponse(
-            dynamoDBError.statusCode,
-            dynamoDBError.message
+            HttpStatusCode.BadRequest,
+            "Failed to write the data three times"
         );
     }
 
