@@ -7,9 +7,9 @@ import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import * as AWS from "aws-sdk";
 import { primaryTableName } from "../../constants/primaryTableName";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
-import { isCompanyAdminOrBoardAdmin } from "../../utils/isCompanyUserAdminOrBoardAdmin";
 import { columnDataErrorMessage } from "../../utils/columnDataErrorMessage";
 import { createDatabaseColumnsFromRequest } from "../../utils/createDatabaseColumnsFromRequest";
+import { isCompanyUserAdminOrBoardAdmin } from "../../utils/isCompanyUserAdminOrBoardAdmin";
 
 export const updateBoardColumnInformation = async (
     event: APIGatewayProxyEvent
@@ -24,7 +24,8 @@ export const updateBoardColumnInformation = async (
         return bodyIsNotAnObjectErrorResponse;
     }
 
-    const { columns, boardId, companyId } = JSON.parse(
+    const { boardId, companyId } = event.queryStringParameters;
+    const { columns } = JSON.parse(
         event.body
     ) as IBoardColumnInformationRequest;
 
@@ -35,7 +36,7 @@ export const updateBoardColumnInformation = async (
         );
     }
 
-    const canUpdateBoardColumnInformation = await isCompanyAdminOrBoardAdmin(
+    const canUpdateBoardColumnInformation = await isCompanyUserAdminOrBoardAdmin(
         event,
         boardId,
         companyId
