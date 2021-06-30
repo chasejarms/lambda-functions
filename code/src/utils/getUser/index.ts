@@ -2,6 +2,8 @@ import { createCompanyKey } from "../createCompanyKey";
 import { createUserKey } from "../createUserKey";
 import { getItemFromPrimaryTable } from "../getItemFromPrimaryTable";
 import { IUser } from "../../models/database/user";
+import { APIGatewayProxyEvent } from "aws-lambda";
+import { userSubFromEvent } from "../userSubFromEvent";
 
 /**
  *
@@ -10,15 +12,17 @@ import { IUser } from "../../models/database/user";
  * @returns The user if found. Otherwise null.
  */
 export async function getUser(
-    userId: string,
+    event: APIGatewayProxyEvent,
     companyId: string
-): Promise<IUser> {
+): Promise<IUser | null> {
+    const userId = userSubFromEvent(event);
+    if (userId === "") {
+        return null;
+    }
+
     const companyKey = createCompanyKey(companyId);
     const userKey = createUserKey(userId);
 
-    try {
-        const user = await getItemFromPrimaryTable<IUser>(userKey, companyKey);
-    } catch (error) {
-        return null;
-    }
+    const user = await getItemFromPrimaryTable<IUser>(userKey, companyKey);
+    return user;
 }

@@ -1,5 +1,5 @@
 import { IBoardColumnRequest } from "../../models/requests/boardColumnRequest";
-import { IBoardColumn } from "../../models/database/boardColumns";
+import { IBoardColumn } from "../../models/database/boardColumn";
 import { isEqual } from "lodash";
 
 const reservedColumnIdStart = "INTERNAL";

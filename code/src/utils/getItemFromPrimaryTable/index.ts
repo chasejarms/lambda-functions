@@ -6,7 +6,7 @@ import { IDefaultPrimaryTableModel } from "../../models/database/defaultPrimaryT
  *
  * @param itemId The partition key of the item for the primary table
  * @param belongsTo The sort key of the item for the primary table
- * @returns If the item doesn't exist, the promise is rejected
+ * @returns If the item exists, it's returned. If it's not, null is returned.
  */
 export async function getItemFromPrimaryTable<T>(
     itemId: string,
@@ -19,12 +19,16 @@ export async function getItemFromPrimaryTable<T>(
         belongsTo,
     };
 
-    const getResult = await dynamoClient
-        .get({
-            TableName: primaryTableName,
-            Key: primaryTableKeySearch,
-        })
-        .promise();
+    try {
+        const getResult = await dynamoClient
+            .get({
+                TableName: primaryTableName,
+                Key: primaryTableKeySearch,
+            })
+            .promise();
 
-    return getResult.Item as T;
+        return getResult.Item as T;
+    } catch (error) {
+        return null;
+    }
 }

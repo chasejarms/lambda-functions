@@ -1,5 +1,5 @@
 import { IBoardColumnRequest } from "../../models/requests/boardColumnRequest";
-import { IBoardColumn } from "../../models/database/boardColumns";
+import { IBoardColumn } from "../../models/database/boardColumn";
 import { generateUniqueId } from "../generateUniqueId";
 
 export function createDatabaseColumnsFromRequest(

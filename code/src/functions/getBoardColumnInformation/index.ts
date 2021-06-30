@@ -1,13 +1,11 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { createErrorResponse } from "../../utils/createErrorResponse";
-import * as AWS from "aws-sdk";
-import { primaryTableName } from "../../constants/primaryTableName";
-import { IBoard } from "../../models/database/board";
-import { parentToChildIndexName } from "../../constants/parentToChildIndexName";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
-import { isCompanyAdminOrBoardAdmin } from "../../utils/isCompanyUserAdminOrBoardAdmin";
-import { isCompanyUser } from "../../utils/isCompanyUser";
+import { isCompanyAdminOrBoardUser } from "../../utils/isCompanyAdminOrBoardUser";
+import { getItemFromPrimaryTable } from "../../utils/getItemFromPrimaryTable";
+import { createBoardColumnInformationKey } from "../../utils/createBoardColumnInformationKey";
+import { IBoardColumn } from "../../models/database/boardColumn";
 
 export const getBoardColumnInformation = async (
     event: APIGatewayProxyEvent
@@ -21,48 +19,35 @@ export const getBoardColumnInformation = async (
         );
     }
 
-    const hasSufficientRights = await isCompanyUser(
+    const hasSufficientRights = await isCompanyAdminOrBoardUser(
         event,
-        companyId,
+        boardId,
+        companyId
     );
     if (!hasSufficientRights) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,
-            "must be a user on the company to get boards for the company"
+            "insufficient rights to access this board information"
         );
     }
 
-    try {
-        await 
+    const boardColumnInformationKey = createBoardColumnInformationKey(
+        companyId,
+        boardId
+    );
+
+    const boardColumns = await getItemFromPrimaryTable<IBoardColumn[]>(
+        boardColumnInformationKey,
+        boardColumnInformationKey
+    );
+    if (boardColumns === null) {
+        return createErrorResponse(
+            HttpStatusCode.BadRequest,
+            "could not find board column information for the given board"
+        );
     }
 
-    const dynamoClient = new AWS.DynamoDB.DocumentClient();
-    try {
-        const getBoardColumnResults = await dynamoClient
-            .query({
-                TableName: primaryTableName,
-                IndexName: parentToChildIndexName,
-                KeyConditionExpression:
-                    "belongsTo = :companyId AND begins_with ( itemId, :boardStartingName )",
-                ExpressionAttributeValues: {
-                    ":companyId": `COMPANY.${companyId}`,
-                    ":boardStartingName": "BOARD.",
-                },
-            })
-            .promise();
-
-        const boardItems = getBoardResults.Items as IBoard[];
-        return createSuccessResponse({
-            items: boardItems.map((board) => {
-                const boardId = board.itemId.split(".")[1];
-                return {
-                    name: board.name,
-                    id: boardId,
-                };
-            }),
-        });
-    } catch (error) {
-        const awsError = error as AWS.AWSError;
-        return createErrorResponse(awsError.statusCode, awsError.message);
-    }
+    return createSuccessResponse({
+        boardColumns,
+    });
 };
