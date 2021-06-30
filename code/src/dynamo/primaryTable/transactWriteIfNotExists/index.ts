@@ -6,7 +6,7 @@ export interface ITransactWriteItem extends IDefaultPrimaryTableModel {
     [attribute: string]: any;
 }
 
-export async function transacteWriteIfNotExistsInPrimaryTable(
+export async function transactWriteIfNotExistsInPrimaryTable(
     ...transactWriteItems: ITransactWriteItem[]
 ): Promise<boolean> {
     const dynamoClient = new AWS.DynamoDB.DocumentClient();

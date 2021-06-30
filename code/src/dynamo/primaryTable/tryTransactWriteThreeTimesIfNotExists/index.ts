@@ -1,6 +1,6 @@
 import {
     ITransactWriteItem,
-    transacteWriteIfNotExistsInPrimaryTable,
+    transactWriteIfNotExistsInPrimaryTable,
 } from "../transactWriteIfNotExists";
 
 export async function tryTransactWriteThreeTimesIfNotExistsInPrimaryTable(
@@ -11,7 +11,7 @@ export async function tryTransactWriteThreeTimesIfNotExistsInPrimaryTable(
     while (transactAttemptCount < 3) {
         const transactWriteItems = generateItemsCallback();
 
-        const transactWriteWasSuccessful = transacteWriteIfNotExistsInPrimaryTable(
+        const transactWriteWasSuccessful = transactWriteIfNotExistsInPrimaryTable(
             ...transactWriteItems
         );
 

@@ -12,7 +12,6 @@ import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { ICompanyInformation } from "../../models/database/companyInformation";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
-import { transacteWriteIfNotExistsInPrimaryTable } from "../../dynamo/primaryTable/transactWriteIfNotExists";
 import { createCompanyInformationKey } from "../../keyGeneration/createCompanyInformationKey";
 import { createAllCompaniesKey } from "../../keyGeneration/createAllCompaniesKey";
 import { createUserKey } from "../../keyGeneration/createUserKey";
