@@ -1,13 +1,16 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { userSubFromEvent } from "../../utils/userSubFromEvent";
-import * as AWS from "aws-sdk";
 import { IDefaultPrimaryTableModel } from "../../models/database/defaultPrimaryTableModel";
-import { primaryTableName } from "../../constants/primaryTableName";
 import { ICompanyInformation } from "../../models/database/companyInformation";
-import { ICompanyUser } from "../../models/database/user";
+import { IUser } from "../../models/database/user";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { createErrorResponse } from "../../utils/createErrorResponse";
+import { queryAllItemsFromPartitionInPrimaryTable } from "../../dynamo/primaryTable/queryAllItemsFromPartition";
+import { createUserKey } from "../../keyGeneration/createUserKey";
+import { batchGetItemsInPrimaryTable } from "../../dynamo/primaryTable/batchGetItems";
+import { createCompanyInformationKey } from "../../keyGeneration/createCompanyInformationKey";
+import { createAllCompaniesKey } from "../../keyGeneration/createAllCompaniesKey";
 
 export const getCompaniesForUser = async (
     event: APIGatewayProxyEvent
@@ -20,66 +23,58 @@ export const getCompaniesForUser = async (
         );
     }
 
-    const dynamoClient = new AWS.DynamoDB.DocumentClient();
-    try {
-        const getCompanyUserResults = await dynamoClient
-            .query({
-                TableName: primaryTableName,
-                KeyConditionExpression: "itemId = :itemId",
-                ExpressionAttributeValues: {
-                    ":itemId": `COMPANYUSER.${userSub}`,
-                },
-            })
-            .promise();
+    const userKey = createUserKey(userSub);
+    const companyUserItems = await queryAllItemsFromPartitionInPrimaryTable<
+        IUser
+    >(userKey);
 
-        if (getCompanyUserResults.Items.length === 0) {
-            return createSuccessResponse({
-                items: [],
-            });
-        }
-
-        const companyUserItems = getCompanyUserResults.Items as ICompanyUser[];
-
-        const getCompanyInformationResults = await dynamoClient
-            .batchGet({
-                RequestItems: {
-                    [primaryTableName]: {
-                        Keys: companyUserItems.map((item) => {
-                            const companyId = item.belongsTo.split(".")[1];
-                            const companyInformationItem: IDefaultPrimaryTableModel = {
-                                itemId: `COMPANYINFORMATION_COMPANY.${companyId}`,
-                                belongsTo: `COMPANY.${companyId}`,
-                            };
-                            return companyInformationItem;
-                        }),
-                    },
-                },
-            })
-            .promise();
-
-        const companyInformationItems = getCompanyInformationResults.Responses[
-            primaryTableName
-        ] as ICompanyInformation[];
-        const companyInformationItemsForResponse = companyInformationItems.map(
-            (companyInformationItem) => {
-                const companyId = companyInformationItem.itemId.split(".")[1];
-                return {
-                    name: companyInformationItem.name,
-                    companyId,
-                };
-            }
+    if (companyUserItems === null) {
+        return createErrorResponse(
+            HttpStatusCode.BadRequest,
+            "Error getting the company user items"
         );
-
-        return createSuccessResponse({
-            items: companyInformationItemsForResponse,
-        });
-    } catch (error) {
-        const awsError = error as AWS.AWSError;
-        return {
-            statusCode: awsError.statusCode,
-            body: JSON.stringify({
-                message: awsError.message,
-            }),
-        };
     }
+
+    if (companyUserItems.length === 0) {
+        return createSuccessResponse({
+            items: [],
+        });
+    }
+
+    const companyInformationItems = companyUserItems.map((companyUserItem) => {
+        const companyId = companyUserItem.belongsTo.split(".")[1];
+        const boardColumnInformationKey = createCompanyInformationKey(
+            companyId
+        );
+        const allCompanies = createAllCompaniesKey();
+        const primaryTableModel: IDefaultPrimaryTableModel = {
+            itemId: boardColumnInformationKey,
+            belongsTo: allCompanies,
+        };
+        return primaryTableModel;
+    });
+    const companyInformationResults = await batchGetItemsInPrimaryTable<
+        ICompanyInformation
+    >(...companyInformationItems);
+
+    if (companyInformationResults === null) {
+        return createErrorResponse(
+            HttpStatusCode.BadRequest,
+            "Error getting the company information"
+        );
+    }
+
+    const companyInformationItemsForResponse = companyInformationResults.map(
+        (companyInformationItem) => {
+            const companyId = companyInformationItem.itemId.split(".")[1];
+            return {
+                name: companyInformationItem.name,
+                companyId,
+            };
+        }
+    );
+
+    return createSuccessResponse({
+        items: companyInformationItemsForResponse,
+    });
 };
