@@ -19,6 +19,7 @@ import { createUserKey } from "../../keyGeneration/createUserKey";
 import { createCompanyKey } from "../../keyGeneration/createCompanyKey";
 import { createCompanyUserAlphabeticalSortKey } from "../../keyGeneration/createCompanyUserAlphabeticalSortKey";
 import { IUser } from "../../models/database/user";
+import { tryTransactWriteThreeTimesIfNotExistsInPrimaryTable } from "../../dynamo/primaryTable/tryTransactWriteThreeTimesIfNotExists";
 
 /**
  * The purpose of this function is just to sign up new users (i.e. never have been added to the system). If
@@ -96,51 +97,40 @@ export const signUpNewUser = async (
         );
     }
 
-    // if they are successfully created, go ahead and create the company and the user in dynamo db
+    const transactionWasSuccessful = await tryTransactWriteThreeTimesIfNotExistsInPrimaryTable(
+        () => {
+            const uniqueCompanyId = generateUniqueId();
 
-    let companyIdAttempts = 0;
+            const companyInformationKey = createCompanyInformationKey(
+                uniqueCompanyId
+            );
+            const allCompaniesKey = createAllCompaniesKey();
+            const companyInformationItem: ICompanyInformation = {
+                itemId: companyInformationKey,
+                belongsTo: allCompaniesKey,
+                name: companyName,
+            };
 
-    while (companyIdAttempts < 3) {
-        const uniqueCompanyId = generateUniqueId();
+            const userKey = createUserKey(signUpResultFromCallback.userSub);
+            const companyKey = createCompanyKey(uniqueCompanyId);
+            const companyUserAlphabeticalSortKey = createCompanyUserAlphabeticalSortKey(
+                name,
+                signUpResultFromCallback.userSub
+            );
+            const companyUserItem: IUser = {
+                itemId: userKey,
+                belongsTo: companyKey,
+                gsiSortKey: companyUserAlphabeticalSortKey,
+                isCompanyAdmin: true,
+                boardRights: {},
+                name: name,
+            };
 
-        const companyInformationKey = createCompanyInformationKey(
-            uniqueCompanyId
-        );
-        const allCompaniesKey = createAllCompaniesKey();
-        const companyInformationItem: ICompanyInformation = {
-            itemId: companyInformationKey,
-            belongsTo: allCompaniesKey,
-            name: companyName,
-        };
-
-        const userKey = createUserKey(signUpResultFromCallback.userSub);
-        const companyKey = createCompanyKey(uniqueCompanyId);
-        const companyUserAlphabeticalSortKey = createCompanyUserAlphabeticalSortKey(
-            name,
-            signUpResultFromCallback.userSub
-        );
-        const companyUserItem: IUser = {
-            itemId: userKey,
-            belongsTo: companyKey,
-            gsiSortKey: companyUserAlphabeticalSortKey,
-            isCompanyAdmin: true,
-            boardRights: {},
-            name: name,
-        };
-
-        const transactWriteWasSuccessful = transacteWriteIfNotExistsInPrimaryTable(
-            companyInformationItem,
-            companyUserItem
-        );
-
-        if (transactWriteWasSuccessful) {
-            break;
-        } else {
-            companyIdAttempts++;
+            return [companyInformationItem, companyUserItem];
         }
-    }
+    );
 
-    if (companyIdAttempts === 3) {
+    if (!transactionWasSuccessful) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
             "Failed to write the data three times"
