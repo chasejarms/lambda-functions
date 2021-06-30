@@ -10,6 +10,9 @@ import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { columnDataErrorMessage } from "../../utils/columnDataErrorMessage";
 import { createDatabaseColumnsFromRequest } from "../../utils/createDatabaseColumnsFromRequest";
 import { isCompanyUserAdminOrBoardAdmin } from "../../utils/isCompanyUserAdminOrBoardAdmin";
+import { createBoardColumnInformationKey } from "../../utils/createBoardColumnInformationKey";
+import { createCompanyBoardsKey } from "../../utils/createCompanyBoardsKey";
+import { updateItemInPrimaryTable } from "../../utils/updateItemInPrimaryTable";
 
 export const updateBoardColumnInformation = async (
     event: APIGatewayProxyEvent
@@ -58,26 +61,28 @@ export const updateBoardColumnInformation = async (
     }
 
     const databaseColumns = createDatabaseColumnsFromRequest(columns);
-    const dynamoClient = new AWS.DynamoDB.DocumentClient();
+    const boardColumnInformationKey = createBoardColumnInformationKey(
+        companyId,
+        boardId
+    );
+    const companyBoardsKey = createCompanyBoardsKey(companyId);
 
-    try {
-        await dynamoClient.put({
-            TableName: primaryTableName,
-            Item: {
-                itemId: `COLUMNINFORMATION_BOARD.${boardId}`,
-                belongsTo: `BOARD.${boardId}`,
-                databaseColumns,
-            },
-        });
+    const wasUpdated = await updateItemInPrimaryTable(
+        boardColumnInformationKey,
+        companyBoardsKey,
+        {
+            databaseColumns,
+        }
+    );
 
-        return createSuccessResponse({
-            columns: databaseColumns,
-        });
-    } catch (error) {
-        const dynamoDBError = error as AWS.AWSError;
+    if (!wasUpdated) {
         return createErrorResponse(
-            dynamoDBError.statusCode,
-            dynamoDBError.message
+            HttpStatusCode.BadRequest,
+            "Error updating the board column information"
         );
     }
+
+    return createSuccessResponse({
+        columns: databaseColumns,
+    });
 };
