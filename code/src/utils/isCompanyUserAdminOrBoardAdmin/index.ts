@@ -7,12 +7,7 @@ export async function isCompanyUserAdminOrBoardAdmin(
     boardId: string,
     companyId: string
 ): Promise<boolean> {
-    const userId = userSubFromEvent(event);
-    if (userId === "") {
-        return false;
-    }
-
-    const user = await getUser(userId, companyId);
+    const user = await getUser(event, companyId);
     if (user === null) return false;
 
     const isCompanyAdmin = user.isCompanyAdmin;
