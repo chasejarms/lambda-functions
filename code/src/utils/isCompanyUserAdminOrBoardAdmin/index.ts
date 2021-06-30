@@ -1,6 +1,5 @@
 import { APIGatewayProxyEvent } from "aws-lambda";
 import { getUser } from "../getUser";
-import { userSubFromEvent } from "../userSubFromEvent";
 
 export async function isCompanyUserAdminOrBoardAdmin(
     event: APIGatewayProxyEvent,
