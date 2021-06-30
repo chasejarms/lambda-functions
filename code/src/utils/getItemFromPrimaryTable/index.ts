@@ -29,6 +29,12 @@ export async function getItemFromPrimaryTable<T>(
 
         return getResult.Item as T;
     } catch (error) {
+        const awsError = error as AWS.AWSError;
+        if (awsError.message && awsError.statusCode) {
+            console.log("error message: ", awsError.message);
+            console.log("error status code: ", awsError.statusCode);
+        }
+
         return null;
     }
 }
