@@ -3,15 +3,15 @@ import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
 import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
 import { createErrorResponse } from "../../utils/createErrorResponse";
-import * as AWS from "aws-sdk";
-import { primaryTableName } from "../../constants/primaryTableName";
 import { generateUniqueId } from "../../utils/generateUniqueId";
-import { userSubFromEvent } from "../../utils/userSubFromEvent";
 import { IBoard } from "../../models/database/board";
-import { IBoardUser } from "../../models/database/boardUser";
-import { getCompanyUser } from "../../utils/getCompanyUser";
-import { ICompanyUser } from "../../models/database/user";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
+import { isCompanyUser } from "../../utils/isCompanyUser";
+import { getUser } from "../../utils/getUser";
+import { tryTransactWriteThreeTimesIfNotExistsInPrimaryTable } from "../../dynamo/primaryTable/tryTransactWriteThreeTimesIfNotExists";
+import { createCompanyBoardsKey } from "../../keyGeneration/createCompanyBoardsKey";
+import { createCompanyBoardKey } from "../../keyGeneration/createCompanyBoardKey";
+import { IUser } from "../../models/database/user";
 
 export const createBoardForCompany = async (
     event: APIGatewayProxyEvent
@@ -41,72 +41,58 @@ export const createBoardForCompany = async (
         );
     }
 
-    let companyUser: ICompanyUser;
-    try {
-        companyUser = await getCompanyUser(event, companyId);
-    } catch (error) {
+    const canCreateBoard = await isCompanyUser(event, companyId);
+
+    if (!canCreateBoard) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
             "Insufficient permissions to create board"
         );
     }
 
-    const userSub = userSubFromEvent(event);
+    const companyUser = await getUser(event, companyId);
 
-    const dynamoClient = new AWS.DynamoDB.DocumentClient();
-    let createBoardIdAttempts = 0;
-    let outputData: AWS.DynamoDB.DocumentClient.TransactWriteItemsOutput | null = null;
-    let dynamoDBError: AWS.AWSError | null = null;
+    if (companyUser === null) {
+        return createErrorResponse(
+            HttpStatusCode.BadRequest,
+            "Unable to get the user on the company"
+        );
+    }
+
     let boardId: string;
+    const writeWasSuccessful = await tryTransactWriteThreeTimesIfNotExistsInPrimaryTable(
+        () => {
+            boardId = generateUniqueId(1);
 
-    while (createBoardIdAttempts < 3 && outputData === null) {
-        boardId = generateUniqueId(1);
-        try {
+            const companyBoardKey = createCompanyBoardKey(companyId, boardId);
+            const companyBoardsKey = createCompanyBoardsKey(companyId);
             const boardItem: IBoard = {
-                itemId: `BOARD.${boardId}`,
-                belongsTo: `COMPANY.${companyId}`,
+                itemId: companyBoardKey,
+                belongsTo: companyBoardsKey,
                 name: boardName,
                 description: boardDescription,
             };
 
-            const boardUserItem: IBoardUser = {
-                itemId: `BOARDUSER.${userSub}_BOARD.${boardId}`,
-                belongsTo: `COMPANY.${companyId}`,
-                isBoardAdmin: true,
-                name: companyUser.name,
+            const currentBoardRights = companyUser.boardRights;
+            const updatedUserItem: IUser = {
+                ...companyUser,
+                boardRights: {
+                    ...currentBoardRights,
+                    [boardId]: {
+                        isAdmin: true,
+                    },
+                },
             };
 
-            outputData = await dynamoClient
-                .transactWrite({
-                    TransactItems: [
-                        {
-                            Put: {
-                                TableName: primaryTableName,
-                                Item: boardItem,
-                                ConditionExpression:
-                                    "attribute_not_exists(itemId)",
-                            },
-                        },
-                        {
-                            Put: {
-                                TableName: primaryTableName,
-                                Item: boardUserItem,
-                                ConditionExpression:
-                                    "attribute_not_exists(itemId)",
-                            },
-                        },
-                    ],
-                })
-                .promise();
-        } catch (error) {
-            dynamoDBError = error;
-        }
-    }
+            // this won't work because the item already exists. need to remove that as a constraint
 
-    if (dynamoDBError) {
+            return [boardItem, updatedUserItem];
+        }
+    );
+    if (!writeWasSuccessful) {
         return createErrorResponse(
-            dynamoDBError.statusCode,
-            dynamoDBError.message
+            HttpStatusCode.BadRequest,
+            "Unable to create the board and user"
         );
     }
 

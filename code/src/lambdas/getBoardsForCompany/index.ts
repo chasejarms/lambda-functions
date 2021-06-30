@@ -20,7 +20,7 @@ export const getBoardsForCompany = async (
         );
     }
 
-    const canGetBoardsForCompany = isCompanyUser(event, companyId);
+    const canGetBoardsForCompany = await isCompanyUser(event, companyId);
     if (!canGetBoardsForCompany) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,
