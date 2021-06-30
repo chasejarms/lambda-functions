@@ -11,7 +11,7 @@ export async function tryTransactWriteThreeTimesIfNotExistsInPrimaryTable(
     while (transactAttemptCount < 3) {
         const transactWriteItems = generateItemsCallback();
 
-        const transactWriteWasSuccessful = transactWriteIfNotExistsInPrimaryTable(
+        const transactWriteWasSuccessful = await transactWriteIfNotExistsInPrimaryTable(
             ...transactWriteItems
         );
 

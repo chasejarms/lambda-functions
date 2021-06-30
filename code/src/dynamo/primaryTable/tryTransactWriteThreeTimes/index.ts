@@ -9,7 +9,7 @@ export async function tryTransactWriteThreeTimesInPrimaryTable(
     while (transactAttemptCount < 3) {
         const transactWriteItems = generateItemsCallback();
 
-        const transactWriteWasSuccessful = transactWriteInPrimaryTable(
+        const transactWriteWasSuccessful = await transactWriteInPrimaryTable(
             ...transactWriteItems
         );
 
