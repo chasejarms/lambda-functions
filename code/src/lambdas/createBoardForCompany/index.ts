@@ -8,10 +8,10 @@ import { IBoard } from "../../models/database/board";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { isCompanyUser } from "../../utils/isCompanyUser";
 import { getUser } from "../../utils/getUser";
-import { tryTransactWriteThreeTimesIfNotExistsInPrimaryTable } from "../../dynamo/primaryTable/tryTransactWriteThreeTimesIfNotExists";
 import { createCompanyBoardsKey } from "../../keyGeneration/createCompanyBoardsKey";
 import { createCompanyBoardKey } from "../../keyGeneration/createCompanyBoardKey";
 import { IUser } from "../../models/database/user";
+import { tryTransactWriteThreeTimesInPrimaryTable } from "../../dynamo/primaryTable/tryTransactWriteThreeTimes";
 
 export const createBoardForCompany = async (
     event: APIGatewayProxyEvent
@@ -60,7 +60,7 @@ export const createBoardForCompany = async (
     }
 
     let boardId: string;
-    const writeWasSuccessful = await tryTransactWriteThreeTimesIfNotExistsInPrimaryTable(
+    const writeWasSuccessful = await tryTransactWriteThreeTimesInPrimaryTable(
         () => {
             boardId = generateUniqueId(1);
 
