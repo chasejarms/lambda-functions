@@ -124,7 +124,6 @@ export const createBoardForCompany = async (
                 name: "Default",
                 description: "Default ticket template description.",
                 title: {
-                    isRequired: true,
                     label: "Ticket Title",
                 },
                 summary: {

@@ -10,7 +10,8 @@ import { createBoardTicketTemplateKey } from "../../keyGeneration/createBoardTic
 import { tryCreateNewItemThreeTimesInPrimaryTable } from "../../dynamo/primaryTable/tryCreateNewItemThreeTimes";
 import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
 import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
-import { ticketTemplateErrorMessage } from "../../dataValidation/ticketTemplateErrorMessage";
+import { ticketTemplateCreateRequestErrorMessage } from "../../dataValidation/ticketTemplateCreateRequestErrorMessage";
+import { ITicketTemplateCreateRequest } from "../../models/requests/ticketTemplateCreateRequest";
 
 export const createTicketTemplateForBoard = async (
     event: APIGatewayProxyEvent
@@ -35,7 +36,7 @@ export const createTicketTemplateForBoard = async (
     }
 
     const { ticketTemplate } = JSON.parse(event.body) as {
-        ticketTemplate: ITicketTemplate;
+        ticketTemplate: ITicketTemplateCreateRequest;
     };
     if (!ticketTemplate) {
         return createErrorResponse(
@@ -44,7 +45,7 @@ export const createTicketTemplateForBoard = async (
         );
     }
 
-    const errorMessageForTicketTemplate = ticketTemplateErrorMessage(
+    const errorMessageForTicketTemplate = ticketTemplateCreateRequestErrorMessage(
         ticketTemplate
     );
     if (errorMessageForTicketTemplate) {
@@ -67,8 +68,6 @@ export const createTicketTemplateForBoard = async (
         );
     }
 
-    // need to do more validation on the ticket and then use those values from the request
-
     const createdTicketTemplate = await tryCreateNewItemThreeTimesInPrimaryTable(
         () => {
             const boardTicketTemplateId = generateUniqueId(1);
@@ -81,22 +80,13 @@ export const createTicketTemplateForBoard = async (
                 companyId,
                 boardId
             );
-            const ticketTemplate: ITicketTemplate = {
+            const ticketTemplateDatabaseItem: ITicketTemplate = {
                 itemId: boardTicketTemplateKey,
                 belongsTo: allBoardTicketTemplatesKey,
-                name: "Default",
-                description: "Default ticket template description.",
-                title: {
-                    label: "Ticket Title",
-                },
-                summary: {
-                    isRequired: false,
-                    label: "Ticket Summary",
-                },
-                sections: [],
+                ...ticketTemplate,
             };
 
-            return ticketTemplate;
+            return ticketTemplateDatabaseItem;
         }
     );
 

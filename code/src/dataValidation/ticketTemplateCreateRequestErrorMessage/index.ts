@@ -1,8 +1,8 @@
-import { ITicketTemplate } from "../../models/database/ticketTemplate";
 import { isArray } from "lodash";
+import { ITicketTemplateCreateRequest } from "../../models/requests/ticketTemplateCreateRequest";
 
-export function ticketTemplateErrorMessage(
-    ticketTemplate: ITicketTemplate
+export function ticketTemplateCreateRequestErrorMessage(
+    ticketTemplate: ITicketTemplateCreateRequest
 ): string {
     const ticketTemplateIsNotObject = typeof ticketTemplate !== "object";
     if (ticketTemplateIsNotObject) {
@@ -12,8 +12,6 @@ export function ticketTemplateErrorMessage(
     const requiredKeys: {
         [key: string]: true;
     } = {
-        itemId: true,
-        belongsTo: true,
         name: true,
         description: true,
         title: true,

@@ -1,15 +1,5 @@
 import { IDefaultPrimaryTableModel } from "./defaultPrimaryTableModel";
-import { Section } from "./sections";
+import { ITicketTemplateCreateRequest } from "../requests/ticketTemplateCreateRequest";
 
-export interface ITicketTemplate extends IDefaultPrimaryTableModel {
-    name: string;
-    description: string;
-    title: {
-        label: string;
-    };
-    summary: {
-        isRequired: boolean;
-        label: string;
-    };
-    sections: Section[];
-}
+export type ITicketTemplate = IDefaultPrimaryTableModel &
+    ITicketTemplateCreateRequest;
