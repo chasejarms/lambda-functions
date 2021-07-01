@@ -12,6 +12,13 @@ import { createCompanyBoardsKey } from "../../keyGeneration/createCompanyBoardsK
 import { createCompanyBoardKey } from "../../keyGeneration/createCompanyBoardKey";
 import { IUser } from "../../models/database/user";
 import { tryTransactWriteThreeTimesInPrimaryTable } from "../../dynamo/primaryTable/tryTransactWriteThreeTimes";
+import { createBoardColumnInformationKey } from "../../keyGeneration/createBoardColumnInformationKey";
+import { IBoardColumnInformation } from "../../models/database/boardColumnInformation";
+import {
+    defaultUncategorizedColumn,
+    defaultInProgressColumn,
+    defaultDoneColumn,
+} from "../../constants/reservedBoardColumnData";
 
 export const createBoardForCompany = async (
     event: APIGatewayProxyEvent
@@ -73,6 +80,20 @@ export const createBoardForCompany = async (
                 description: boardDescription,
             };
 
+            const boardColumnInformationKey = createBoardColumnInformationKey(
+                companyId,
+                boardId
+            );
+            const boardColumnInformation: IBoardColumnInformation = {
+                itemId: boardColumnInformationKey,
+                belongsTo: boardColumnInformationKey,
+                columns: [
+                    defaultUncategorizedColumn,
+                    defaultInProgressColumn,
+                    defaultDoneColumn,
+                ],
+            };
+
             const currentBoardRights = companyUser.boardRights;
             const updatedUserItem: IUser = {
                 ...companyUser,
@@ -86,7 +107,7 @@ export const createBoardForCompany = async (
 
             // this won't work because the item already exists. need to remove that as a constraint
 
-            return [boardItem, updatedUserItem];
+            return [boardItem, updatedUserItem, boardColumnInformation];
         }
     );
     if (!writeWasSuccessful) {

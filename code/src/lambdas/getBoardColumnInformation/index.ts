@@ -6,6 +6,7 @@ import { isCompanyAdminOrBoardUser } from "../../utils/isCompanyAdminOrBoardUser
 import { getItemFromPrimaryTable } from "../../dynamo/primaryTable/getItem";
 import { createBoardColumnInformationKey } from "../../keyGeneration/createBoardColumnInformationKey";
 import { IBoardColumn } from "../../models/database/boardColumn";
+import { IBoardColumnInformation } from "../../models/database/boardColumnInformation";
 
 export const getBoardColumnInformation = async (
     event: APIGatewayProxyEvent
@@ -36,11 +37,10 @@ export const getBoardColumnInformation = async (
         boardId
     );
 
-    const boardColumns = await getItemFromPrimaryTable<IBoardColumn[]>(
-        boardColumnInformationKey,
-        boardColumnInformationKey
-    );
-    if (boardColumns === null) {
+    const boardColumnInformation = await getItemFromPrimaryTable<
+        IBoardColumnInformation
+    >(boardColumnInformationKey, boardColumnInformationKey);
+    if (boardColumnInformation === null) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
             "could not find board column information for the given board"
@@ -48,6 +48,6 @@ export const getBoardColumnInformation = async (
     }
 
     return createSuccessResponse({
-        boardColumns,
+        columns: boardColumnInformation.columns,
     });
 };

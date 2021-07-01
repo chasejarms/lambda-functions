@@ -60,7 +60,6 @@ export const updateBoardColumnInformation = async (
         );
     }
 
-    const databaseColumns = createDatabaseColumnsFromRequest(columns);
     const boardColumnInformationKey = createBoardColumnInformationKey(
         companyId,
         boardId
@@ -71,7 +70,7 @@ export const updateBoardColumnInformation = async (
         boardColumnInformationKey,
         companyBoardsKey,
         {
-            databaseColumns,
+            columns,
         }
     );
 
@@ -83,6 +82,6 @@ export const updateBoardColumnInformation = async (
     }
 
     return createSuccessResponse({
-        columns: databaseColumns,
+        columns,
     });
 };

@@ -1,22 +1,11 @@
 import { IBoardColumnRequest } from "../../models/requests/boardColumnRequest";
 import { IBoardColumn } from "../../models/database/boardColumn";
 import { isEqual } from "lodash";
-
-const reservedColumnIdStart = "INTERNAL";
-const uncategorizedColumnReservedId = `${reservedColumnIdStart}:UNCATEGORIZED`;
-const doneColumnReservedId = `${reservedColumnIdStart}:DONE`;
-
-const defaultUncategorizedColumn: IBoardColumn = {
-    name: "Uncategorized",
-    id: uncategorizedColumnReservedId,
-    canBeModified: false,
-};
-
-const defaultDoneColumn: IBoardColumn = {
-    name: "Done",
-    id: doneColumnReservedId,
-    canBeModified: false,
-};
+import {
+    defaultUncategorizedColumn,
+    defaultDoneColumn,
+    reservedColumnIdStart,
+} from "../../constants/reservedBoardColumnData";
 
 export function columnDataErrorMessage(columns: IBoardColumnRequest[]) {
     if (columns.length === 2) {
@@ -44,6 +33,14 @@ export function columnDataErrorMessage(columns: IBoardColumnRequest[]) {
 
     if (otherColumnsAreInvalid) {
         return "Added column eithers starts with INTERNAL for the id or has had its modified property updated to be false.";
+    }
+
+    const allColumnsHaveId = columns.every((column) => {
+        return !!column.id;
+    });
+
+    if (!allColumnsHaveId) {
+        return "All columns must have an id";
     }
 
     return "";
