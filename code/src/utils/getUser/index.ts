@@ -17,6 +17,7 @@ export async function getUser(
 ): Promise<IUser | null> {
     const userId = userSubFromEvent(event);
     if (userId === "") {
+        console.log("getUser: user not found");
         return null;
     }
 
@@ -24,5 +25,9 @@ export async function getUser(
     const userKey = createUserKey(userId);
 
     const user = await getItemFromPrimaryTable<IUser>(userKey, companyKey);
+    if (user === null) {
+        console.log("companyKey: ", companyKey);
+        console.log("userKey: ", userKey);
+    }
     return user;
 }
