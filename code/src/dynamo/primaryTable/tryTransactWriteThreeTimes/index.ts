@@ -1,16 +1,18 @@
-import { ITransactWriteItem } from "../transactWriteIfNotExists";
-import { transactWriteInPrimaryTable } from "../transactWrite";
+import {
+    transactWriteInPrimaryTable,
+    ITransactWriteItemParameter,
+} from "../transactWrite";
 
 export async function tryTransactWriteThreeTimesInPrimaryTable(
-    generateItemsCallback: () => ITransactWriteItem[]
+    generateItemsCallback: () => ITransactWriteItemParameter[]
 ): Promise<boolean> {
     let transactAttemptCount = 0;
 
     while (transactAttemptCount < 3) {
-        const transactWriteItems = generateItemsCallback();
+        const transactWriteItemParameters = generateItemsCallback();
 
         const transactWriteWasSuccessful = await transactWriteInPrimaryTable(
-            ...transactWriteItems
+            ...transactWriteItemParameters
         );
 
         if (transactWriteWasSuccessful) {

@@ -18,7 +18,7 @@ import { createUserKey } from "../../keyGeneration/createUserKey";
 import { createCompanyKey } from "../../keyGeneration/createCompanyKey";
 import { createCompanyUserAlphabeticalSortKey } from "../../keyGeneration/createCompanyUserAlphabeticalSortKey";
 import { IUser } from "../../models/database/user";
-import { tryTransactWriteThreeTimesIfNotExistsInPrimaryTable } from "../../dynamo/primaryTable/tryTransactWriteThreeTimesIfNotExists";
+import { tryTransactWriteThreeTimesInPrimaryTable } from "../../dynamo/primaryTable/tryTransactWriteThreeTimes";
 
 /**
  * The purpose of this function is just to sign up new users (i.e. never have been added to the system). If
@@ -96,7 +96,7 @@ export const signUpNewUser = async (
         );
     }
 
-    const transactionWasSuccessful = await tryTransactWriteThreeTimesIfNotExistsInPrimaryTable(
+    const transactionWasSuccessful = await tryTransactWriteThreeTimesInPrimaryTable(
         () => {
             const uniqueCompanyId = generateUniqueId();
 
@@ -125,7 +125,16 @@ export const signUpNewUser = async (
                 name: name,
             };
 
-            return [companyInformationItem, companyUserItem];
+            return [
+                {
+                    item: companyInformationItem,
+                    canOverrideExistingItem: false,
+                },
+                {
+                    item: companyUserItem,
+                    canOverrideExistingItem: false,
+                },
+            ];
         }
     );
 

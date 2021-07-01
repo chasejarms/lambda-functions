@@ -105,9 +105,21 @@ export const createBoardForCompany = async (
                 },
             };
 
+            /*
+            const boardTicketTemplateId = generateUniqueId(1);
+            const boardTicketTemplate = 
+            */
+
             // this won't work because the item already exists. need to remove that as a constraint
 
-            return [boardItem, updatedUserItem, boardColumnInformation];
+            return [
+                { item: boardItem, canOverrideExistingItem: false },
+                { item: updatedUserItem, canOverrideExistingItem: true },
+                {
+                    item: boardColumnInformation,
+                    canOverrideExistingItem: false,
+                },
+            ];
         }
     );
     if (!writeWasSuccessful) {
