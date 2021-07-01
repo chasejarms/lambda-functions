@@ -8,7 +8,6 @@ import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { columnDataErrorMessage } from "../../utils/columnDataErrorMessage";
 import { isCompanyUserAdminOrBoardAdmin } from "../../utils/isCompanyUserAdminOrBoardAdmin";
 import { createBoardColumnInformationKey } from "../../keyGeneration/createBoardColumnInformationKey";
-import { createCompanyBoardsKey } from "../../keyGeneration/createCompanyBoardsKey";
 import { updateItemInPrimaryTable } from "../../dynamo/primaryTable/updateItem";
 
 export const updateBoardColumnInformation = async (

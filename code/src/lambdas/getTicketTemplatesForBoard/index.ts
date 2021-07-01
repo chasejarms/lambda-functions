@@ -33,7 +33,7 @@ export const getTicketTemplatesForBoard = async (
         );
     }
 
-    const startOfTicketTemplatKey = createStartOfTicketTemplateKey(
+    const startOfTicketTemplateKey = createStartOfTicketTemplateKey(
         companyId,
         boardId
     );
@@ -43,7 +43,7 @@ export const getTicketTemplatesForBoard = async (
     );
     const ticketTemplates = await queryParentToChildIndexBeginsWith<
         ITicketTemplate
-    >(startOfTicketTemplatKey, allBoardTicketTemplatesKey);
+    >(startOfTicketTemplateKey, allBoardTicketTemplatesKey);
 
     if (ticketTemplates === null) {
         return createErrorResponse(
