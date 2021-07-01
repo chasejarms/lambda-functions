@@ -66,7 +66,9 @@ export const getCompaniesForUser = async (
 
     const companyInformationItemsForResponse = companyInformationResults.map(
         (companyInformationItem) => {
-            const companyId = companyInformationItem.itemId.split(".")[1];
+            const companyId = companyInformationItem.itemId
+                .replace("COMPANY.", "")
+                .replace("_COMPANYINFORMATION", "");
             return {
                 name: companyInformationItem.name,
                 companyId,

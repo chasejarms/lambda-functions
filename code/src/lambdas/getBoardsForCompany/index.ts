@@ -44,7 +44,8 @@ export const getBoardsForCompany = async (
 
     return createSuccessResponse({
         items: boardItems.map((board) => {
-            const boardId = board.itemId.split(".")[1];
+            const splitOnDots = board.itemId.split(".");
+            const boardId = splitOnDots[splitOnDots.length - 1];
             return {
                 name: board.name,
                 id: boardId,
