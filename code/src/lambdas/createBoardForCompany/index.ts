@@ -19,6 +19,9 @@ import {
     defaultInProgressColumn,
     defaultDoneColumn,
 } from "../../constants/reservedBoardColumnData";
+import { createBoardTicketTemplateKey } from "../../keyGeneration/createBoardTicketTemplateKey";
+import { ITicketTemplate } from "../../models/database/ticketTemplate";
+import { createAllBoardTicketTemplatesKey } from "../../keyGeneration/createAllBoardTicketTemplatesKey";
 
 export const createBoardForCompany = async (
     event: APIGatewayProxyEvent
@@ -105,18 +108,41 @@ export const createBoardForCompany = async (
                 },
             };
 
-            /*
             const boardTicketTemplateId = generateUniqueId(1);
-            const boardTicketTemplate = 
-            */
-
-            // this won't work because the item already exists. need to remove that as a constraint
+            const boardTicketTemplateKey = createBoardTicketTemplateKey(
+                companyId,
+                boardId,
+                boardTicketTemplateId
+            );
+            const allBoardTicketTemplatesKey = createAllBoardTicketTemplatesKey(
+                companyId,
+                boardId
+            );
+            const ticketTemplate: ITicketTemplate = {
+                itemId: boardTicketTemplateKey,
+                belongsTo: allBoardTicketTemplatesKey,
+                name: "Default",
+                description: "Default ticket template description.",
+                title: {
+                    isRequired: true,
+                    label: "Ticket Title",
+                },
+                summary: {
+                    isRequired: false,
+                    label: "Ticket Summary",
+                },
+                sections: [],
+            };
 
             return [
                 { item: boardItem, canOverrideExistingItem: false },
                 { item: updatedUserItem, canOverrideExistingItem: true },
                 {
                     item: boardColumnInformation,
+                    canOverrideExistingItem: false,
+                },
+                {
+                    item: ticketTemplate,
                     canOverrideExistingItem: false,
                 },
             ];

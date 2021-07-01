@@ -21,11 +21,10 @@ export async function transactWriteInPrimaryTable(
             const put: Put = {
                 TableName: primaryTableName,
                 Item: {
-                    ...transactWriteItemParameter.item
-                        .transactWriteItemParameter,
+                    ...transactWriteItemParameter.item,
                 },
             };
-            if (transactWriteItemParameter.canOverrideExistingItem) {
+            if (!transactWriteItemParameter.canOverrideExistingItem) {
                 put.ConditionExpression = "attribute_not_exists(itemId)";
             }
 
