@@ -18,14 +18,16 @@ export async function updateItemInPrimaryTable(
     const dynamoClient = new AWS.DynamoDB.DocumentClient();
 
     try {
-        await dynamoClient.put({
-            TableName: primaryTableName,
-            Item: {
-                itemId,
-                belongsTo,
-                ...itemAttributes,
-            },
-        });
+        await dynamoClient
+            .put({
+                TableName: primaryTableName,
+                Item: {
+                    itemId,
+                    belongsTo,
+                    ...itemAttributes,
+                },
+            })
+            .promise();
         return true;
     } catch (error) {
         const awsError = error as AWS.AWSError;

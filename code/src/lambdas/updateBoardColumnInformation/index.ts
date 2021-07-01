@@ -4,11 +4,8 @@ import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
 import { IBoardColumnInformationRequest } from "../../models/requests/boardColumnInformationRequest";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
-import * as AWS from "aws-sdk";
-import { primaryTableName } from "../../constants/primaryTableName";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { columnDataErrorMessage } from "../../utils/columnDataErrorMessage";
-import { createDatabaseColumnsFromRequest } from "../../utils/createDatabaseColumnsFromRequest";
 import { isCompanyUserAdminOrBoardAdmin } from "../../utils/isCompanyUserAdminOrBoardAdmin";
 import { createBoardColumnInformationKey } from "../../keyGeneration/createBoardColumnInformationKey";
 import { createCompanyBoardsKey } from "../../keyGeneration/createCompanyBoardsKey";
@@ -64,11 +61,10 @@ export const updateBoardColumnInformation = async (
         companyId,
         boardId
     );
-    const companyBoardsKey = createCompanyBoardsKey(companyId);
 
     const wasUpdated = await updateItemInPrimaryTable(
         boardColumnInformationKey,
-        companyBoardsKey,
+        boardColumnInformationKey,
         {
             columns,
         }
