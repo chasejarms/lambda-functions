@@ -2,25 +2,55 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
-import { queryParentToChildIndexBeginsWith } from "../../dynamo/parentToChildIndex/queryBeginsWith";
-import { isCompanyAdminOrBoardUser } from "../../utils/isCompanyAdminOrBoardUser";
 import { createAllBoardTicketTemplatesKey } from "../../keyGeneration/createAllBoardTicketTemplatesKey";
-import { createStartOfTicketTemplateKey } from "../../keyGeneration/createStartOfTicketTemplateKey";
 import { ITicketTemplate } from "../../models/database/ticketTemplate";
 import { isCompanyUserAdminOrBoardAdmin } from "../../utils/isCompanyUserAdminOrBoardAdmin";
 import { generateUniqueId } from "../../utils/generateUniqueId";
 import { createBoardTicketTemplateKey } from "../../keyGeneration/createBoardTicketTemplateKey";
 import { tryCreateNewItemThreeTimesInPrimaryTable } from "../../dynamo/primaryTable/tryCreateNewItemThreeTimes";
+import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
+import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
+import { ticketTemplateErrorMessage } from "../../dataValidation/ticketTemplateErrorMessage";
 
 export const createTicketTemplateForBoard = async (
     event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
+    const bodyIsEmptyErrorResponse = bodyIsEmptyError(event);
+    if (bodyIsEmptyErrorResponse) {
+        return bodyIsEmptyErrorResponse;
+    }
+
+    const bodyIsNotAnObjectErrorResponse = bodyIsNotAnObjectError(event);
+    if (bodyIsNotAnObjectErrorResponse) {
+        return bodyIsNotAnObjectErrorResponse;
+    }
+
     const { companyId, boardId } = event.queryStringParameters;
 
     if (!companyId || !boardId) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
             "companyId and boardId are required query parameter"
+        );
+    }
+
+    const { ticketTemplate } = JSON.parse(event.body) as {
+        ticketTemplate: ITicketTemplate;
+    };
+    if (!ticketTemplate) {
+        return createErrorResponse(
+            HttpStatusCode.BadRequest,
+            "ticketTemplate is a required field"
+        );
+    }
+
+    const errorMessageForTicketTemplate = ticketTemplateErrorMessage(
+        ticketTemplate
+    );
+    if (errorMessageForTicketTemplate) {
+        return createErrorResponse(
+            HttpStatusCode.BadRequest,
+            errorMessageForTicketTemplate
         );
     }
 
@@ -57,7 +87,6 @@ export const createTicketTemplateForBoard = async (
                 name: "Default",
                 description: "Default ticket template description.",
                 title: {
-                    isRequired: true,
                     label: "Ticket Title",
                 },
                 summary: {

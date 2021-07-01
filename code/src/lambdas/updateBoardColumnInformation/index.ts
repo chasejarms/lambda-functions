@@ -5,7 +5,7 @@ import { IBoardColumnInformationRequest } from "../../models/requests/boardColum
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
-import { columnDataErrorMessage } from "../../utils/columnDataErrorMessage";
+import { columnDataErrorMessage } from "../../dataValidation/columnDataErrorMessage";
 import { isCompanyUserAdminOrBoardAdmin } from "../../utils/isCompanyUserAdminOrBoardAdmin";
 import { createBoardColumnInformationKey } from "../../keyGeneration/createBoardColumnInformationKey";
 import { updateItemInPrimaryTable } from "../../dynamo/primaryTable/updateItem";
