@@ -1,0 +1,61 @@
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+import { HttpStatusCode } from "../../models/shared/httpStatusCode";
+import { createErrorResponse } from "../../utils/createErrorResponse";
+import { createSuccessResponse } from "../../utils/createSuccessResponse";
+import { createAllBoardTicketTemplatesKey } from "../../keyGeneration/createAllBoardTicketTemplatesKey";
+import { isCompanyUserAdminOrBoardAdmin } from "../../utils/isCompanyUserAdminOrBoardAdmin";
+import { createBoardTicketTemplateKey } from "../../keyGeneration/createBoardTicketTemplateKey";
+import { deleteItemFromPrimaryTable } from "../../dynamo/primaryTable/deleteItem";
+
+export const deleteTicketTemplateForBoard = async (
+    event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> => {
+    const {
+        companyId,
+        boardId,
+        ticketTemplateId,
+    } = event.queryStringParameters;
+
+    if (!companyId || !boardId || !ticketTemplateId) {
+        return createErrorResponse(
+            HttpStatusCode.BadRequest,
+            "companyId, boardId, and ticket template id are required query parameters"
+        );
+    }
+
+    const canDeleteTicketTemplate = await isCompanyUserAdminOrBoardAdmin(
+        event,
+        boardId,
+        companyId
+    );
+
+    if (!canDeleteTicketTemplate) {
+        return createErrorResponse(
+            HttpStatusCode.Forbidden,
+            "must be a company admin or a board admin to create ticket templates"
+        );
+    }
+
+    const boardTicketTemplateKey = createBoardTicketTemplateKey(
+        companyId,
+        boardId,
+        ticketTemplateId
+    );
+    const allBoardTicketTemplatesKey = createAllBoardTicketTemplatesKey(
+        companyId,
+        boardId
+    );
+    const itemWasDeletedSuccessfully = await deleteItemFromPrimaryTable(
+        boardTicketTemplateKey,
+        allBoardTicketTemplatesKey
+    );
+
+    if (itemWasDeletedSuccessfully === null) {
+        return createErrorResponse(
+            HttpStatusCode.BadRequest,
+            "Error deleting the ticket template"
+        );
+    }
+
+    return createSuccessResponse({});
+};
