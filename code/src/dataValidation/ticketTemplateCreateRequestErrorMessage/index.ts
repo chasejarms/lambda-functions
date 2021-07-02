@@ -16,6 +16,7 @@ export function ticketTemplateCreateRequestErrorMessage(
         description: true,
         title: true,
         sections: true,
+        summary: true,
     };
     const allKeysAreValid = Object.keys(ticketTemplate).every(
         (key) => requiredKeys[key]
