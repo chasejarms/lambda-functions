@@ -3,6 +3,11 @@ import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
 import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
+import { isCompanyUserAdminOrBoardAdmin } from "../../utils/isCompanyUserAdminOrBoardAdmin";
+import { createTagKey } from "../../keyGeneration/createTagKey";
+import { createAllTagsKey } from "../../keyGeneration/createAllTagsKey";
+import { createNewItemInPrimaryTable } from "../../dynamo/primaryTable/createNewItem";
+import { createSuccessResponse } from "../../utils/createSuccessResponse";
 
 export const createTagForBoard = async (
     event: APIGatewayProxyEvent
@@ -17,6 +22,18 @@ export const createTagForBoard = async (
         return bodyIsNotAnObjectErrorResponse;
     }
 
+    const { boardId, companyId } = event.queryStringParameters as {
+        boardId: string;
+        companyId: string;
+    };
+
+    if (!companyId || !boardId) {
+        return createErrorResponse(
+            HttpStatusCode.BadRequest,
+            "companyId and boardId are required query parameters"
+        );
+    }
+
     const { tagName, tagColor } = JSON.parse(event.body) as {
         tagName: string;
         tagColor: string;
@@ -29,113 +46,37 @@ export const createTagForBoard = async (
         );
     }
 
-    const canCreateBoard = await isCompanyUser(event, companyId);
-
-    if (!canCreateBoard) {
-        return createErrorResponse(
-            HttpStatusCode.BadRequest,
-            "Insufficient permissions to create board"
-        );
-    }
-
-    const companyUser = await getUser(event, companyId);
-
-    if (companyUser === null) {
-        return createErrorResponse(
-            HttpStatusCode.BadRequest,
-            "Unable to get the user on the company"
-        );
-    }
-
-    let boardId: string;
-    const writeWasSuccessful = await tryTransactWriteThreeTimesInPrimaryTable(
-        () => {
-            boardId = generateUniqueId(1);
-
-            const companyBoardKey = createCompanyBoardKey(companyId, boardId);
-            const companyBoardsKey = createCompanyBoardsKey(companyId);
-            const boardItem: IBoard = {
-                itemId: companyBoardKey,
-                belongsTo: companyBoardsKey,
-                name: boardName,
-                description: boardDescription,
-            };
-
-            const boardColumnInformationKey = createBoardColumnInformationKey(
-                companyId,
-                boardId
-            );
-            const boardColumnInformation: IBoardColumnInformation = {
-                itemId: boardColumnInformationKey,
-                belongsTo: boardColumnInformationKey,
-                columns: [
-                    defaultUncategorizedColumn,
-                    defaultInProgressColumn,
-                    defaultDoneColumn,
-                ],
-            };
-
-            const currentBoardRights = companyUser.boardRights;
-            const updatedUserItem: IUser = {
-                ...companyUser,
-                boardRights: {
-                    ...currentBoardRights,
-                    [boardId]: {
-                        isAdmin: true,
-                    },
-                },
-            };
-
-            const boardTicketTemplateId = generateUniqueId(1);
-            const boardTicketTemplateKey = createBoardTicketTemplateKey(
-                companyId,
-                boardId,
-                boardTicketTemplateId
-            );
-            const allBoardTicketTemplatesKey = createAllBoardTicketTemplatesKey(
-                companyId,
-                boardId
-            );
-            const ticketTemplate: ITicketTemplate = {
-                itemId: boardTicketTemplateKey,
-                belongsTo: allBoardTicketTemplatesKey,
-                shortenedItemId: boardTicketTemplateId,
-                name: "Default",
-                description: "Default ticket template description.",
-                title: {
-                    label: "Ticket Title",
-                },
-                summary: {
-                    isRequired: false,
-                    label: "Ticket Summary",
-                },
-                sections: [],
-            };
-
-            return [
-                { item: boardItem, canOverrideExistingItem: false },
-                { item: updatedUserItem, canOverrideExistingItem: true },
-                {
-                    item: boardColumnInformation,
-                    canOverrideExistingItem: false,
-                },
-                {
-                    item: ticketTemplate,
-                    canOverrideExistingItem: false,
-                },
-            ];
-        }
+    const canCreateTag = await isCompanyUserAdminOrBoardAdmin(
+        event,
+        boardId,
+        companyId
     );
-    if (!writeWasSuccessful) {
+
+    if (!canCreateTag) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
-            "Unable to create the board and user"
+            "Insufficient permissions to create tag"
+        );
+    }
+
+    const tagKey = createTagKey(companyId, boardId, tagName);
+    const allTagsKey = createAllTagsKey(companyId, boardId);
+
+    const databaseItemAfterCreate = await createNewItemInPrimaryTable({
+        itemId: tagKey,
+        belongsTo: allTagsKey,
+        color: tagColor,
+        name: tagName,
+    });
+
+    if (!databaseItemAfterCreate) {
+        return createErrorResponse(
+            HttpStatusCode.BadRequest,
+            "A tag with the same name already exists"
         );
     }
 
     return createSuccessResponse({
-        id: boardId,
-        name: boardName,
-        description: boardDescription,
+        tagInformation: databaseItemAfterCreate,
     });
 };
