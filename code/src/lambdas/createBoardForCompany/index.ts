@@ -121,6 +121,7 @@ export const createBoardForCompany = async (
             const ticketTemplate: ITicketTemplate = {
                 itemId: boardTicketTemplateKey,
                 belongsTo: allBoardTicketTemplatesKey,
+                shortenedItemId: boardTicketTemplateId,
                 name: "Default",
                 description: "Default ticket template description.",
                 title: {

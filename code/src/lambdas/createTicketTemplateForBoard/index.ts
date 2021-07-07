@@ -83,6 +83,7 @@ export const createTicketTemplateForBoard = async (
             const ticketTemplateDatabaseItem: ITicketTemplate = {
                 itemId: boardTicketTemplateKey,
                 belongsTo: allBoardTicketTemplatesKey,
+                shortenedItemId: boardTicketTemplateId,
                 ...ticketTemplate,
             };
 
