@@ -288,6 +288,23 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/getPriorityListForBoard
+    UpdatePriorityListForBoard:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /updatePriorityListForBoard
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.updatePriorityListForBoard
+            FunctionName: UpdatePriorityListForBoard
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/updatePriorityListForBoard
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:
