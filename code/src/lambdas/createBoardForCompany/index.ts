@@ -22,6 +22,8 @@ import {
 import { createBoardTicketTemplateKey } from "../../keyGeneration/createBoardTicketTemplateKey";
 import { ITicketTemplate } from "../../models/database/ticketTemplate";
 import { createAllBoardTicketTemplatesKey } from "../../keyGeneration/createAllBoardTicketTemplatesKey";
+import { createBoardPriorityKey } from "../../keyGeneration/createBoardPriorityKey";
+import { IBoardPriorityList } from "../../models/database";
 
 export const createBoardForCompany = async (
     event: APIGatewayProxyEvent
@@ -134,6 +136,16 @@ export const createBoardForCompany = async (
                 sections: [],
             };
 
+            const boardPriorityListKey = createBoardPriorityKey(
+                companyId,
+                boardId
+            );
+            const boardPriorityList: IBoardPriorityList = {
+                itemId: boardPriorityListKey,
+                belongsTo: boardPriorityListKey,
+                priorities: [],
+            };
+
             return [
                 { item: boardItem, canOverrideExistingItem: false },
                 { item: updatedUserItem, canOverrideExistingItem: true },
@@ -143,6 +155,10 @@ export const createBoardForCompany = async (
                 },
                 {
                     item: ticketTemplate,
+                    canOverrideExistingItem: false,
+                },
+                {
+                    item: boardPriorityList,
                     canOverrideExistingItem: false,
                 },
             ];
