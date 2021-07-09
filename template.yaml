@@ -322,6 +322,23 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/createTicketForBoard
+    GetInProgressTicketsForBoard:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /getInProgressTicketsForBoard
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getInProgressTicketsForBoard
+            FunctionName: GetInProgressTicketsForBoard
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/getInProgressTicketsForBoard
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:
