@@ -4,9 +4,7 @@ import { Section } from "../database/sections";
 export interface ITicketCreateRequest {
     title: string;
     summary: string;
-    fields: {
-        [id: string]: any;
-    };
+    sections: any[];
     tags: string[];
     simplifiedTicketTemplate: {
         title: {

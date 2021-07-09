@@ -64,20 +64,21 @@ export const createTicketForBoard = async (
     };
 
     const requestSchema = Joi.object({
-        title: Joi.string().required().min(1),
-        summary: Joi.string(),
-        tags: Joi.array().items(Joi.string()).required(),
+        title: Joi.string().required(),
+        summary: Joi.string().allow(""),
+        sections: Joi.array(),
+        tags: Joi.array().items(Joi.string()),
         simplifiedTicketTemplate: Joi.object({
             title: Joi.object({
-                label: Joi.string().required().min(1),
+                label: Joi.string().required(),
             }).required(),
             summary: Joi.object({
                 isRequired: Joi.boolean().required(),
-                label: Joi.string().required().min(1),
+                label: Joi.string().required(),
             }),
-            sections: Joi.array().required(),
+            sections: Joi.array(),
         }).required(),
-        startingColumnId: Joi.string().required(),
+        startingColumnId: Joi.string().allow(""),
     });
 
     const { error, value } = requestSchema.validate(ticket);
@@ -104,7 +105,7 @@ export const createTicketForBoard = async (
             belongsTo,
             title: ticket.title,
             summary: ticket.summary,
-            fields: ticket.fields,
+            sections: ticket.sections,
             tags: ticket.tags,
             simplifiedTicketTemplate: ticket.simplifiedTicketTemplate,
             createdTimestamp: nowTimestamp,

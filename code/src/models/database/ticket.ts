@@ -5,9 +5,7 @@ export interface ITicket extends IDefaultPrimaryTableModel {
     shortenedItemId: string;
     title: string;
     summary: string;
-    fields: {
-        [id: string]: any;
-    };
+    sections: any[];
     createdTimestamp: string;
     lastModifiedTimestamp: string;
     completedTimestamp: string;
