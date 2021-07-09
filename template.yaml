@@ -305,6 +305,23 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/updatePriorityListForBoard
+    CreateTicketForBoard:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /createTicketForBoard
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.createTicketForBoard
+            FunctionName: CreateTicketForBoard
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/createTicketForBoard
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:
