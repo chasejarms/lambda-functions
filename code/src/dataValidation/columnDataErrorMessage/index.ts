@@ -1,5 +1,4 @@
 import { IBoardColumnRequest } from "../../models/requests/boardColumnRequest";
-import { IBoardColumn } from "../../models/database/boardColumn";
 import { isEqual } from "lodash";
 import {
     defaultUncategorizedColumn,

@@ -6,6 +6,15 @@ import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { ITicketCreateRequest } from "../../models/requests/ticketCreateRequest";
 import { queryStringParametersError } from "../../utils/queryStringParametersError";
 import * as Joi from "joi";
+import { isCompanyAdminOrBoardUser } from "../../utils/isCompanyAdminOrBoardUser";
+import { tryCreateNewItemThreeTimesInPrimaryTable } from "../../dynamo/primaryTable/tryCreateNewItemThreeTimes";
+import { generateUniqueId } from "../../utils/generateUniqueId";
+import { createInProgressTicketKey } from "../../keyGeneration/createInProgressTicketKey";
+import { createAllInProgressTicketsKey } from "../../keyGeneration/createAllInProgressTicketsKey";
+import { createBacklogTicketKey } from "../../keyGeneration/createBacklogTicketKey";
+import { createAllBacklogTicketsKey } from "../../keyGeneration/createAllBacklogTicketsKey";
+import { ITicket } from "../../models/database/ticket";
+import { createSuccessResponse } from "../../utils/createSuccessResponse";
 
 export const createTicketForBoard = async (
     event: APIGatewayProxyEvent
@@ -32,71 +41,88 @@ export const createTicketForBoard = async (
         );
     }
 
-    const { ticket } = JSON.parse(event.body) as {
-        ticket: ITicketCreateRequest;
+    const { boardId, companyId } = event.queryStringParameters as {
+        boardId: string;
+        companyId: string;
     };
 
-    // stop here while you learn about how the joi library works
-    Joi.object({
-        title: Joi.string().required().min(1),
-        summary: Joi.string().required(),
-        fields: Joi.object({}).required(),
-        tags: Joi.array().items(Joi.string()),
-        simplifiedTicketTemplate: Joi.object({
-            title: Joi.object({
-                label: Joi.string().required(),
-            }),
-            summary: Joi.object({
-                isRequired: Joi.boolean().required(),
-            }),
-        }),
-    });
-
-    if (!ticket) {
-        return createErrorResponse(
-            HttpStatusCode.BadRequest,
-            "ticket is a required field on the request"
-        );
-    }
-
-    if (!ticket.title) {
-        return createErrorResponse(
-            HttpStatusCode.BadRequest,
-            "the title is a required"
-        );
-    }
-
-    const canCreateTag = await isCompanyUserAdminOrBoardAdmin(
+    const canCreateTicketForBoard = await isCompanyAdminOrBoardUser(
         event,
         boardId,
         companyId
     );
 
-    if (!canCreateTag) {
+    if (!canCreateTicketForBoard) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
-            "Insufficient permissions to create tag"
+            "insufficient permissions to create the ticket"
         );
     }
 
-    const tagKey = createTagKey(companyId, boardId, tagName);
-    const allTagsKey = createAllTagsKey(companyId, boardId);
+    const { ticket } = JSON.parse(event.body) as {
+        ticket: ITicketCreateRequest;
+    };
 
-    const databaseItemAfterCreate = await createNewItemInPrimaryTable({
-        itemId: tagKey,
-        belongsTo: allTagsKey,
-        color: tagColor,
-        name: tagName,
+    const requestSchema = Joi.object({
+        title: Joi.string().required().min(1),
+        summary: Joi.string(),
+        tags: Joi.array().items(Joi.string()).required(),
+        simplifiedTicketTemplate: Joi.object({
+            title: Joi.object({
+                label: Joi.string().required().min(1),
+            }).required(),
+            summary: Joi.object({
+                isRequired: Joi.boolean().required(),
+                label: Joi.string().required().min(1),
+            }),
+            sections: Joi.array().required(),
+        }).required(),
+        startingColumnId: Joi.string().required(),
     });
 
-    if (!databaseItemAfterCreate) {
+    const { error, value } = requestSchema.validate(ticket);
+    if (error) {
+        return createErrorResponse(HttpStatusCode.BadRequest, error.message);
+    }
+
+    const ticketAfterDatabaseCreation = await tryCreateNewItemThreeTimesInPrimaryTable<
+        ITicket
+    >(() => {
+        const ticketId = generateUniqueId(3);
+        const sendTicketToBacklog = ticket.startingColumnId === "";
+        const itemId = sendTicketToBacklog
+            ? createBacklogTicketKey(companyId, boardId, ticketId)
+            : createInProgressTicketKey(companyId, boardId, ticketId);
+        const belongsTo = sendTicketToBacklog
+            ? createAllBacklogTicketsKey(companyId, boardId)
+            : createAllInProgressTicketsKey(companyId, boardId);
+
+        const nowTimestamp = Date.now().toString();
+        const ticketForDatabase: ITicket = {
+            shortenedItemId: ticketId,
+            itemId,
+            belongsTo,
+            title: ticket.title,
+            summary: ticket.summary,
+            fields: ticket.fields,
+            tags: ticket.tags,
+            simplifiedTicketTemplate: ticket.simplifiedTicketTemplate,
+            createdTimestamp: nowTimestamp,
+            lastModifiedTimestamp: nowTimestamp,
+            completedTimestamp: "",
+        };
+
+        return ticketForDatabase;
+    });
+
+    if (!ticketAfterDatabaseCreation) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
-            "A tag with the same name already exists"
+            "There was an error creating the ticket in the database"
         );
     }
 
     return createSuccessResponse({
-        tagInformation: databaseItemAfterCreate,
+        ticket: ticketAfterDatabaseCreation,
     });
 };

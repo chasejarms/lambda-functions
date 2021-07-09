@@ -18,4 +18,6 @@ export interface ITicketCreateRequest {
         };
         sections: Section[];
     };
+    // if this is an empty string, the ticket will start off in the backlog
+    startingColumnId: string;
 }
