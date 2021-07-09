@@ -111,6 +111,7 @@ export const createTicketForBoard = async (
             createdTimestamp: nowTimestamp,
             lastModifiedTimestamp: nowTimestamp,
             completedTimestamp: "",
+            columnId: sendTicketToBacklog ? "" : ticket.startingColumnId,
         };
 
         return ticketForDatabase;
