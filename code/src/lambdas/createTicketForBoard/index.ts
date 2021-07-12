@@ -67,7 +67,12 @@ export const createTicketForBoard = async (
         title: Joi.string().required(),
         summary: Joi.string().allow(""),
         sections: Joi.array(),
-        tags: Joi.array().items(Joi.string()),
+        tags: Joi.array().items(
+            Joi.object({
+                name: Joi.string(),
+                color: Joi.string(),
+            })
+        ),
         simplifiedTicketTemplate: Joi.object({
             title: Joi.object({
                 label: Joi.string().required(),

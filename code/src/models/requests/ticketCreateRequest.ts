@@ -5,7 +5,10 @@ export interface ITicketCreateRequest {
     title: string;
     summary: string;
     sections: any[];
-    tags: string[];
+    tags: {
+        name: string;
+        color: string;
+    }[];
     simplifiedTicketTemplate: {
         title: {
             label: string;

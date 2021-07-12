@@ -9,7 +9,10 @@ export interface ITicket extends IDefaultPrimaryTableModel {
     createdTimestamp: string;
     lastModifiedTimestamp: string;
     completedTimestamp: string;
-    tags: string[];
+    tags: {
+        name: string;
+        color: string;
+    }[];
     simplifiedTicketTemplate: {
         title: {
             label: string;
