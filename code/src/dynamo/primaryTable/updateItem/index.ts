@@ -13,7 +13,8 @@ export async function updateItemInPrimaryTable(
     belongsTo: string,
     itemAttributes: {
         [attributeName: string]: any;
-    }
+    },
+    attributesToNotAllowUpdate?: string[]
 ): Promise<boolean> {
     const dynamoClient = new AWS.DynamoDB.DocumentClient();
 
