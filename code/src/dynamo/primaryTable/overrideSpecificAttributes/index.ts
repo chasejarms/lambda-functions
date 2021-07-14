@@ -57,6 +57,8 @@ export async function overrideSpecificAttributesInPrimaryTable<T>(
 
         return updateItemOutput.Attributes as T;
     } catch (error) {
+        console.log("updateItemInput: ", updateItemInput);
+
         const awsError = error as AWS.AWSError;
         if (awsError.message && awsError.statusCode) {
             console.log("error message: ", awsError.message);
