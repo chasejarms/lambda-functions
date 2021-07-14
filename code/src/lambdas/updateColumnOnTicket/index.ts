@@ -84,7 +84,5 @@ export const updateColumnOnTicket = async (
         );
     }
 
-    return createSuccessResponse({
-        ticket: updatedTicket,
-    });
+    return createSuccessResponse({});
 };
