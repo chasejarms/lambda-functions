@@ -339,6 +339,23 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/getInProgressTicketsForBoard
+    UpdateColumnOnTicket:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /updateColumnOnTicket
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.updateColumnOnTicket
+            FunctionName: UpdateColumnOnTicket
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/updateColumnOnTicket
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:

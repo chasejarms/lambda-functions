@@ -6,7 +6,10 @@ import { createErrorResponse } from "../../utils/createErrorResponse";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { ITicket } from "../../models/database/ticket";
 import { isCompanyAdminOrBoardUser } from "../../utils/isCompanyAdminOrBoardUser";
-import * as Joi from "joi";
+import { createInProgressTicketKey } from "../../keyGeneration/createInProgressTicketKey";
+import { createAllInProgressTicketsKey } from "../../keyGeneration/createAllInProgressTicketsKey";
+import { overrideSpecificAttributesInPrimaryTable } from "../../dynamo/primaryTable/overrideSpecificAttributes";
+import { createSuccessResponse } from "../../utils/createSuccessResponse";
 
 export const updateColumnOnTicket = async (
     event: APIGatewayProxyEvent
@@ -33,16 +36,16 @@ export const updateColumnOnTicket = async (
         );
     }
 
-    const { companyId, boardId } = event.queryStringParameters;
+    const { companyId, boardId, ticketId } = event.queryStringParameters;
 
-    const { ticket } = JSON.parse(event.body) as {
-        ticket: ITicket;
+    const { columnId } = JSON.parse(event.body) as {
+        columnId: string;
     };
 
-    if (!ticket) {
+    if (!columnId) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
-            "the ticket must be part of the request body"
+            "the ticket needs a column id as part of the request body"
         );
     }
 
@@ -58,57 +61,30 @@ export const updateColumnOnTicket = async (
         );
     }
 
-    // validate the structure of the object
-
-    const requestSchema = Joi.object({
-        shortenedItemId: Joi.string().required(),
-        title: Joi.string().required(),
-        summary: Joi.string().allow(""),
-        sections: Joi.array(),
-        createdTimestamp: Joi.string().allow(""),
-        lastModifiedTimestamp: Joi.string().allow(""),
-        completedTimestamp: Joi.string().allow(""),
-        tags: Joi.array().items(
-            Joi.object({
-                name: Joi.string(),
-                color: Joi.string(),
-            })
-        ),
-        simplifiedTicketTemplate: Joi.object({
-            title: Joi.object({
-                label: Joi.string().required(),
-            }).required(),
-            summary: Joi.object({
-                isRequired: Joi.boolean().required(),
-                label: Joi.string().required(),
-            }),
-            sections: Joi.array(),
-        }).required(),
-        columnId: Joi.string().allow(""),
-    });
-
-    const { error } = requestSchema.validate(ticket);
-    if (error) {
-        return createErrorResponse(HttpStatusCode.BadRequest, error.message);
-    }
-
-    // run an update but don't allow changing of certain values
-
-    const boardPriorityKey = createBoardPriorityKey(companyId, boardId);
-    const wasSuccessful = await overrideItemInPrimaryTable(
-        boardPriorityKey,
-        boardPriorityKey,
-        {
-            priorities,
-        }
+    const inProgressTicketKey = createInProgressTicketKey(
+        companyId,
+        boardId,
+        ticketId
+    );
+    const allInProgressTicketsKey = createAllInProgressTicketsKey(
+        companyId,
+        boardId
     );
 
-    if (wasSuccessful === null) {
+    const updatedTicket = await overrideSpecificAttributesInPrimaryTable<
+        ITicket
+    >(inProgressTicketKey, allInProgressTicketsKey, {
+        columnId,
+    });
+
+    if (updatedTicket === null) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
-            "Error updating the priority list for the board"
+            "Error updating the ticket column"
         );
     }
 
-    return createSuccessResponse({});
+    return createSuccessResponse({
+        ticket: updatedTicket,
+    });
 };

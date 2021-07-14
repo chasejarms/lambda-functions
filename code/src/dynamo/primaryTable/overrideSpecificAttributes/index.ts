@@ -24,8 +24,8 @@ export async function overrideSpecificAttributesInPrimaryTable<T>(
 
         Object.keys(itemAttributes).forEach((key, index) => {
             const value = itemAttributes[key];
-            const valueAlias = String.fromCharCode((index = 97));
-            additionalUpdateExpressionValues.push(`info.${key}=:${valueAlias}`);
+            const valueAlias = `:${String.fromCharCode((index = 97))}`;
+            additionalUpdateExpressionValues.push(`info.${key}=${valueAlias}`);
 
             expressionAttributeValuesInternal[valueAlias] = value;
         });
