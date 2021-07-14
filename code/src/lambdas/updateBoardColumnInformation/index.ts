@@ -8,7 +8,7 @@ import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { columnDataErrorMessage } from "../../dataValidation/columnDataErrorMessage";
 import { isCompanyUserAdminOrBoardAdmin } from "../../utils/isCompanyUserAdminOrBoardAdmin";
 import { createBoardColumnInformationKey } from "../../keyGeneration/createBoardColumnInformationKey";
-import { updateItemInPrimaryTable } from "../../dynamo/primaryTable/updateItem";
+import { overrideItemInPrimaryTable } from "../../dynamo/primaryTable/overrideItem";
 
 export const updateBoardColumnInformation = async (
     event: APIGatewayProxyEvent
@@ -61,7 +61,7 @@ export const updateBoardColumnInformation = async (
         boardId
     );
 
-    const wasUpdated = await updateItemInPrimaryTable(
+    const wasUpdated = await overrideItemInPrimaryTable(
         boardColumnInformationKey,
         boardColumnInformationKey,
         {

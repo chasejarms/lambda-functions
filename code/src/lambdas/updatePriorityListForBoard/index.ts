@@ -6,7 +6,7 @@ import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
 import { isArray } from "lodash";
 import { isCompanyUserAdminOrBoardAdmin } from "../../utils/isCompanyUserAdminOrBoardAdmin";
 import { createBoardPriorityKey } from "../../keyGeneration/createBoardPriorityKey";
-import { updateItemInPrimaryTable } from "../../dynamo/primaryTable/updateItem";
+import { overrideItemInPrimaryTable } from "../../dynamo/primaryTable/overrideItem";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 
 export const updatePriorityListForBoard = async (
@@ -55,7 +55,7 @@ export const updatePriorityListForBoard = async (
     }
 
     const boardPriorityKey = createBoardPriorityKey(companyId, boardId);
-    const wasSuccessful = await updateItemInPrimaryTable(
+    const wasSuccessful = await overrideItemInPrimaryTable(
         boardPriorityKey,
         boardPriorityKey,
         {

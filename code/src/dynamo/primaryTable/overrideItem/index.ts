@@ -1,6 +1,5 @@
 import * as AWS from "aws-sdk";
 import { primaryTableName } from "../../../constants/primaryTableName";
-import { IDefaultPrimaryTableModel } from "../../../models/database/defaultPrimaryTableModel";
 
 /**
  *
@@ -8,13 +7,12 @@ import { IDefaultPrimaryTableModel } from "../../../models/database/defaultPrima
  * @param belongsTo The sort key of the item for the primary table
  * @returns If the item exists, it's returned. If it's not, null is returned.
  */
-export async function updateItemInPrimaryTable(
+export async function overrideItemInPrimaryTable(
     itemId: string,
     belongsTo: string,
     itemAttributes: {
         [attributeName: string]: any;
-    },
-    attributesToNotAllowUpdate?: string[]
+    }
 ): Promise<boolean> {
     const dynamoClient = new AWS.DynamoDB.DocumentClient();
 

@@ -8,7 +8,7 @@ import { ITicket } from "../../models/database/ticket";
 import { isCompanyAdminOrBoardUser } from "../../utils/isCompanyAdminOrBoardUser";
 import * as Joi from "joi";
 
-export const updateTicketForBoard = async (
+export const updateColumnOnTicket = async (
     event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
     const bodyIsEmptyErrorResponse = bodyIsEmptyError(event);
@@ -95,7 +95,7 @@ export const updateTicketForBoard = async (
     // run an update but don't allow changing of certain values
 
     const boardPriorityKey = createBoardPriorityKey(companyId, boardId);
-    const wasSuccessful = await updateItemInPrimaryTable(
+    const wasSuccessful = await overrideItemInPrimaryTable(
         boardPriorityKey,
         boardPriorityKey,
         {
