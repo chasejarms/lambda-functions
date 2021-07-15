@@ -390,6 +390,23 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/markTicketAsDone
+    GetDoneTickets:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /getDoneTickets
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getDoneTickets
+            FunctionName: GetDoneTickets
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/getDoneTickets
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:

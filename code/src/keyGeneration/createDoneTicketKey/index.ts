@@ -4,5 +4,5 @@ export function createDoneTicketKey(
     ticketId: string,
     completedTimestamp: string
 ) {
-    return `COMPANY.${companyId}_BOARD.${boardId}_DONETICKET.${ticketId}_COMPLETED.${completedTimestamp}`;
+    return `COMPANY.${companyId}_BOARD.${boardId}_COMPLETED.${completedTimestamp}_DONETICKET.${ticketId}`;
 }
