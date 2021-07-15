@@ -56,12 +56,9 @@ export async function transactWriteInPrimaryTable(
                 const deleteItem: Delete = {
                     TableName: primaryTableName,
                     Key: {
-                        itemId: {
-                            S: transactWriteItemParameter.itemId,
-                        },
-                        belongsTo: {
-                            S: transactWriteItemParameter.belongsTo,
-                        },
+                        // casting these as any because Delete seems to have the wrong typing
+                        itemId: transactWriteItemParameter.itemId as any,
+                        belongsTo: transactWriteItemParameter.belongsTo as any,
                     },
                 };
 
@@ -82,6 +79,11 @@ export async function transactWriteInPrimaryTable(
         return true;
     } catch (error) {
         const awsError = error as AWS.AWSError;
+
+        itemsForWrite.forEach((item) => {
+            console.log("item for write: ", JSON.stringify(item));
+        });
+
         if (awsError.message && awsError.statusCode) {
             console.log("error message: ", awsError.message);
             console.log("error status code: ", awsError.statusCode);

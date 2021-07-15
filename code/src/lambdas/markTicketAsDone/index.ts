@@ -20,7 +20,7 @@ import {
 import { createDoneTicketKey } from "../../keyGeneration/createDoneTicketKey";
 import { createAllDoneTicketsKey } from "../../keyGeneration/createAllDoneTicketsKey";
 
-export const updateColumnOnTicket = async (
+export const markTicketAsDone = async (
     event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
     const queryStringParametersErrorMessage = queryStringParametersError(
@@ -63,7 +63,7 @@ export const updateColumnOnTicket = async (
             : createBacklogTicketKey(companyId, boardId, ticketId);
 
     const originalTicketBelongsTo =
-        ticketType === TicketType.Backlog
+        ticketType === TicketType.InProgress
             ? createAllInProgressTicketsKey(companyId, boardId)
             : createAllBacklogTicketsKey(companyId, boardId);
 
