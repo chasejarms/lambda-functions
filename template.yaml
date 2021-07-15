@@ -356,6 +356,23 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/updateColumnOnTicket
+    DeleteTicket:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /deleteTicket
+                        Method: delete
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.deleteTicket
+            FunctionName: DeleteTicket
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/deleteTicket
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:
