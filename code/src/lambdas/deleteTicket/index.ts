@@ -3,10 +3,13 @@ import { queryStringParametersError } from "../../utils/queryStringParametersErr
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { isCompanyAdminOrBoardUser } from "../../utils/isCompanyAdminOrBoardUser";
-import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
-import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
 import { deleteItemFromPrimaryTable } from "../../dynamo/primaryTable/deleteItem";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
+import { TicketType } from "../../models/requests/ticketType";
+import { createInProgressTicketKey } from "../../keyGeneration/createInProgressTicketKey";
+import { createAllInProgressTicketsKey } from "../../keyGeneration/createAllInProgressTicketsKey";
+import { createBacklogTicketKey } from "../../keyGeneration/createBacklogTicketKey";
+import { createAllBacklogTicketsKey } from "../../keyGeneration/createAllBacklogTicketsKey";
 
 export const deleteTicket = async (
     event: APIGatewayProxyEvent
@@ -15,8 +18,8 @@ export const deleteTicket = async (
         event.queryStringParameters,
         "boardId",
         "companyId",
-        "itemId",
-        "belongsTo"
+        "ticketId",
+        "ticketType"
     );
     if (queryStringParametersErrorMessage) {
         return createErrorResponse(
@@ -28,13 +31,13 @@ export const deleteTicket = async (
     const {
         boardId,
         companyId,
-        itemId,
-        belongsTo,
+        ticketId,
+        ticketType,
     } = event.queryStringParameters as {
         boardId: string;
         companyId: string;
-        itemId: string;
-        belongsTo: string;
+        ticketId: string;
+        ticketType: TicketType;
     };
 
     const canDeleteTicketFromBoard = await isCompanyAdminOrBoardUser(
@@ -47,6 +50,16 @@ export const deleteTicket = async (
             HttpStatusCode.BadRequest,
             "Insufficient permissions to delete ticket from board"
         );
+    }
+
+    let itemId: string;
+    let belongsTo: string;
+    if (ticketType === TicketType.InProgress) {
+        itemId = createInProgressTicketKey(companyId, boardId, ticketId);
+        belongsTo = createAllInProgressTicketsKey(companyId, boardId);
+    } else if (ticketType === TicketType.Backlog) {
+        itemId = createBacklogTicketKey(companyId, boardId, ticketId);
+        belongsTo = createAllBacklogTicketsKey(companyId, boardId);
     }
 
     const itemWasDeleted = await deleteItemFromPrimaryTable(itemId, belongsTo);
