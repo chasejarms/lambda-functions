@@ -19,6 +19,7 @@ import { createCompanyKey } from "../../keyGeneration/createCompanyKey";
 import { createCompanyUserAlphabeticalSortKey } from "../../keyGeneration/createCompanyUserAlphabeticalSortKey";
 import { IUser } from "../../models/database/user";
 import { tryTransactWriteThreeTimesInPrimaryTable } from "../../dynamo/primaryTable/tryTransactWriteThreeTimes";
+import { TransactWriteItemType } from "../../dynamo/primaryTable/transactWrite";
 
 /**
  * The purpose of this function is just to sign up new users (i.e. never have been added to the system). If
@@ -127,10 +128,12 @@ export const signUpNewUser = async (
 
             return [
                 {
+                    type: TransactWriteItemType.Put,
                     item: companyInformationItem,
                     canOverrideExistingItem: false,
                 },
                 {
+                    type: TransactWriteItemType.Put,
                     item: companyUserItem,
                     canOverrideExistingItem: false,
                 },

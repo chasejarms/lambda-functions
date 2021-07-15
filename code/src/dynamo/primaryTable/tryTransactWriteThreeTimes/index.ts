@@ -1,10 +1,10 @@
 import {
     transactWriteInPrimaryTable,
-    ITransactWriteItemParameter,
+    TransactWriteItemParameter,
 } from "../transactWrite";
 
 export async function tryTransactWriteThreeTimesInPrimaryTable(
-    generateItemsCallback: () => ITransactWriteItemParameter[]
+    generateItemsCallback: () => TransactWriteItemParameter[]
 ): Promise<boolean> {
     let transactAttemptCount = 0;
 

@@ -373,6 +373,23 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/deleteTicket
+    MarkTicketAsDone:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /markTicketAsDone
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.markTicketAsDone
+            FunctionName: MarkTicketAsDone
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/markTicketAsDone
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:

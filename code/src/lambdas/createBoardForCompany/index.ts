@@ -24,6 +24,7 @@ import { ITicketTemplate } from "../../models/database/ticketTemplate";
 import { createAllBoardTicketTemplatesKey } from "../../keyGeneration/createAllBoardTicketTemplatesKey";
 import { createBoardPriorityKey } from "../../keyGeneration/createBoardPriorityKey";
 import { IBoardPriorityList } from "../../models/database";
+import { TransactWriteItemType } from "../../dynamo/primaryTable/transactWrite";
 
 export const createBoardForCompany = async (
     event: APIGatewayProxyEvent
@@ -147,17 +148,28 @@ export const createBoardForCompany = async (
             };
 
             return [
-                { item: boardItem, canOverrideExistingItem: false },
-                { item: updatedUserItem, canOverrideExistingItem: true },
                 {
+                    type: TransactWriteItemType.Put,
+                    item: boardItem,
+                    canOverrideExistingItem: false,
+                },
+                {
+                    type: TransactWriteItemType.Put,
+                    item: updatedUserItem,
+                    canOverrideExistingItem: true,
+                },
+                {
+                    type: TransactWriteItemType.Put,
                     item: boardColumnInformation,
                     canOverrideExistingItem: false,
                 },
                 {
+                    type: TransactWriteItemType.Put,
                     item: ticketTemplate,
                     canOverrideExistingItem: false,
                 },
                 {
+                    type: TransactWriteItemType.Put,
                     item: boardPriorityList,
                     canOverrideExistingItem: false,
                 },

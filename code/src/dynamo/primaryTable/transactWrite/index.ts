@@ -1,36 +1,74 @@
 import * as AWS from "aws-sdk";
 import { primaryTableName } from "../../../constants/primaryTableName";
 import { IDefaultPrimaryTableModel } from "../../../models/database/defaultPrimaryTableModel";
-import { Put } from "aws-sdk/clients/dynamodb";
+import { Put, Delete } from "aws-sdk/clients/dynamodb";
 
 interface ITransactWriteItem extends IDefaultPrimaryTableModel {
     [attribute: string]: any;
 }
 
-export interface ITransactWriteItemParameter {
+export enum TransactWriteItemType {
+    Put = "Put",
+    Delete = "Delete",
+}
+
+export type TransactWriteItemParameter =
+    | ITransactWriteItemPutParameter
+    | ITransactWriteItemDeleteParameter;
+
+export interface ITransactWriteItemPutParameter {
+    type: TransactWriteItemType.Put;
     item: ITransactWriteItem;
     canOverrideExistingItem: boolean;
 }
 
+export interface ITransactWriteItemDeleteParameter {
+    type: TransactWriteItemType.Delete;
+    itemId: string;
+    belongsTo: string;
+}
+
 export async function transactWriteInPrimaryTable(
-    ...transactWriteItemParameters: ITransactWriteItemParameter[]
+    ...transactWriteItemParameters: TransactWriteItemParameter[]
 ): Promise<boolean> {
     const dynamoClient = new AWS.DynamoDB.DocumentClient();
     const itemsForWrite: AWS.DynamoDB.DocumentClient.TransactWriteItemList = transactWriteItemParameters.map(
         (transactWriteItemParameter) => {
-            const put: Put = {
-                TableName: primaryTableName,
-                Item: {
-                    ...transactWriteItemParameter.item,
-                },
-            };
-            if (!transactWriteItemParameter.canOverrideExistingItem) {
-                put.ConditionExpression = "attribute_not_exists(itemId)";
+            if (transactWriteItemParameter.type === TransactWriteItemType.Put) {
+                const put: Put = {
+                    TableName: primaryTableName,
+                    Item: {
+                        ...transactWriteItemParameter.item,
+                    },
+                };
+                if (!transactWriteItemParameter.canOverrideExistingItem) {
+                    put.ConditionExpression = "attribute_not_exists(itemId)";
+                }
+
+                return {
+                    Put: put,
+                };
             }
 
-            return {
-                Put: put,
-            };
+            if (
+                transactWriteItemParameter.type === TransactWriteItemType.Delete
+            ) {
+                const deleteItem: Delete = {
+                    TableName: primaryTableName,
+                    Key: {
+                        itemId: {
+                            S: transactWriteItemParameter.itemId,
+                        },
+                        belongsTo: {
+                            S: transactWriteItemParameter.belongsTo,
+                        },
+                    },
+                };
+
+                return {
+                    Delete: deleteItem,
+                };
+            }
         }
     );
 
