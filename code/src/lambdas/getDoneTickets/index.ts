@@ -14,8 +14,7 @@ export const getDoneTickets = async (
         event.queryStringParameters,
         "boardId",
         "companyId",
-        "limit",
-        "lastEvaluatedKey"
+        "limit"
     );
     if (queryStringParametersErrorMessage) {
         return createErrorResponse(
@@ -53,7 +52,7 @@ export const getDoneTickets = async (
     const paginatedQueryResult = await queryParentToChildIndexBeginsWithPaginated(
         "C",
         allDoneTicketsKey,
-        50,
+        Number(limit),
         lastEvaluatedKey as any
     );
 
