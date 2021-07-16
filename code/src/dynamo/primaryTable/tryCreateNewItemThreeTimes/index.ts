@@ -15,6 +15,8 @@ export async function tryCreateNewItemThreeTimesInPrimaryTable<
         if (databaseItemAfterCreate) {
             return databaseItemAfterCreate as T;
         }
+
+        transactAttemptCount++;
     }
 
     return null;

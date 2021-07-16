@@ -407,6 +407,23 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/getDoneTickets
+    GetTicketInformationById:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /getTicketInformationById
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getTicketInformationById
+            FunctionName: GetTicketInformationById
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/getTicketInformationById
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:
@@ -416,7 +433,7 @@ Resources:
                   AttributeType: "S"
                 - AttributeName: "belongsTo"
                   AttributeType: "S"
-                - AttributeName: "gsiSortKey"
+                - AttributeName: "ticketIdForTicketInformation"
                   AttributeType: "S"
             KeySchema:
                 - AttributeName: "itemId"
@@ -433,12 +450,10 @@ Resources:
                         KeyType: "RANGE"
                   Projection:
                       ProjectionType: "ALL"
-                - IndexName: "parentWithSortedChild"
+                - IndexName: "ticketIdForTicketInformation"
                   KeySchema:
-                      - AttributeName: "belongsTo"
+                      - AttributeName: "ticketIdForTicketInformation"
                         KeyType: "HASH"
-                      - AttributeName: "gsiSortKey"
-                        KeyType: "RANGE"
                   Projection:
                       ProjectionType: "ALL"
 Outputs:

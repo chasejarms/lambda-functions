@@ -15,6 +15,8 @@ import { createBacklogTicketKey } from "../../keyGeneration/createBacklogTicketK
 import { createAllBacklogTicketsKey } from "../../keyGeneration/createAllBacklogTicketsKey";
 import { ITicket } from "../../models/database/ticket";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
+import { createTicketIdForTicketInformationKey } from "../../keyGeneration/createTicketIdForTicketInformationKey";
+import { getItemFromTicketIdToTicketInformationIndex } from "../../dynamo/ticketIdToTicketInformation/getItem";
 
 export const createTicketForBoard = async (
     event: APIGatewayProxyEvent
@@ -91,10 +93,32 @@ export const createTicketForBoard = async (
         return createErrorResponse(HttpStatusCode.BadRequest, error.message);
     }
 
+    let uniqueTicketIdAttempts = 0;
+    let ticketId: string;
+    let ticketIdForTicketInformationKey: string;
+
+    while (uniqueTicketIdAttempts < 3) {
+        ticketId = generateUniqueId();
+
+        ticketIdForTicketInformationKey = createTicketIdForTicketInformationKey(
+            companyId,
+            boardId,
+            ticketId
+        );
+
+        const ticket = await getItemFromTicketIdToTicketInformationIndex<
+            ITicket
+        >(ticketIdForTicketInformationKey);
+        if (ticket === null) {
+            break;
+        }
+
+        uniqueTicketIdAttempts++;
+    }
+
     const ticketAfterDatabaseCreation = await tryCreateNewItemThreeTimesInPrimaryTable<
         ITicket
     >(() => {
-        const ticketId = generateUniqueId(3);
         const sendTicketToBacklog = ticket.startingColumnId === "";
         const itemId = sendTicketToBacklog
             ? createBacklogTicketKey(companyId, boardId, ticketId)
@@ -106,6 +130,7 @@ export const createTicketForBoard = async (
         const nowTimestamp = Date.now().toString();
         const ticketForDatabase: ITicket = {
             shortenedItemId: ticketId,
+            ticketIdForTicketInformation: ticketIdForTicketInformationKey,
             itemId,
             belongsTo,
             title: ticket.title,

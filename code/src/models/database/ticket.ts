@@ -24,4 +24,5 @@ export interface ITicket extends IDefaultPrimaryTableModel {
         sections: Section[];
     };
     columnId: string;
+    ticketIdForTicketInformation: string;
 }

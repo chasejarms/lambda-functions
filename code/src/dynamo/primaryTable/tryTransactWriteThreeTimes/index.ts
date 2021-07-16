@@ -18,6 +18,8 @@ export async function tryTransactWriteThreeTimesInPrimaryTable(
         if (transactWriteWasSuccessful) {
             return true;
         }
+
+        transactAttemptCount++;
     }
 
     return false;
