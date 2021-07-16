@@ -1,6 +1,7 @@
 import * as AWS from "aws-sdk";
 import { directAccessTicketIdIndexName } from "../../../constants/directAccessTicketIdIndexName";
-import { GetItemInput } from "aws-sdk/clients/dynamodb";
+import { GetItemInput, QueryInput } from "aws-sdk/clients/dynamodb";
+import { primaryTableName } from "../../../constants/primaryTableName";
 
 /**
  *
@@ -8,31 +9,27 @@ import { GetItemInput } from "aws-sdk/clients/dynamodb";
  * @returns If the item exists, it's returned. If it's not, null is returned.
  */
 export async function getItemFromDirectAccessTicketIdIndex<T>(
-    ticketId: string
+    directAccessTicketId: string
 ): Promise<T> {
     const dynamoClient = new AWS.DynamoDB.DocumentClient();
 
-    const Key = {
-        directAccessTicketId: ticketId,
-    };
-
-    const getItemInput: GetItemInput = {
-        TableName: directAccessTicketIdIndexName,
-        Key: Key as any,
+    const queryInput: QueryInput = {
+        TableName: primaryTableName,
+        IndexName: directAccessTicketIdIndexName,
+        KeyConditionExpression: `directAccessTicketId = :directAccessTicketId`,
+        ExpressionAttributeValues: {
+            ":directAccessTicketId": directAccessTicketId,
+        } as any,
     };
 
     try {
-        const getResult = await dynamoClient.get(getItemInput).promise();
+        const results = await dynamoClient.query(queryInput).promise();
 
-        if (getResult.Item) {
-            return getResult.Item as T;
-        } else {
-            return null;
-        }
+        return results.Items[0] as T;
     } catch (error) {
         const awsError = error as AWS.AWSError;
 
-        console.log("getItemInput: ", getItemInput);
+        console.log("queryInput: ", queryInput);
 
         if (awsError.message && awsError.statusCode) {
             console.log("error message: ", awsError.message);
