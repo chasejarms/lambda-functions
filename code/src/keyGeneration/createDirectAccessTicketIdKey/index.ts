@@ -1,4 +1,4 @@
-export function createTicketIdForTicketInformationKey(
+export function createDirectAccessTicketIdKey(
     companyId: string,
     boardId: string,
     ticketId: string

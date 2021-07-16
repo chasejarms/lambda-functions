@@ -1,5 +1,5 @@
 import * as AWS from "aws-sdk";
-import { ticketIdToTicketInformation } from "../../../constants/ticketIdToTicketInformation";
+import { directAccessTicketIdIndexName } from "../../../constants/directAccessTicketIdIndexName";
 import { GetItemInput } from "aws-sdk/clients/dynamodb";
 
 /**
@@ -17,7 +17,7 @@ export async function getItemFromDirectAccessTicketIdIndex<T>(
     };
 
     const getItemInput: GetItemInput = {
-        TableName: ticketIdToTicketInformation,
+        TableName: directAccessTicketIdIndexName,
         Key: Key as any,
     };
 

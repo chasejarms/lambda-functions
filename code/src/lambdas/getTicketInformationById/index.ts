@@ -6,7 +6,7 @@ import { isCompanyAdminOrBoardUser } from "../../utils/isCompanyAdminOrBoardUser
 import { getItemFromDirectAccessTicketIdIndex } from "../../dynamo/directAccessTicketIdIndex/getItem";
 import { ITicket } from "../../models/database/ticket";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
-import { createTicketIdForTicketInformationKey } from "../../keyGeneration/createTicketIdForTicketInformationKey";
+import { createDirectAccessTicketIdKey } from "../../keyGeneration/createDirectAccessTicketIdKey";
 
 export const getTicketInformationById = async (
     event: APIGatewayProxyEvent
@@ -46,13 +46,13 @@ export const getTicketInformationById = async (
         );
     }
 
-    const ticketIdForTicketInformation = createTicketIdForTicketInformationKey(
+    const directAccessTicketIdKey = createDirectAccessTicketIdKey(
         companyId,
         boardId,
         ticketId
     );
     const ticket = await getItemFromDirectAccessTicketIdIndex<ITicket>(
-        ticketIdForTicketInformation
+        directAccessTicketIdKey
     );
     if (ticket === null) {
         return createErrorResponse(

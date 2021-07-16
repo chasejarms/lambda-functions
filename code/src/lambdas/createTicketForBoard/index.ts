@@ -15,7 +15,7 @@ import { createBacklogTicketKey } from "../../keyGeneration/createBacklogTicketK
 import { createAllBacklogTicketsKey } from "../../keyGeneration/createAllBacklogTicketsKey";
 import { ITicket } from "../../models/database/ticket";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
-import { createTicketIdForTicketInformationKey } from "../../keyGeneration/createTicketIdForTicketInformationKey";
+import { createDirectAccessTicketIdKey } from "../../keyGeneration/createDirectAccessTicketIdKey";
 import { getItemFromDirectAccessTicketIdIndex } from "../../dynamo/directAccessTicketIdIndex/getItem";
 
 export const createTicketForBoard = async (
@@ -95,19 +95,19 @@ export const createTicketForBoard = async (
 
     let uniqueTicketIdAttempts = 0;
     let ticketId: string;
-    let ticketIdForTicketInformationKey: string;
+    let directAccessTicketIdKey: string;
 
     while (uniqueTicketIdAttempts < 3) {
         ticketId = generateUniqueId();
 
-        ticketIdForTicketInformationKey = createTicketIdForTicketInformationKey(
+        directAccessTicketIdKey = createDirectAccessTicketIdKey(
             companyId,
             boardId,
             ticketId
         );
 
         const ticket = await getItemFromDirectAccessTicketIdIndex<ITicket>(
-            ticketIdForTicketInformationKey
+            directAccessTicketIdKey
         );
         if (ticket === null) {
             break;
@@ -130,7 +130,7 @@ export const createTicketForBoard = async (
         const nowTimestamp = Date.now().toString();
         const ticketForDatabase: ITicket = {
             shortenedItemId: ticketId,
-            ticketIdForTicketInformation: ticketIdForTicketInformationKey,
+            directAccessTicketId: directAccessTicketIdKey,
             itemId,
             belongsTo,
             title: ticket.title,
