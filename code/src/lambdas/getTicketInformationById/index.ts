@@ -3,7 +3,7 @@ import { queryStringParametersError } from "../../utils/queryStringParametersErr
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { isCompanyAdminOrBoardUser } from "../../utils/isCompanyAdminOrBoardUser";
-import { getItemFromTicketIdToTicketInformationIndex } from "../../dynamo/ticketIdToTicketInformation/getItem";
+import { getItemFromDirectAccessTicketIdIndex } from "../../dynamo/directAccessTicketIdIndex/getItem";
 import { ITicket } from "../../models/database/ticket";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { createTicketIdForTicketInformationKey } from "../../keyGeneration/createTicketIdForTicketInformationKey";
@@ -51,7 +51,7 @@ export const getTicketInformationById = async (
         boardId,
         ticketId
     );
-    const ticket = await getItemFromTicketIdToTicketInformationIndex<ITicket>(
+    const ticket = await getItemFromDirectAccessTicketIdIndex<ITicket>(
         ticketIdForTicketInformation
     );
     if (ticket === null) {

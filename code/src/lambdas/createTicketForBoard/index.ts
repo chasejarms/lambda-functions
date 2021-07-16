@@ -16,7 +16,7 @@ import { createAllBacklogTicketsKey } from "../../keyGeneration/createAllBacklog
 import { ITicket } from "../../models/database/ticket";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { createTicketIdForTicketInformationKey } from "../../keyGeneration/createTicketIdForTicketInformationKey";
-import { getItemFromTicketIdToTicketInformationIndex } from "../../dynamo/ticketIdToTicketInformation/getItem";
+import { getItemFromDirectAccessTicketIdIndex } from "../../dynamo/directAccessTicketIdIndex/getItem";
 
 export const createTicketForBoard = async (
     event: APIGatewayProxyEvent
@@ -106,9 +106,9 @@ export const createTicketForBoard = async (
             ticketId
         );
 
-        const ticket = await getItemFromTicketIdToTicketInformationIndex<
-            ITicket
-        >(ticketIdForTicketInformationKey);
+        const ticket = await getItemFromDirectAccessTicketIdIndex<ITicket>(
+            ticketIdForTicketInformationKey
+        );
         if (ticket === null) {
             break;
         }

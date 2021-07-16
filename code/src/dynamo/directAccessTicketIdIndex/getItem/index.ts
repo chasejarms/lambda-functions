@@ -4,16 +4,16 @@ import { GetItemInput } from "aws-sdk/clients/dynamodb";
 
 /**
  *
- * @param ticketIdForTicketInformation The id of the ticket
+ * @param ticketId The id of the ticket
  * @returns If the item exists, it's returned. If it's not, null is returned.
  */
-export async function getItemFromTicketIdToTicketInformationIndex<T>(
-    ticketIdForTicketInformation: string
+export async function getItemFromDirectAccessTicketIdIndex<T>(
+    ticketId: string
 ): Promise<T> {
     const dynamoClient = new AWS.DynamoDB.DocumentClient();
 
     const Key = {
-        ticketIdForTicketInformation,
+        directAccessTicketId: ticketId,
     };
 
     const getItemInput: GetItemInput = {

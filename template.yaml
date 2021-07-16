@@ -433,7 +433,7 @@ Resources:
                   AttributeType: "S"
                 - AttributeName: "belongsTo"
                   AttributeType: "S"
-                - AttributeName: "ticketIdForTicketInformation"
+                - AttributeName: "directAccessTicketId"
                   AttributeType: "S"
             KeySchema:
                 - AttributeName: "itemId"
@@ -450,9 +450,9 @@ Resources:
                         KeyType: "RANGE"
                   Projection:
                       ProjectionType: "ALL"
-                - IndexName: "ticketIdForTicketInformation"
+                - IndexName: "directAccessTicketId"
                   KeySchema:
-                      - AttributeName: "ticketIdForTicketInformation"
+                      - AttributeName: "directAccessTicketId"
                         KeyType: "HASH"
                   Projection:
                       ProjectionType: "ALL"
