@@ -339,6 +339,23 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/getInProgressTicketsForBoard
+    GetBacklogTicketsForBoard:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /getBacklogTicketsForBoard
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getBacklogTicketsForBoard
+            FunctionName: GetBacklogTicketsForBoard
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/getBacklogTicketsForBoard
     UpdateColumnOnTicket:
         Type: AWS::Serverless::Function
         Properties:
