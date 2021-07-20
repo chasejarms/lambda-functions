@@ -407,6 +407,23 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/markTicketAsDone
+    MoveNonInProgressTicketToInProgress:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /moveNonInProgressTicketToInProgress
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.moveNonInProgressTicketToInProgress
+            FunctionName: MoveNonInProgressTicketToInProgress
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/moveNonInProgressTicketToInProgress
     GetDoneTickets:
         Type: AWS::Serverless::Function
         Properties:
