@@ -10,6 +10,9 @@ import { createInProgressTicketKey } from "../../keyGeneration/createInProgressT
 import { createAllInProgressTicketsKey } from "../../keyGeneration/createAllInProgressTicketsKey";
 import { createBacklogTicketKey } from "../../keyGeneration/createBacklogTicketKey";
 import { createAllBacklogTicketsKey } from "../../keyGeneration/createAllBacklogTicketsKey";
+import { getItemFromDirectAccessTicketIdIndex } from "../../dynamo/directAccessTicketIdIndex/getItem";
+import { createDirectAccessTicketIdKey } from "../../keyGeneration/createDirectAccessTicketIdKey";
+import { ITicket } from "../../models/database/ticket";
 
 export const deleteTicket = async (
     event: APIGatewayProxyEvent
@@ -60,6 +63,18 @@ export const deleteTicket = async (
     } else if (ticketType === TicketType.Backlog) {
         itemId = createBacklogTicketKey(companyId, boardId, ticketId);
         belongsTo = createAllBacklogTicketsKey(companyId, boardId);
+    } else if (ticketType === TicketType.Done) {
+        const directTicketAccessIdKey = createDirectAccessTicketIdKey(
+            companyId,
+            boardId,
+            ticketId
+        );
+        const ticket = await getItemFromDirectAccessTicketIdIndex<ITicket>(
+            directTicketAccessIdKey
+        );
+
+        itemId = ticket.itemId;
+        belongsTo = ticket.belongsTo;
     }
 
     const itemWasDeleted = await deleteItemFromPrimaryTable(itemId, belongsTo);
