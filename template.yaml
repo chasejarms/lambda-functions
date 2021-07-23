@@ -492,6 +492,23 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/deleteBoardForCompany
+    GetBoardForCompany:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /getBoardForCompany
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getBoardForCompany
+            FunctionName: GetBoardForCompany
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/getBoardForCompany
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:
