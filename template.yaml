@@ -475,6 +475,23 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/updateTicketForBoard
+    DeleteBoardForCompany:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /deleteBoardForCompany
+                        Method: delete
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.deleteBoardForCompany
+            FunctionName: DeleteBoardForCompany
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/deleteBoardForCompany
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:

@@ -12,7 +12,8 @@ export async function overrideSpecificAttributesInPrimaryTable<T>(
     belongsTo: string,
     itemAttributes: {
         [attributeName: string]: any;
-    }
+    },
+    logUpdateItemInput: boolean = false
 ): Promise<T> {
     const dynamoClient = new AWS.DynamoDB.DocumentClient();
 
@@ -49,6 +50,10 @@ export async function overrideSpecificAttributesInPrimaryTable<T>(
         },
         ReturnValues: "UPDATED_NEW",
     };
+
+    if (logUpdateItemInput) {
+        console.log("updateItemInput: ", updateItemInput);
+    }
 
     try {
         const updateItemOutput = await dynamoClient
