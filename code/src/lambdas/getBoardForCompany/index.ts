@@ -9,7 +9,7 @@ import { getItemFromPrimaryTable } from "../../dynamo/primaryTable/getItem";
 import { IBoard } from "../../models/database/board";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 
-export const getBoardColumnInformation = async (
+export const getBoardForCompany = async (
     event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
     const queryStringParametersErrorMessage = queryStringParametersError(

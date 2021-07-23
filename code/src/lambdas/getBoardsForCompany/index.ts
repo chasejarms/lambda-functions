@@ -43,17 +43,8 @@ export const getBoardsForCompany = async (
     }
 
     return createSuccessResponse({
-        items: boardItems
-            .filter((board) => {
-                return !board.hasBeenDeleted;
-            })
-            .map((board) => {
-                const splitOnDots = board.itemId.split(".");
-                const boardId = splitOnDots[splitOnDots.length - 1];
-                return {
-                    name: board.name,
-                    id: boardId,
-                };
-            }),
+        items: boardItems.filter((board) => {
+            return !board.hasBeenDeleted;
+        }),
     });
 };

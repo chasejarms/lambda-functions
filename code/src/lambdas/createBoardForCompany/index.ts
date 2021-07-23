@@ -80,6 +80,7 @@ export const createBoardForCompany = async (
             const companyBoardKey = createCompanyBoardKey(companyId, boardId);
             const companyBoardsKey = createCompanyBoardsKey(companyId);
             const boardItem: IBoard = {
+                shortenedItemId: boardId,
                 itemId: companyBoardKey,
                 belongsTo: companyBoardsKey,
                 name: boardName,
