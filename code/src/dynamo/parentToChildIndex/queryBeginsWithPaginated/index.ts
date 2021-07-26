@@ -12,9 +12,19 @@ export async function queryParentToChildIndexBeginsWithPaginated<T>(
     itemIdStart: string,
     belongsTo: string,
     limit: number,
-    exclusiveStartKey?: Key
+    ascendingOrder: boolean = true,
+    lastEvaluatedItemId?: string,
+    lastEvaluatedBelongsTo?: string
 ): Promise<IPaginatedQueryResults<T> | null> {
     const dynamoClient = new AWS.DynamoDB.DocumentClient();
+    const exclusiveStartKey: Key | undefined =
+        lastEvaluatedItemId && lastEvaluatedBelongsTo
+            ? ({
+                  itemId: lastEvaluatedItemId,
+                  belongsTo: lastEvaluatedBelongsTo,
+              } as any)
+            : undefined;
+
     try {
         const results = await dynamoClient
             .query({
@@ -27,6 +37,7 @@ export async function queryParentToChildIndexBeginsWithPaginated<T>(
                 },
                 Limit: limit,
                 ExclusiveStartKey: exclusiveStartKey,
+                ScanIndexForward: ascendingOrder,
             })
             .promise();
 

@@ -27,12 +27,14 @@ export const getDoneTickets = async (
         boardId,
         companyId,
         limit,
-        lastEvaluatedKey,
+        lastEvaluatedItemId,
+        lastEvaluatedBelongsTo,
     } = event.queryStringParameters as {
         boardId: string;
         companyId: string;
         limit: string;
-        lastEvaluatedKey?: string;
+        lastEvaluatedItemId?: string;
+        lastEvaluatedBelongsTo?: string;
     };
 
     const canGetDoneTicketsForBoard = await isCompanyAdminOrBoardUser(
@@ -53,7 +55,9 @@ export const getDoneTickets = async (
         "C",
         allDoneTicketsKey,
         Number(limit),
-        lastEvaluatedKey as any
+        false,
+        lastEvaluatedItemId,
+        lastEvaluatedBelongsTo
     );
 
     if (paginatedQueryResult === null) {
