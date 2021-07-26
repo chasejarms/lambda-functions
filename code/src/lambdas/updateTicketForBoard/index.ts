@@ -10,6 +10,8 @@ import * as Joi from "joi";
 import { overrideSpecificAttributesInPrimaryTable } from "../../dynamo/primaryTable/overrideSpecificAttributes";
 import { ITicket } from "../../models/database/ticket";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
+import { getItemFromPrimaryTable } from "../../dynamo/primaryTable/getItem";
+import { ticketErrorMessageFromTicketTemplate } from "../../utils/ticketErrorMessageFromTicketTemplate";
 
 export const updateTicketForBoard = async (
     event: APIGatewayProxyEvent
@@ -66,6 +68,29 @@ export const updateTicketForBoard = async (
             })
         ),
     });
+
+    const originalTicket = await getItemFromPrimaryTable<ITicket>(
+        itemId,
+        belongsTo
+    );
+    if (originalTicket === null) {
+        return createErrorResponse(
+            HttpStatusCode.BadRequest,
+            "There was an error getting the original ticket"
+        );
+    }
+
+    const ticketErrorMessage = ticketErrorMessageFromTicketTemplate(
+        parsedBody.title,
+        parsedBody.summary,
+        originalTicket.simplifiedTicketTemplate
+    );
+    if (ticketErrorMessage) {
+        return createErrorResponse(
+            HttpStatusCode.BadRequest,
+            ticketErrorMessage
+        );
+    }
 
     const { error } = requestSchema.validate(parsedBody);
     if (error) {

@@ -17,6 +17,7 @@ import { ITicket } from "../../models/database/ticket";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { createDirectAccessTicketIdKey } from "../../keyGeneration/createDirectAccessTicketIdKey";
 import { getItemFromDirectAccessTicketIdIndex } from "../../dynamo/directAccessTicketIdIndex/getItem";
+import { ticketErrorMessageFromTicketTemplate } from "../../utils/ticketErrorMessageFromTicketTemplate";
 
 export const createTicketForBoard = async (
     event: APIGatewayProxyEvent
@@ -88,9 +89,21 @@ export const createTicketForBoard = async (
         startingColumnId: Joi.string().allow(""),
     });
 
-    const { error, value } = requestSchema.validate(ticket);
+    const { error } = requestSchema.validate(ticket);
     if (error) {
         return createErrorResponse(HttpStatusCode.BadRequest, error.message);
+    }
+
+    const ticketErrorMessage = ticketErrorMessageFromTicketTemplate(
+        ticket.title,
+        ticket.summary,
+        ticket.simplifiedTicketTemplate
+    );
+    if (ticketErrorMessage) {
+        return createErrorResponse(
+            HttpStatusCode.BadRequest,
+            ticketErrorMessage
+        );
     }
 
     let uniqueTicketIdAttempts = 0;

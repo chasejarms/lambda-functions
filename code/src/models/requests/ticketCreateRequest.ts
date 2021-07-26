@@ -1,5 +1,4 @@
-import { ITicketTemplate } from "../database/ticketTemplate";
-import { Section } from "../database/sections";
+import { ISimplifiedTicketTemplate } from "./simplifiedTicketTemplate";
 
 export interface ITicketCreateRequest {
     title: string;
@@ -9,16 +8,7 @@ export interface ITicketCreateRequest {
         name: string;
         color: string;
     }[];
-    simplifiedTicketTemplate: {
-        title: {
-            label: string;
-        };
-        summary: {
-            isRequired: boolean;
-            label: string;
-        };
-        sections: Section[];
-    };
+    simplifiedTicketTemplate: ISimplifiedTicketTemplate;
     // if this is an empty string, the ticket will start off in the backlog
     startingColumnId: string;
 }
