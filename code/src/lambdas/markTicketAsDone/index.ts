@@ -94,6 +94,7 @@ export const markTicketAsDone = async (
             );
             const updatedTicket: ITicket = {
                 ...ticket,
+                columnId: "",
                 belongsTo: allDoneTicketsKey,
                 itemId: doneTicketKey,
                 completedTimestamp: nowTimestamp,

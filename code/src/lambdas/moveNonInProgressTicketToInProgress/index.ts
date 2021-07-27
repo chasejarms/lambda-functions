@@ -87,6 +87,7 @@ export const moveNonInProgressTicketToInProgress = async (
                 ...ticket,
                 itemId: inProgressTicketKey,
                 belongsTo: allInProgressTicketsKey,
+                completedTimestamp: "",
                 lastModifiedTimestamp: nowTimestamp,
                 columnId,
             };
