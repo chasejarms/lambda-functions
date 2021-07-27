@@ -526,6 +526,23 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/getBoardForCompany
+    GetTicketTemplateForBoard:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /getTicketTemplateForBoard
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getTicketTemplateForBoard
+            FunctionName: GetTicketTemplateForBoard
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/getTicketTemplateForBoard
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:
