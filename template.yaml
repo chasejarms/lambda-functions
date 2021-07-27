@@ -424,6 +424,23 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/moveNonInProgressTicketToInProgress
+    MoveNonBacklogTicketToBacklog:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /moveNonBacklogTicketToBacklog
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.moveNonBacklogTicketToBacklog
+            FunctionName: MoveNonBacklogTicketToBacklog
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/moveNonBacklogTicketToBacklog
     GetDoneTickets:
         Type: AWS::Serverless::Function
         Properties:
