@@ -33,23 +33,12 @@ export function ticketTemplateCreateRequestErrorMessage(
         return "The name must be a string";
     }
 
-    const nameIsOver40Characters = ticketTemplate.name.length > 40;
-    if (nameIsOver40Characters) {
-        return "The name is over 40 characters";
-    }
-
     // validate description
 
     const descriptionIsNotAString =
         typeof ticketTemplate.description !== "string";
     if (descriptionIsNotAString) {
         return "The description must be a string";
-    }
-
-    const descriptionIsOver120Characters =
-        ticketTemplate.description.length > 120;
-    if (descriptionIsOver120Characters) {
-        return "The description is over 120 characters";
     }
 
     // validate title
@@ -65,11 +54,6 @@ export function ticketTemplateCreateRequestErrorMessage(
         return "The title label is not a string";
     }
 
-    const titleLabelIsOver40Characters = ticketTemplate.title.label.length > 40;
-    if (titleLabelIsOver40Characters) {
-        return "The title label is over 40 characters";
-    }
-
     // validate summary
 
     const summaryIsMissingLabel = !ticketTemplate.summary.label;
@@ -81,12 +65,6 @@ export function ticketTemplateCreateRequestErrorMessage(
         typeof ticketTemplate.summary.label !== "string";
     if (summaryLabelIsNotString) {
         return "The summary label is not a string";
-    }
-
-    const summaryLabelIsOver40Characters =
-        ticketTemplate.summary.label.length > 40;
-    if (summaryLabelIsOver40Characters) {
-        return "The summary label is over 40 characters";
     }
 
     const summaryIsRequiredIsMissing =
