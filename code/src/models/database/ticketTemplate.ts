@@ -1,7 +1,7 @@
 import { IDefaultPrimaryTableModel } from "./defaultPrimaryTableModel";
-import { ITicketTemplateCreateRequest } from "../requests/ticketTemplateCreateRequest";
+import { ITicketTemplatePutRequest } from "../requests/ticketTemplatePutRequest";
 
 export type ITicketTemplate = IDefaultPrimaryTableModel &
-    ITicketTemplateCreateRequest & {
+    ITicketTemplatePutRequest & {
         shortenedItemId: string;
     };

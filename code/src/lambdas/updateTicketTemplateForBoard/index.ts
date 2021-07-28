@@ -5,15 +5,15 @@ import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { createAllBoardTicketTemplatesKey } from "../../keyGeneration/createAllBoardTicketTemplatesKey";
 import { ITicketTemplate } from "../../models/database/ticketTemplate";
 import { isCompanyUserAdminOrBoardAdmin } from "../../utils/isCompanyUserAdminOrBoardAdmin";
-import { generateUniqueId } from "../../utils/generateUniqueId";
 import { createBoardTicketTemplateKey } from "../../keyGeneration/createBoardTicketTemplateKey";
-import { tryCreateNewItemThreeTimesInPrimaryTable } from "../../dynamo/primaryTable/tryCreateNewItemThreeTimes";
 import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
 import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
 import { ticketTemplateCreateRequestErrorMessage } from "../../dataValidation/ticketTemplateCreateRequestErrorMessage";
 import { ITicketTemplatePutRequest } from "../../models/requests/ticketTemplatePutRequest";
+import { queryStringParametersError } from "../../utils/queryStringParametersError";
+import { overrideSpecificAttributesInPrimaryTable } from "../../dynamo/primaryTable/overrideSpecificAttributes";
 
-export const createTicketTemplateForBoard = async (
+export const updateTicketTemplateForBoard = async (
     event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
     const bodyIsEmptyErrorResponse = bodyIsEmptyError(event);
@@ -26,14 +26,24 @@ export const createTicketTemplateForBoard = async (
         return bodyIsNotAnObjectErrorResponse;
     }
 
-    const { companyId, boardId } = event.queryStringParameters;
-
-    if (!companyId || !boardId) {
+    const queryStringParametersErrorMessage = queryStringParametersError(
+        event.queryStringParameters,
+        "companyId",
+        "boardId",
+        "ticketTemplateId"
+    );
+    if (queryStringParametersErrorMessage) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
-            "companyId and boardId are required query parameter"
+            queryStringParametersErrorMessage
         );
     }
+
+    const {
+        companyId,
+        boardId,
+        ticketTemplateId,
+    } = event.queryStringParameters;
 
     const { ticketTemplate } = JSON.parse(event.body) as {
         ticketTemplate: ITicketTemplatePutRequest;
@@ -55,50 +65,39 @@ export const createTicketTemplateForBoard = async (
         );
     }
 
-    const canCreateTicketTemplateForBoard = await isCompanyUserAdminOrBoardAdmin(
+    const canUpdateTicketTemplateForBoard = await isCompanyUserAdminOrBoardAdmin(
         event,
         boardId,
         companyId
     );
 
-    if (!canCreateTicketTemplateForBoard) {
+    if (!canUpdateTicketTemplateForBoard) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,
             "must be a company admin or a board admin to create ticket templates"
         );
     }
 
-    const createdTicketTemplate = await tryCreateNewItemThreeTimesInPrimaryTable(
-        () => {
-            const boardTicketTemplateId = generateUniqueId(1);
-            const boardTicketTemplateKey = createBoardTicketTemplateKey(
-                companyId,
-                boardId,
-                boardTicketTemplateId
-            );
-            const allBoardTicketTemplatesKey = createAllBoardTicketTemplatesKey(
-                companyId,
-                boardId
-            );
-            const ticketTemplateDatabaseItem: ITicketTemplate = {
-                itemId: boardTicketTemplateKey,
-                belongsTo: allBoardTicketTemplatesKey,
-                shortenedItemId: boardTicketTemplateId,
-                ...ticketTemplate,
-            };
-
-            return ticketTemplateDatabaseItem;
-        }
+    const boardTicketTemplateKey = createBoardTicketTemplateKey(
+        companyId,
+        boardId,
+        ticketTemplateId
+    );
+    const allBoardTicketTemplatesKey = createAllBoardTicketTemplatesKey(
+        companyId,
+        boardId
     );
 
-    if (createdTicketTemplate === null) {
+    const updatedTicketTemplate = await overrideSpecificAttributesInPrimaryTable<
+        ITicketTemplate
+    >(boardTicketTemplateKey, allBoardTicketTemplatesKey, ticketTemplate);
+
+    if (updatedTicketTemplate === null) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
-            "Error creating the ticket template"
+            "Error updating the ticket template"
         );
     }
 
-    return createSuccessResponse({
-        ticketTemplate: createdTicketTemplate,
-    });
+    return createSuccessResponse({});
 };

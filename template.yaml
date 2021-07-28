@@ -543,6 +543,23 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/getTicketTemplateForBoard
+    UpdateTicketTemplateForBoard:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /updateTicketTemplateForBoard
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.updateTicketTemplateForBoard
+            FunctionName: UpdateTicketTemplateForBoard
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/updateTicketTemplateForBoard
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:

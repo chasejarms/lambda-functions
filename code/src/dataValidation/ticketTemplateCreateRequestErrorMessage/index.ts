@@ -1,8 +1,8 @@
 import { isArray } from "lodash";
-import { ITicketTemplateCreateRequest } from "../../models/requests/ticketTemplateCreateRequest";
+import { ITicketTemplatePutRequest } from "../../models/requests/ticketTemplatePutRequest";
 
 export function ticketTemplateCreateRequestErrorMessage(
-    ticketTemplate: ITicketTemplateCreateRequest
+    ticketTemplate: ITicketTemplatePutRequest
 ): string {
     const ticketTemplateIsNotObject = typeof ticketTemplate !== "object";
     if (ticketTemplateIsNotObject) {
