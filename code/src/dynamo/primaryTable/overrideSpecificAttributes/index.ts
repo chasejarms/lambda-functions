@@ -17,25 +17,39 @@ export async function overrideSpecificAttributesInPrimaryTable<T>(
 ): Promise<T> {
     const dynamoClient = new AWS.DynamoDB.DocumentClient();
 
-    const [updateExpression, expressionAttributeValues] = (function () {
+    const [
+        updateExpression,
+        expressionAttributeValues,
+        expressionAttributeNamesInternal,
+    ] = (function () {
         const additionalUpdateExpressionValues: string[] = [];
         const expressionAttributeValuesInternal: {
+            [key: string]: any;
+        } = {};
+        const expressionAttributeNamesInternal: {
             [key: string]: any;
         } = {};
 
         Object.keys(itemAttributes).forEach((key, index) => {
             const value = itemAttributes[key];
             const valueAlias = `:${String.fromCharCode(index + 97)}`;
-            additionalUpdateExpressionValues.push(`${key}=${valueAlias}`);
+            const nameAlias = `#${key}`;
+
+            additionalUpdateExpressionValues.push(`${nameAlias}=${valueAlias}`);
 
             expressionAttributeValuesInternal[valueAlias] = value;
+            expressionAttributeNamesInternal[nameAlias] = key;
         });
 
         const updateExpressionInternal = `set ${additionalUpdateExpressionValues.join(
             ", "
         )}`;
 
-        return [updateExpressionInternal, expressionAttributeValuesInternal];
+        return [
+            updateExpressionInternal,
+            expressionAttributeValuesInternal,
+            expressionAttributeNamesInternal,
+        ];
     })();
 
     const updateItemInput: AWS.DynamoDB.DocumentClient.UpdateItemInput = {
@@ -46,6 +60,9 @@ export async function overrideSpecificAttributesInPrimaryTable<T>(
         },
         UpdateExpression: updateExpression as string,
         ExpressionAttributeValues: expressionAttributeValues as {
+            [key: string]: any;
+        },
+        ExpressionAttributeNames: expressionAttributeNamesInternal as {
             [key: string]: any;
         },
         ReturnValues: "UPDATED_NEW",
