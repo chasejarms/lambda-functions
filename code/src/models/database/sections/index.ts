@@ -1,3 +1,3 @@
-import { ISingleLineTextSection } from "./singleLineTextSection";
+import { ITextSection } from "./textSection";
 
-export type Section = ISingleLineTextSection;
+export type Section = ITextSection;
