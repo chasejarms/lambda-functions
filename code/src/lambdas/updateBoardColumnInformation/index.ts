@@ -6,9 +6,9 @@ import { createErrorResponse } from "../../utils/createErrorResponse";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { columnDataErrorMessage } from "../../dataValidation/columnDataErrorMessage";
-import { isCompanyUserAdminOrBoardAdmin } from "../../utils/isCompanyUserAdminOrBoardAdmin";
 import { createBoardColumnInformationKey } from "../../keyGeneration/createBoardColumnInformationKey";
 import { overrideItemInPrimaryTable } from "../../dynamo/primaryTable/overrideItem";
+import { isBoardAdmin } from "../../utils/isBoardAdmin";
 
 export const updateBoardColumnInformation = async (
     event: APIGatewayProxyEvent
@@ -35,7 +35,7 @@ export const updateBoardColumnInformation = async (
         );
     }
 
-    const canUpdateBoardColumnInformation = await isCompanyUserAdminOrBoardAdmin(
+    const canUpdateBoardColumnInformation = await isBoardAdmin(
         event,
         boardId,
         companyId

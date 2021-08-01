@@ -3,11 +3,11 @@ import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
 import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
-import { isCompanyUserAdminOrBoardAdmin } from "../../utils/isCompanyUserAdminOrBoardAdmin";
 import { createTagKey } from "../../keyGeneration/createTagKey";
 import { createAllTagsKey } from "../../keyGeneration/createAllTagsKey";
 import { createNewItemInPrimaryTable } from "../../dynamo/primaryTable/createNewItem";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
+import { isBoardAdmin } from "../../utils/isBoardAdmin";
 
 export const createTagForBoard = async (
     event: APIGatewayProxyEvent
@@ -46,11 +46,7 @@ export const createTagForBoard = async (
         );
     }
 
-    const canCreateTag = await isCompanyUserAdminOrBoardAdmin(
-        event,
-        boardId,
-        companyId
-    );
+    const canCreateTag = await isBoardAdmin(event, boardId, companyId);
 
     if (!canCreateTag) {
         return createErrorResponse(

@@ -1,7 +1,7 @@
 import { APIGatewayProxyEvent } from "aws-lambda";
 import { getUser } from "../getUser";
 
-export async function isCompanyAdminOrBoardUser(
+export async function isBoardUser(
     event: APIGatewayProxyEvent,
     boardId: string,
     companyId: string
@@ -11,8 +11,6 @@ export async function isCompanyAdminOrBoardUser(
         return false;
     }
 
-    const isCompanyAdmin = user.isCompanyAdmin;
-    const isBoardAdmin = user.boardRights && !!user.boardRights[boardId];
-
-    return isCompanyAdmin || isBoardAdmin;
+    const isBoardUser = !!user.boardRights && !!user.boardRights[boardId];
+    return isBoardUser;
 }

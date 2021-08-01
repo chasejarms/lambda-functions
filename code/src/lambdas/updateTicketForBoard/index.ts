@@ -5,7 +5,6 @@ import { queryStringParametersError } from "../../utils/queryStringParametersErr
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { ITicketUpdateRequest } from "../../models/requests/ticketUpdateRequest";
-import { isCompanyAdminOrBoardUser } from "../../utils/isCompanyAdminOrBoardUser";
 import * as Joi from "joi";
 import { overrideSpecificAttributesInPrimaryTable } from "../../dynamo/primaryTable/overrideSpecificAttributes";
 import { ITicket } from "../../models/database/ticket";
@@ -13,6 +12,7 @@ import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { getItemFromPrimaryTable } from "../../dynamo/primaryTable/getItem";
 import { ticketErrorMessageFromTicketTemplate } from "../../utils/ticketErrorMessageFromTicketTemplate";
 import { ticketSectionsError } from "../../utils/ticketSectionsError";
+import { isBoardUser } from "../../utils/isBoardUser";
 
 export const updateTicketForBoard = async (
     event: APIGatewayProxyEvent
@@ -45,7 +45,7 @@ export const updateTicketForBoard = async (
     const companyId = companyPortion.replace("COMPANY.", "");
     const boardId = boardPortion.replace("BOARD.", "");
 
-    const canUpdateTicketForBoard = await isCompanyAdminOrBoardUser(
+    const canUpdateTicketForBoard = await isBoardUser(
         event,
         boardId,
         companyId

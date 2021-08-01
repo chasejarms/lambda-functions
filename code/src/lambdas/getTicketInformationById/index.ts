@@ -2,11 +2,11 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { queryStringParametersError } from "../../utils/queryStringParametersError";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
-import { isCompanyAdminOrBoardUser } from "../../utils/isCompanyAdminOrBoardUser";
 import { getItemFromDirectAccessTicketIdIndex } from "../../dynamo/directAccessTicketIdIndex/getItem";
 import { ITicket } from "../../models/database/ticket";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { createDirectAccessTicketIdKey } from "../../keyGeneration/createDirectAccessTicketIdKey";
+import { isBoardUser } from "../../utils/isBoardUser";
 
 export const getTicketInformationById = async (
     event: APIGatewayProxyEvent
@@ -34,11 +34,7 @@ export const getTicketInformationById = async (
         );
     }
 
-    const canGetTicketForBoard = await isCompanyAdminOrBoardUser(
-        event,
-        boardId,
-        companyId
-    );
+    const canGetTicketForBoard = await isBoardUser(event, boardId, companyId);
     if (!canGetTicketForBoard) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,

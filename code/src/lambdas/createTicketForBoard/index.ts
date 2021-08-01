@@ -6,7 +6,6 @@ import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { ITicketCreateRequest } from "../../models/requests/ticketCreateRequest";
 import { queryStringParametersError } from "../../utils/queryStringParametersError";
 import * as Joi from "joi";
-import { isCompanyAdminOrBoardUser } from "../../utils/isCompanyAdminOrBoardUser";
 import { tryCreateNewItemThreeTimesInPrimaryTable } from "../../dynamo/primaryTable/tryCreateNewItemThreeTimes";
 import { generateUniqueId } from "../../utils/generateUniqueId";
 import { createInProgressTicketKey } from "../../keyGeneration/createInProgressTicketKey";
@@ -19,6 +18,7 @@ import { createDirectAccessTicketIdKey } from "../../keyGeneration/createDirectA
 import { getItemFromDirectAccessTicketIdIndex } from "../../dynamo/directAccessTicketIdIndex/getItem";
 import { ticketErrorMessageFromTicketTemplate } from "../../utils/ticketErrorMessageFromTicketTemplate";
 import { ticketSectionsError } from "../../utils/ticketSectionsError";
+import { isBoardUser } from "../../utils/isBoardUser";
 
 export const createTicketForBoard = async (
     event: APIGatewayProxyEvent
@@ -50,7 +50,7 @@ export const createTicketForBoard = async (
         companyId: string;
     };
 
-    const canCreateTicketForBoard = await isCompanyAdminOrBoardUser(
+    const canCreateTicketForBoard = await isBoardUser(
         event,
         boardId,
         companyId

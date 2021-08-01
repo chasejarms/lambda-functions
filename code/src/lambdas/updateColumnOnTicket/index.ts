@@ -5,11 +5,11 @@ import { queryStringParametersError } from "../../utils/queryStringParametersErr
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { ITicket } from "../../models/database/ticket";
-import { isCompanyAdminOrBoardUser } from "../../utils/isCompanyAdminOrBoardUser";
 import { createInProgressTicketKey } from "../../keyGeneration/createInProgressTicketKey";
 import { createAllInProgressTicketsKey } from "../../keyGeneration/createAllInProgressTicketsKey";
 import { overrideSpecificAttributesInPrimaryTable } from "../../dynamo/primaryTable/overrideSpecificAttributes";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
+import { isBoardUser } from "../../utils/isBoardUser";
 
 export const updateColumnOnTicket = async (
     event: APIGatewayProxyEvent
@@ -49,7 +49,7 @@ export const updateColumnOnTicket = async (
         );
     }
 
-    const canUpdateTicketForBoard = await isCompanyAdminOrBoardUser(
+    const canUpdateTicketForBoard = await isBoardUser(
         event,
         boardId,
         companyId

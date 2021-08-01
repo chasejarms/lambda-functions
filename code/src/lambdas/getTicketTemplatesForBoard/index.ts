@@ -3,10 +3,10 @@ import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { queryParentToChildIndexBeginsWith } from "../../dynamo/parentToChildIndex/queryBeginsWith";
-import { isCompanyAdminOrBoardUser } from "../../utils/isCompanyAdminOrBoardUser";
 import { createAllBoardTicketTemplatesKey } from "../../keyGeneration/createAllBoardTicketTemplatesKey";
 import { createStartOfTicketTemplateKey } from "../../keyGeneration/createStartOfTicketTemplateKey";
 import { ITicketTemplate } from "../../models/database/ticketTemplate";
+import { isBoardUser } from "../../utils/isBoardUser";
 
 export const getTicketTemplatesForBoard = async (
     event: APIGatewayProxyEvent
@@ -20,7 +20,7 @@ export const getTicketTemplatesForBoard = async (
         );
     }
 
-    const canGetTicketTemplatesForBoard = await isCompanyAdminOrBoardUser(
+    const canGetTicketTemplatesForBoard = await isBoardUser(
         event,
         boardId,
         companyId

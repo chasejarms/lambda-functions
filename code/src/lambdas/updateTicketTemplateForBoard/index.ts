@@ -4,7 +4,6 @@ import { createErrorResponse } from "../../utils/createErrorResponse";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { createAllBoardTicketTemplatesKey } from "../../keyGeneration/createAllBoardTicketTemplatesKey";
 import { ITicketTemplate } from "../../models/database/ticketTemplate";
-import { isCompanyUserAdminOrBoardAdmin } from "../../utils/isCompanyUserAdminOrBoardAdmin";
 import { createBoardTicketTemplateKey } from "../../keyGeneration/createBoardTicketTemplateKey";
 import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
 import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
@@ -12,6 +11,7 @@ import { ticketTemplateCreateRequestErrorMessage } from "../../dataValidation/ti
 import { ITicketTemplatePutRequest } from "../../models/requests/ticketTemplatePutRequest";
 import { queryStringParametersError } from "../../utils/queryStringParametersError";
 import { overrideSpecificAttributesInPrimaryTable } from "../../dynamo/primaryTable/overrideSpecificAttributes";
+import { isBoardAdmin } from "../../utils/isBoardAdmin";
 
 export const updateTicketTemplateForBoard = async (
     event: APIGatewayProxyEvent
@@ -65,7 +65,7 @@ export const updateTicketTemplateForBoard = async (
         );
     }
 
-    const canUpdateTicketTemplateForBoard = await isCompanyUserAdminOrBoardAdmin(
+    const canUpdateTicketTemplateForBoard = await isBoardAdmin(
         event,
         boardId,
         companyId

@@ -2,12 +2,12 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
-import { isCompanyAdminOrBoardUser } from "../../utils/isCompanyAdminOrBoardUser";
 import { createAllBoardTicketTemplatesKey } from "../../keyGeneration/createAllBoardTicketTemplatesKey";
 import { ITicketTemplate } from "../../models/database/ticketTemplate";
 import { queryStringParametersError } from "../../utils/queryStringParametersError";
 import { createBoardTicketTemplateKey } from "../../keyGeneration/createBoardTicketTemplateKey";
 import { getItemFromPrimaryTable } from "../../dynamo/primaryTable/getItem";
+import { isBoardUser } from "../../utils/isBoardUser";
 
 export const getTicketTemplateForBoard = async (
     event: APIGatewayProxyEvent
@@ -31,7 +31,7 @@ export const getTicketTemplateForBoard = async (
         ticketTemplateId,
     } = event.queryStringParameters;
 
-    const canGetTicketTemplateForBoard = await isCompanyAdminOrBoardUser(
+    const canGetTicketTemplateForBoard = await isBoardUser(
         event,
         boardId,
         companyId

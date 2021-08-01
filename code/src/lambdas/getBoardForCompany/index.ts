@@ -2,12 +2,12 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { queryStringParametersError } from "../../utils/queryStringParametersError";
-import { isCompanyAdminOrBoardUser } from "../../utils/isCompanyAdminOrBoardUser";
 import { createCompanyBoardKey } from "../../keyGeneration/createCompanyBoardKey";
 import { createCompanyBoardsKey } from "../../keyGeneration/createCompanyBoardsKey";
 import { getItemFromPrimaryTable } from "../../dynamo/primaryTable/getItem";
 import { IBoard } from "../../models/database/board";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
+import { isBoardUser } from "../../utils/isBoardUser";
 
 export const getBoardForCompany = async (
     event: APIGatewayProxyEvent
@@ -26,11 +26,7 @@ export const getBoardForCompany = async (
 
     const { companyId, boardId } = event.queryStringParameters;
 
-    const canGetBoardForCompany = await isCompanyAdminOrBoardUser(
-        event,
-        boardId,
-        companyId
-    );
+    const canGetBoardForCompany = await isBoardUser(event, boardId, companyId);
     if (!canGetBoardForCompany) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,

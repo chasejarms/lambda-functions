@@ -7,12 +7,12 @@ import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import * as Joi from "joi";
 import { overrideSpecificAttributesInPrimaryTable } from "../../dynamo/primaryTable/overrideSpecificAttributes";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
-import { isCompanyUserAdmin } from "../../utils/isCompanyUserAdmin";
 import { createUserKey } from "../../keyGeneration/createUserKey";
 import { createCompanyKey } from "../../keyGeneration/createCompanyKey";
 import { IUser } from "../../models/database/user";
+import { hasCanManageCompanyUsersRight } from "../../utils/hasCanManageCompanyUsersRight.ts";
 
-export const updateCompanyAdminRights = async (
+export const updateCanManageCompanyUsers = async (
     event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
     const bodyIsEmptyErrorResponse = bodyIsEmptyError(event);
@@ -42,14 +42,14 @@ export const updateCompanyAdminRights = async (
         userToUpdateShortenedItemId,
     } = event.queryStringParameters;
 
-    const canUpdateCompanyAdminRights = await isCompanyUserAdmin(
+    const canAddManageUsersRights = await hasCanManageCompanyUsersRight(
         event,
         companyId
     );
-    if (!canUpdateCompanyAdminRights) {
+    if (!canAddManageUsersRights) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,
-            "insufficient permissions to update the company admin rights for this company"
+            "insufficient permissions to update the user management rights for this company"
         );
     }
 
@@ -64,8 +64,8 @@ export const updateCompanyAdminRights = async (
         return createErrorResponse(HttpStatusCode.BadRequest, error.message);
     }
 
-    const { isCompanyAdmin } = JSON.parse(event.body) as {
-        isCompanyAdmin: boolean;
+    const { canManageCompanyUsers } = JSON.parse(event.body) as {
+        canManageCompanyUsers: boolean;
     };
 
     const itemId = createUserKey(userToUpdateShortenedItemId);
@@ -74,7 +74,7 @@ export const updateCompanyAdminRights = async (
         itemId,
         belongsTo,
         {
-            isCompanyAdmin,
+            canManageCompanyUsers,
         }
     );
 

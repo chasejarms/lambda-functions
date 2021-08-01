@@ -1,11 +1,11 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { createErrorResponse } from "../../utils/createErrorResponse";
-import { isCompanyAdminOrBoardUser } from "../../utils/isCompanyAdminOrBoardUser";
 import { createAllTagsKey } from "../../keyGeneration/createAllTagsKey";
 import { ITag } from "../../models/database/tag";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { queryParentToChildIndexBeginsWith } from "../../dynamo/parentToChildIndex/queryBeginsWith";
+import { isBoardUser } from "../../utils/isBoardUser";
 
 export const getAllTagsForBoard = async (
     event: APIGatewayProxyEvent
@@ -19,11 +19,7 @@ export const getAllTagsForBoard = async (
         );
     }
 
-    const canGetTagsForBoard = await isCompanyAdminOrBoardUser(
-        event,
-        boardId,
-        companyId
-    );
+    const canGetTagsForBoard = await isBoardUser(event, boardId, companyId);
     if (!canGetTagsForBoard) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,

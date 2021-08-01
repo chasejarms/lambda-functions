@@ -4,10 +4,10 @@ import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
 import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
 import { isArray } from "lodash";
-import { isCompanyUserAdminOrBoardAdmin } from "../../utils/isCompanyUserAdminOrBoardAdmin";
 import { createBoardPriorityKey } from "../../keyGeneration/createBoardPriorityKey";
 import { overrideItemInPrimaryTable } from "../../dynamo/primaryTable/overrideItem";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
+import { isBoardAdmin } from "../../utils/isBoardAdmin";
 
 export const updatePriorityListForBoard = async (
     event: APIGatewayProxyEvent
@@ -42,7 +42,7 @@ export const updatePriorityListForBoard = async (
         );
     }
 
-    const canUpdatePriorityListForBoard = await isCompanyUserAdminOrBoardAdmin(
+    const canUpdatePriorityListForBoard = await isBoardAdmin(
         event,
         boardId,
         companyId

@@ -3,7 +3,8 @@ import { IDefaultPrimaryTableModel } from "./defaultPrimaryTableModel";
 export interface IUser extends IDefaultPrimaryTableModel {
     name: string;
     gsiSortKey: string;
-    isCompanyAdmin: boolean;
+    canManageCompanyUsers: boolean;
+    isRootUser: boolean;
     boardRights: {
         [boardId: string]: {
             isAdmin: boolean;

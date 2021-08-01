@@ -2,11 +2,10 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
-import { isCompanyAdminOrBoardUser } from "../../utils/isCompanyAdminOrBoardUser";
 import { getItemFromPrimaryTable } from "../../dynamo/primaryTable/getItem";
 import { createBoardColumnInformationKey } from "../../keyGeneration/createBoardColumnInformationKey";
-import { IBoardColumn } from "../../models/database/boardColumn";
 import { IBoardColumnInformation } from "../../models/database/boardColumnInformation";
+import { isBoardUser } from "../../utils/isBoardUser";
 
 export const getBoardColumnInformation = async (
     event: APIGatewayProxyEvent
@@ -20,11 +19,7 @@ export const getBoardColumnInformation = async (
         );
     }
 
-    const hasSufficientRights = await isCompanyAdminOrBoardUser(
-        event,
-        boardId,
-        companyId
-    );
+    const hasSufficientRights = await isBoardUser(event, boardId, companyId);
     if (!hasSufficientRights) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,

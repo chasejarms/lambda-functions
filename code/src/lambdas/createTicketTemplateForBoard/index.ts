@@ -4,7 +4,6 @@ import { createErrorResponse } from "../../utils/createErrorResponse";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { createAllBoardTicketTemplatesKey } from "../../keyGeneration/createAllBoardTicketTemplatesKey";
 import { ITicketTemplate } from "../../models/database/ticketTemplate";
-import { isCompanyUserAdminOrBoardAdmin } from "../../utils/isCompanyUserAdminOrBoardAdmin";
 import { generateUniqueId } from "../../utils/generateUniqueId";
 import { createBoardTicketTemplateKey } from "../../keyGeneration/createBoardTicketTemplateKey";
 import { tryCreateNewItemThreeTimesInPrimaryTable } from "../../dynamo/primaryTable/tryCreateNewItemThreeTimes";
@@ -12,6 +11,7 @@ import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
 import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
 import { ticketTemplateCreateRequestErrorMessage } from "../../dataValidation/ticketTemplateCreateRequestErrorMessage";
 import { ITicketTemplatePutRequest } from "../../models/requests/ticketTemplatePutRequest";
+import { isBoardAdmin } from "../../utils/isBoardAdmin";
 
 export const createTicketTemplateForBoard = async (
     event: APIGatewayProxyEvent
@@ -55,7 +55,7 @@ export const createTicketTemplateForBoard = async (
         );
     }
 
-    const canCreateTicketTemplateForBoard = await isCompanyUserAdminOrBoardAdmin(
+    const canCreateTicketTemplateForBoard = await isBoardAdmin(
         event,
         boardId,
         companyId

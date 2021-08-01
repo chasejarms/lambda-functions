@@ -3,9 +3,9 @@ import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { createAllBoardTicketTemplatesKey } from "../../keyGeneration/createAllBoardTicketTemplatesKey";
-import { isCompanyUserAdminOrBoardAdmin } from "../../utils/isCompanyUserAdminOrBoardAdmin";
 import { createBoardTicketTemplateKey } from "../../keyGeneration/createBoardTicketTemplateKey";
 import { deleteItemFromPrimaryTable } from "../../dynamo/primaryTable/deleteItem";
+import { isBoardAdmin } from "../../utils/isBoardAdmin";
 
 export const deleteTicketTemplateForBoard = async (
     event: APIGatewayProxyEvent
@@ -23,7 +23,7 @@ export const deleteTicketTemplateForBoard = async (
         );
     }
 
-    const canDeleteTicketTemplate = await isCompanyUserAdminOrBoardAdmin(
+    const canDeleteTicketTemplate = await isBoardAdmin(
         event,
         boardId,
         companyId

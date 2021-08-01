@@ -2,11 +2,11 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { queryStringParametersError } from "../../utils/queryStringParametersError";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
-import { isCompanyAdminOrBoardUser } from "../../utils/isCompanyAdminOrBoardUser";
 import { createAllInProgressTicketsKey } from "../../keyGeneration/createAllInProgressTicketsKey";
 import { queryParentToChildIndexBeginsWith } from "../../dynamo/parentToChildIndex/queryBeginsWith";
 import { ITicket } from "../../models/database/ticket";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
+import { isBoardUser } from "../../utils/isBoardUser";
 
 export const getInProgressTicketsForBoard = async (
     event: APIGatewayProxyEvent
@@ -25,7 +25,7 @@ export const getInProgressTicketsForBoard = async (
 
     const { companyId, boardId } = event.queryStringParameters;
 
-    const canGetInProgressTicketsForBoard = await isCompanyAdminOrBoardUser(
+    const canGetInProgressTicketsForBoard = await isBoardUser(
         event,
         boardId,
         companyId

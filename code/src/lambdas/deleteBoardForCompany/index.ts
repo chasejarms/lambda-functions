@@ -2,12 +2,12 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { queryStringParametersError } from "../../utils/queryStringParametersError";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
-import { isCompanyUserAdminOrBoardAdmin } from "../../utils/isCompanyUserAdminOrBoardAdmin";
 import { createCompanyBoardKey } from "../../keyGeneration/createCompanyBoardKey";
 import { createCompanyBoardsKey } from "../../keyGeneration/createCompanyBoardsKey";
 import { overrideSpecificAttributesInPrimaryTable } from "../../dynamo/primaryTable/overrideSpecificAttributes";
 import { IBoard } from "../../models/database/board";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
+import { isBoardAdmin } from "../../utils/isBoardAdmin";
 
 export const deleteBoardForCompany = async (
     event: APIGatewayProxyEvent
@@ -26,7 +26,7 @@ export const deleteBoardForCompany = async (
 
     const { companyId, boardId } = event.queryStringParameters;
 
-    const canDeleteBoardForCompany = await isCompanyUserAdminOrBoardAdmin(
+    const canDeleteBoardForCompany = await isBoardAdmin(
         event,
         boardId,
         companyId

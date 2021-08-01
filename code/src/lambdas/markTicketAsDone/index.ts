@@ -2,7 +2,6 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { queryStringParametersError } from "../../utils/queryStringParametersError";
-import { isCompanyAdminOrBoardUser } from "../../utils/isCompanyAdminOrBoardUser";
 import { createInProgressTicketKey } from "../../keyGeneration/createInProgressTicketKey";
 import { createAllInProgressTicketsKey } from "../../keyGeneration/createAllInProgressTicketsKey";
 import { getItemFromPrimaryTable } from "../../dynamo/primaryTable/getItem";
@@ -19,6 +18,7 @@ import {
 } from "../../dynamo/primaryTable/transactWrite";
 import { createDoneTicketKey } from "../../keyGeneration/createDoneTicketKey";
 import { createAllDoneTicketsKey } from "../../keyGeneration/createAllDoneTicketsKey";
+import { isBoardUser } from "../../utils/isBoardUser";
 
 export const markTicketAsDone = async (
     event: APIGatewayProxyEvent
@@ -45,11 +45,7 @@ export const markTicketAsDone = async (
         ticketType,
     } = event.queryStringParameters;
 
-    const canMarkTicketAsDone = await isCompanyAdminOrBoardUser(
-        event,
-        boardId,
-        companyId
-    );
+    const canMarkTicketAsDone = await isBoardUser(event, boardId, companyId);
     if (!canMarkTicketAsDone) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,
