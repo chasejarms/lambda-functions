@@ -560,6 +560,40 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/updateTicketTemplateForBoard
+    GetAllUsersForCompany:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /getAllUsersForCompany
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getAllUsersForCompany
+            FunctionName: GetAllUsersForCompany
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/getAllUsersForCompany
+    UpdateCompanyAdminRights:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /updateCompanyAdminRights
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.updateCompanyAdminRights
+            FunctionName: UpdateCompanyAdminRights
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/updateCompanyAdminRights
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:

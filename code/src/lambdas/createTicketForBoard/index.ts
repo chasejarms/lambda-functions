@@ -18,6 +18,7 @@ import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { createDirectAccessTicketIdKey } from "../../keyGeneration/createDirectAccessTicketIdKey";
 import { getItemFromDirectAccessTicketIdIndex } from "../../dynamo/directAccessTicketIdIndex/getItem";
 import { ticketErrorMessageFromTicketTemplate } from "../../utils/ticketErrorMessageFromTicketTemplate";
+import { ticketSectionsError } from "../../utils/ticketSectionsError";
 
 export const createTicketForBoard = async (
     event: APIGatewayProxyEvent
@@ -92,6 +93,17 @@ export const createTicketForBoard = async (
     const { error } = requestSchema.validate(ticket);
     if (error) {
         return createErrorResponse(HttpStatusCode.BadRequest, error.message);
+    }
+
+    const errorFromTicketSections = ticketSectionsError(
+        ticket.sections,
+        ticket.simplifiedTicketTemplate.sections
+    );
+    if (errorFromTicketSections) {
+        return createErrorResponse(
+            HttpStatusCode.BadRequest,
+            errorFromTicketSections
+        );
     }
 
     const ticketErrorMessage = ticketErrorMessageFromTicketTemplate(

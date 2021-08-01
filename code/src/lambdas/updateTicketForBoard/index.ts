@@ -12,6 +12,7 @@ import { ITicket } from "../../models/database/ticket";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { getItemFromPrimaryTable } from "../../dynamo/primaryTable/getItem";
 import { ticketErrorMessageFromTicketTemplate } from "../../utils/ticketErrorMessageFromTicketTemplate";
+import { ticketSectionsError } from "../../utils/ticketSectionsError";
 
 export const updateTicketForBoard = async (
     event: APIGatewayProxyEvent
@@ -67,6 +68,7 @@ export const updateTicketForBoard = async (
                 color: Joi.string(),
             })
         ),
+        sections: Joi.array(),
     });
 
     const originalTicket = await getItemFromPrimaryTable<ITicket>(
@@ -97,12 +99,24 @@ export const updateTicketForBoard = async (
         return createErrorResponse(HttpStatusCode.BadRequest, error.message);
     }
 
+    const errorFromTicketSections = ticketSectionsError(
+        parsedBody.sections,
+        originalTicket.simplifiedTicketTemplate.sections
+    );
+    if (errorFromTicketSections) {
+        return createErrorResponse(
+            HttpStatusCode.BadRequest,
+            errorFromTicketSections
+        );
+    }
+
     const updatedTicket = await overrideSpecificAttributesInPrimaryTable<
         ITicket
     >(itemId, belongsTo, {
         tags: parsedBody.tags,
         summary: parsedBody.summary,
         title: parsedBody.title,
+        sections: parsedBody.sections,
     });
 
     if (updatedTicket === null) {

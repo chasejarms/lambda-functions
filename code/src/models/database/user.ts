@@ -9,4 +9,5 @@ export interface IUser extends IDefaultPrimaryTableModel {
             isAdmin: boolean;
         };
     };
+    shortenedItemId: string;
 }

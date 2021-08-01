@@ -124,6 +124,7 @@ export const signUpNewUser = async (
                 isCompanyAdmin: true,
                 boardRights: {},
                 name: name,
+                shortenedItemId: signUpResultFromCallback.userSub,
             };
 
             return [
