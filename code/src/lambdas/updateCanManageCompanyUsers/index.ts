@@ -11,6 +11,7 @@ import { createUserKey } from "../../keyGeneration/createUserKey";
 import { createCompanyKey } from "../../keyGeneration/createCompanyKey";
 import { IUser } from "../../models/database/user";
 import { hasCanManageCompanyUsersRight } from "../../utils/hasCanManageCompanyUsersRight.ts";
+import { userSubFromEvent } from "../../utils/userSubFromEvent";
 
 export const updateCanManageCompanyUsers = async (
     event: APIGatewayProxyEvent
@@ -42,6 +43,14 @@ export const updateCanManageCompanyUsers = async (
         userToUpdateShortenedItemId,
     } = event.queryStringParameters;
 
+    const requestingUserSub = userSubFromEvent(event);
+    if (userToUpdateShortenedItemId === requestingUserSub) {
+        return createErrorResponse(
+            HttpStatusCode.BadRequest,
+            "Cannot update your own user"
+        );
+    }
+
     const canAddManageUsersRights = await hasCanManageCompanyUsersRight(
         event,
         companyId
@@ -55,7 +64,7 @@ export const updateCanManageCompanyUsers = async (
 
     const body = JSON.parse(event.body);
     const bodySchema = Joi.object({
-        isCompanyAdmin: Joi.bool(),
+        canManageCompanyUsers: Joi.bool(),
     });
 
     const { error } = bodySchema.validate(body);
@@ -64,7 +73,7 @@ export const updateCanManageCompanyUsers = async (
         return createErrorResponse(HttpStatusCode.BadRequest, error.message);
     }
 
-    const { canManageCompanyUsers } = JSON.parse(event.body) as {
+    const { canManageCompanyUsers } = body as {
         canManageCompanyUsers: boolean;
     };
 
