@@ -118,6 +118,7 @@ export const signUpNewUser = async (
                 signUpResultFromCallback.userSub
             );
             const companyUserItem: IUser = {
+                email,
                 itemId: userKey,
                 belongsTo: companyKey,
                 gsiSortKey: companyUserAlphabeticalSortKey,

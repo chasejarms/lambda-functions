@@ -612,6 +612,24 @@ Resources:
                 - AmazonDynamoDBFullAccess
                 - AmazonCognitoPowerUser
             CodeUri: code/built/addUserToCompany
+    RemoveUserFromCompany:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /removeUserFromCompany
+                        Method: delete
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.removeUserFromCompany
+            FunctionName: RemoveUserFromCompany
+            Policies:
+                - AmazonDynamoDBFullAccess
+                - AmazonCognitoPowerUser
+            CodeUri: code/built/removeUserFromCompany
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:

@@ -6,7 +6,7 @@ import { IDefaultPrimaryTableModel } from "../../../models/database/defaultPrima
  *
  * @param itemId The partition key of the item for the primary table
  * @param belongsTo The sort key of the item for the primary table
- * @returns If the item exists, it's returned. If it's not, null is returned.
+ * @returns If there was an error deleting the item, null is returned. If the delete is successful, true is returned.
  */
 export async function deleteItemFromPrimaryTable(
     itemId: string,

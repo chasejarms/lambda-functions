@@ -135,6 +135,7 @@ export const addUserToCompany = async (
         userSub
     );
     const userDatabaseItem: IUser = {
+        email,
         itemId: userKey,
         belongsTo: companyKey,
         name,
