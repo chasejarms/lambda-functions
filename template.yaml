@@ -610,6 +610,7 @@ Resources:
             FunctionName: AddUserToCompany
             Policies:
                 - AmazonDynamoDBFullAccess
+                - AmazonCognitoPowerUser
             CodeUri: code/built/addUserToCompany
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table

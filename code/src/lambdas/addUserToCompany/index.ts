@@ -9,6 +9,12 @@ import * as AWS from "aws-sdk";
 import { hasCanManageCompanyUsersRight } from "../../utils/hasCanManageCompanyUsersRight.ts";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { CognitoIdentityServiceProvider } from "aws-sdk";
+import { PromiseResult } from "aws-sdk/lib/request";
+import { createUserKey } from "../../keyGeneration/createUserKey";
+import { createCompanyKey } from "../../keyGeneration/createCompanyKey";
+import { IUser } from "../../models/database/user";
+import { createNewItemInPrimaryTable } from "../../dynamo/primaryTable/createNewItem";
+import { createCompanyUserAlphabeticalSortKey } from "../../keyGeneration/createCompanyUserAlphabeticalSortKey";
 
 export const addUserToCompany = async (
     event: APIGatewayProxyEvent
@@ -67,98 +73,86 @@ export const addUserToCompany = async (
     }
 
     // Check to see if the user already exists
+    let existingCognitoUser: PromiseResult<
+        CognitoIdentityServiceProvider.AdminGetUserResponse,
+        AWS.AWSError
+    > | null = null;
+
+    let newlyCreatedCognitoUser: PromiseResult<
+        CognitoIdentityServiceProvider.AdminCreateUserResponse,
+        AWS.AWSError
+    > | null = null;
+
     try {
         const getUserParams: CognitoIdentityServiceProvider.Types.AdminGetUserRequest = {
             UserPoolId: "us-east-1_hjQ631UTC",
             Username: email,
         };
-        const user = await cognitoIdentityServiceProvider
+        existingCognitoUser = await cognitoIdentityServiceProvider
             .adminGetUser(getUserParams)
             .promise();
-        console.log("user from get user: ", JSON.stringify(user));
-        if (user && user.Username) {
+    } catch (error) {
+        const params: CognitoIdentityServiceProvider.Types.AdminCreateUserRequest = {
+            UserPoolId: "us-east-1_hjQ631UTC",
+            Username: email,
+            DesiredDeliveryMediums: ["EMAIL"],
+        };
+        try {
+            newlyCreatedCognitoUser = await cognitoIdentityServiceProvider
+                .adminCreateUser(params)
+                .promise();
+        } catch (innerError) {
+            const awsError = innerError as AWS.AWSError;
+            if (awsError.message && awsError.statusCode) {
+                console.log("error message: ", awsError.message);
+                console.log("error status code: ", awsError.statusCode);
+            }
+
             return createErrorResponse(
                 HttpStatusCode.BadRequest,
-                "The user already exists for this company"
+                "There was an error creating the new user in cognito"
             );
         }
-    } catch (error) {
+    }
+
+    if (!newlyCreatedCognitoUser && !existingCognitoUser) {
+        console.log(
+            "there's no created cognito user and no exising cognito user"
+        );
         return createErrorResponse(
             HttpStatusCode.BadRequest,
-            "The user already exists for this company"
+            "There was an error creating the new user in cognito"
         );
     }
 
-    return createSuccessResponse({});
+    const userSub = existingCognitoUser
+        ? existingCognitoUser.Username
+        : newlyCreatedCognitoUser.User.Username;
+    const userKey = createUserKey(userSub);
+    const companyKey = createCompanyKey(companyId);
+    const companyUserAlphabeticalSortKey = createCompanyUserAlphabeticalSortKey(
+        name,
+        userSub
+    );
+    const userDatabaseItem: IUser = {
+        itemId: userKey,
+        belongsTo: companyKey,
+        name,
+        gsiSortKey: companyUserAlphabeticalSortKey,
+        canManageCompanyUsers,
+        isRootUser: false,
+        boardRights: {},
+        shortenedItemId: userSub,
+    };
 
-    // const params: CognitoIdentityServiceProvider.Types.AdminCreateUserRequest = {
-    //     UserPoolId: "us-east-1_hjQ631UTC",
-    //     Username: email,
-    //     DesiredDeliveryMediums: ["EMAIL"],
-    // };
-    // try {
-    //     await cognitoIdentityServiceProvider.adminCreateUser(params).promise();
-    // } catch (error) {
-    //     return createErrorResponse(
-    //         HttpStatusCode.BadRequest,
-    //         "There was an error creating the new user in cognito"
-    //     );
-    // }
+    const user = await createNewItemInPrimaryTable<IUser>(userDatabaseItem);
 
-    // const transactionWasSuccessful = await tryCreateNewItemThreeTimesInPrimaryTable(
-    //     () => {
-    //         const uniqueCompanyId = generateUniqueId();
+    if (user === null) {
+        return createErrorResponse(
+            HttpStatusCode.BadRequest,
+            "Failed to create the user in dynamo"
+        );
+    }
 
-    //         const companyInformationKey = createCompanyInformationKey(
-    //             uniqueCompanyId
-    //         );
-    //         const allCompaniesKey = createAllCompaniesKey();
-    //         const companyInformationItem: ICompanyInformation = {
-    //             itemId: companyInformationKey,
-    //             belongsTo: allCompaniesKey,
-    //             name: companyName,
-    //         };
-
-    //         const userKey = createUserKey(signUpResultFromCallback.userSub);
-    //         const companyKey = createCompanyKey(uniqueCompanyId);
-    //         const companyUserAlphabeticalSortKey = createCompanyUserAlphabeticalSortKey(
-    //             name,
-    //             signUpResultFromCallback.userSub
-    //         );
-    //         const companyUserItem: IUser = {
-    //             itemId: userKey,
-    //             belongsTo: companyKey,
-    //             gsiSortKey: companyUserAlphabeticalSortKey,
-    //             isRootUser: true,
-    //             canManageCompanyUsers: true,
-    //             boardRights: {},
-    //             name: name,
-    //             shortenedItemId: signUpResultFromCallback.userSub,
-    //         };
-
-    //         return [
-    //             {
-    //                 type: TransactWriteItemType.Put,
-    //                 item: companyInformationItem,
-    //                 canOverrideExistingItem: false,
-    //             },
-    //             {
-    //                 type: TransactWriteItemType.Put,
-    //                 item: companyUserItem,
-    //                 canOverrideExistingItem: false,
-    //             },
-    //         ];
-    //     }
-    // );
-
-    // if (!transactionWasSuccessful) {
-    //     return createErrorResponse(
-    //         HttpStatusCode.BadRequest,
-    //         "Failed to write the data three times"
-    //     );
-    // }
-
-    // return createSuccessResponse({
-    //     message: "Sign Up Successful",
-    // });
+    return createSuccessResponse(user);
 };

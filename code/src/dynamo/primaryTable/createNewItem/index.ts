@@ -10,7 +10,7 @@ export interface IDatabaseItem extends IDefaultPrimaryTableModel {
  *
  * @param itemId The partition key of the item for the primary table
  * @param belongsTo The sort key of the item for the primary table
- * @returns If the item exists, it's returned. If it's not, null is returned.
+ * @returns If the item already exists, null is returned. Otherwise the created item is returned.
  */
 export async function createNewItemInPrimaryTable<T extends IDatabaseItem>(
     item: IDatabaseItem
