@@ -6,10 +6,9 @@ import { createErrorResponse } from "../../utils/createErrorResponse";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import * as Joi from "joi";
 import * as AWS from "aws-sdk";
-import { CognitoIdentityServiceProvider } from "aws-sdk";
-import { generateUniqueId } from "../../utils/generateUniqueId";
 import { hasCanManageCompanyUsersRight } from "../../utils/hasCanManageCompanyUsersRight.ts";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
+import { CognitoIdentityServiceProvider } from "aws-sdk";
 
 export const addUserToCompany = async (
     event: APIGatewayProxyEvent
@@ -40,6 +39,7 @@ export const addUserToCompany = async (
     const addUserRequestSchema = Joi.object({
         email: Joi.string().email().required(),
         name: Joi.string().required(),
+        canManageCompanyUsers: Joi.bool().required(),
     });
 
     const { error } = addUserRequestSchema.validate(body);
@@ -47,9 +47,10 @@ export const addUserToCompany = async (
         return createErrorResponse(HttpStatusCode.BadRequest, error.message);
     }
 
-    const { email, name } = body as {
+    const { email, name, canManageCompanyUsers } = body as {
         email: string;
         name: string;
+        canManageCompanyUsers: boolean;
     };
 
     const cognitoIdentityServiceProvider = new AWS.CognitoIdentityServiceProvider();
@@ -67,8 +68,12 @@ export const addUserToCompany = async (
 
     // Check to see if the user already exists
     try {
+        const getUserParams: CognitoIdentityServiceProvider.Types.AdminGetUserRequest = {
+            UserPoolId: "us-east-1_hjQ631UTC",
+            Username: email,
+        };
         const user = await cognitoIdentityServiceProvider
-            .adminGetUser()
+            .adminGetUser(getUserParams)
             .promise();
         console.log("user from get user: ", JSON.stringify(user));
         if (user && user.Username) {

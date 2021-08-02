@@ -594,6 +594,23 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/updateCanManageCompanyUsers
+    AddUserToCompany:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /addUserToCompany
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.addUserToCompany
+            FunctionName: AddUserToCompany
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/addUserToCompany
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:
