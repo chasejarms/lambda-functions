@@ -9,6 +9,7 @@ import * as AWS from "aws-sdk";
 import { CognitoIdentityServiceProvider } from "aws-sdk";
 import { generateUniqueId } from "../../utils/generateUniqueId";
 import { hasCanManageCompanyUsersRight } from "../../utils/hasCanManageCompanyUsersRight.ts";
+import { createSuccessResponse } from "../../utils/createSuccessResponse";
 
 export const addUserToCompany = async (
     event: APIGatewayProxyEvent
@@ -69,6 +70,7 @@ export const addUserToCompany = async (
         const user = await cognitoIdentityServiceProvider
             .adminGetUser()
             .promise();
+        console.log("user from get user: ", JSON.stringify(user));
         if (user && user.Username) {
             return createErrorResponse(
                 HttpStatusCode.BadRequest,
@@ -82,74 +84,76 @@ export const addUserToCompany = async (
         );
     }
 
-    const params: CognitoIdentityServiceProvider.Types.AdminCreateUserRequest = {
-        UserPoolId: "us-east-1_hjQ631UTC",
-        Username: email,
-        DesiredDeliveryMediums: ["EMAIL"],
-    };
-    try {
-        await cognitoIdentityServiceProvider.adminCreateUser(params).promise();
-    } catch (error) {
-        return createErrorResponse(
-            HttpStatusCode.BadRequest,
-            "There was an error creating the new user in cognito"
-        );
-    }
+    return createSuccessResponse({});
 
-    const transactionWasSuccessful = await tryCreateNewItemThreeTimesInPrimaryTable(
-        () => {
-            const uniqueCompanyId = generateUniqueId();
+    // const params: CognitoIdentityServiceProvider.Types.AdminCreateUserRequest = {
+    //     UserPoolId: "us-east-1_hjQ631UTC",
+    //     Username: email,
+    //     DesiredDeliveryMediums: ["EMAIL"],
+    // };
+    // try {
+    //     await cognitoIdentityServiceProvider.adminCreateUser(params).promise();
+    // } catch (error) {
+    //     return createErrorResponse(
+    //         HttpStatusCode.BadRequest,
+    //         "There was an error creating the new user in cognito"
+    //     );
+    // }
 
-            const companyInformationKey = createCompanyInformationKey(
-                uniqueCompanyId
-            );
-            const allCompaniesKey = createAllCompaniesKey();
-            const companyInformationItem: ICompanyInformation = {
-                itemId: companyInformationKey,
-                belongsTo: allCompaniesKey,
-                name: companyName,
-            };
+    // const transactionWasSuccessful = await tryCreateNewItemThreeTimesInPrimaryTable(
+    //     () => {
+    //         const uniqueCompanyId = generateUniqueId();
 
-            const userKey = createUserKey(signUpResultFromCallback.userSub);
-            const companyKey = createCompanyKey(uniqueCompanyId);
-            const companyUserAlphabeticalSortKey = createCompanyUserAlphabeticalSortKey(
-                name,
-                signUpResultFromCallback.userSub
-            );
-            const companyUserItem: IUser = {
-                itemId: userKey,
-                belongsTo: companyKey,
-                gsiSortKey: companyUserAlphabeticalSortKey,
-                isRootUser: true,
-                canManageCompanyUsers: true,
-                boardRights: {},
-                name: name,
-                shortenedItemId: signUpResultFromCallback.userSub,
-            };
+    //         const companyInformationKey = createCompanyInformationKey(
+    //             uniqueCompanyId
+    //         );
+    //         const allCompaniesKey = createAllCompaniesKey();
+    //         const companyInformationItem: ICompanyInformation = {
+    //             itemId: companyInformationKey,
+    //             belongsTo: allCompaniesKey,
+    //             name: companyName,
+    //         };
 
-            return [
-                {
-                    type: TransactWriteItemType.Put,
-                    item: companyInformationItem,
-                    canOverrideExistingItem: false,
-                },
-                {
-                    type: TransactWriteItemType.Put,
-                    item: companyUserItem,
-                    canOverrideExistingItem: false,
-                },
-            ];
-        }
-    );
+    //         const userKey = createUserKey(signUpResultFromCallback.userSub);
+    //         const companyKey = createCompanyKey(uniqueCompanyId);
+    //         const companyUserAlphabeticalSortKey = createCompanyUserAlphabeticalSortKey(
+    //             name,
+    //             signUpResultFromCallback.userSub
+    //         );
+    //         const companyUserItem: IUser = {
+    //             itemId: userKey,
+    //             belongsTo: companyKey,
+    //             gsiSortKey: companyUserAlphabeticalSortKey,
+    //             isRootUser: true,
+    //             canManageCompanyUsers: true,
+    //             boardRights: {},
+    //             name: name,
+    //             shortenedItemId: signUpResultFromCallback.userSub,
+    //         };
 
-    if (!transactionWasSuccessful) {
-        return createErrorResponse(
-            HttpStatusCode.BadRequest,
-            "Failed to write the data three times"
-        );
-    }
+    //         return [
+    //             {
+    //                 type: TransactWriteItemType.Put,
+    //                 item: companyInformationItem,
+    //                 canOverrideExistingItem: false,
+    //             },
+    //             {
+    //                 type: TransactWriteItemType.Put,
+    //                 item: companyUserItem,
+    //                 canOverrideExistingItem: false,
+    //             },
+    //         ];
+    //     }
+    // );
 
-    return createSuccessResponse({
-        message: "Sign Up Successful",
-    });
+    // if (!transactionWasSuccessful) {
+    //     return createErrorResponse(
+    //         HttpStatusCode.BadRequest,
+    //         "Failed to write the data three times"
+    //     );
+    // }
+
+    // return createSuccessResponse({
+    //     message: "Sign Up Successful",
+    // });
 };
