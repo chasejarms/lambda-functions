@@ -7,6 +7,7 @@ import { isCompanyUser } from "../../utils/isCompanyUser";
 import { queryParentToChildIndexBeginsWith } from "../../dynamo/parentToChildIndex/queryBeginsWith";
 import { createCompanyBoardsKey } from "../../keyGeneration/createCompanyBoardsKey";
 import { createStartOfBoardKey } from "../../keyGeneration/createStartOfBoardKey";
+import { getUser } from "../../utils/getUser";
 
 export const getBoardsForCompany = async (
     event: APIGatewayProxyEvent
@@ -20,7 +21,8 @@ export const getBoardsForCompany = async (
         );
     }
 
-    const canGetBoardsForCompany = await isCompanyUser(event, companyId);
+    const user = await getUser(event, companyId);
+    const canGetBoardsForCompany = user !== null;
     if (!canGetBoardsForCompany) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,
@@ -44,7 +46,10 @@ export const getBoardsForCompany = async (
 
     return createSuccessResponse({
         items: boardItems.filter((board) => {
-            return !board.hasBeenDeleted;
+            const userHasAccessToBoard = !!user.boardRights[
+                board.shortenedItemId
+            ];
+            return userHasAccessToBoard && !board.hasBeenDeleted;
         }),
     });
 };
