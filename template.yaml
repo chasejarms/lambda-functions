@@ -630,6 +630,23 @@ Resources:
                 - AmazonDynamoDBFullAccess
                 - AmazonCognitoPowerUser
             CodeUri: code/built/removeUserFromCompany
+    UpdateUserBoardRights:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /updateUserBoardRights
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.updateUserBoardRights
+            FunctionName: UpdateUserBoardRights
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/updateUserBoardRights
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:
