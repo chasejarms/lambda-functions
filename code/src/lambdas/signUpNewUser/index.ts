@@ -109,6 +109,7 @@ export const signUpNewUser = async (
                 itemId: companyInformationKey,
                 belongsTo: allCompaniesKey,
                 name: companyName,
+                shortenedItemId: uniqueCompanyId,
             };
 
             const userKey = createUserKey(signUpResultFromCallback.userSub);

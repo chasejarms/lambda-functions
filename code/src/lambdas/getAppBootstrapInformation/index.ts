@@ -12,7 +12,7 @@ import { batchGetItemsInPrimaryTable } from "../../dynamo/primaryTable/batchGetI
 import { createCompanyInformationKey } from "../../keyGeneration/createCompanyInformationKey";
 import { createAllCompaniesKey } from "../../keyGeneration/createAllCompaniesKey";
 
-export const getCompaniesForUser = async (
+export const getAppBootstrapInformation = async (
     event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
     const userSub = userSubFromEvent(event);
@@ -64,19 +64,8 @@ export const getCompaniesForUser = async (
         );
     }
 
-    const companyInformationItemsForResponse = companyInformationResults.map(
-        (companyInformationItem) => {
-            const companyId = companyInformationItem.itemId
-                .replace("COMPANY.", "")
-                .replace("_COMPANYINFORMATION", "");
-            return {
-                name: companyInformationItem.name,
-                companyId,
-            };
-        }
-    );
-
     return createSuccessResponse({
-        items: companyInformationItemsForResponse,
+        companyInformationItems: companyInformationResults,
+        companyUserItems,
     });
 };

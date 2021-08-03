@@ -101,23 +101,23 @@ Resources:
                             Header: AuthHeader
                         UserPoolArn:
                             Fn::GetAtt: [ProdCognitoUserPool, Arn]
-    GetCompaniesForUserFunction:
+    GetAppBootstrapInformation:
         Type: AWS::Serverless::Function
         Properties:
             Events:
                 ApiEvent:
                     Type: Api
                     Properties:
-                        Path: /companies
+                        Path: /getAppBootstrapInformation
                         Method: get
                         RestApiId:
                             Ref: ProdAuthenticatedOnlyApi
             Runtime: nodejs14.x
-            Handler: index.getCompaniesForUser
-            FunctionName: GetCompaniesForUser
+            Handler: index.getAppBootstrapInformation
+            FunctionName: GetAppBootstrapInformation
             Policies:
                 - AmazonDynamoDBFullAccess
-            CodeUri: code/built/getCompaniesForUser
+            CodeUri: code/built/getAppBootstrapInformation
     CreateBoardForCompanyFunction:
         Type: AWS::Serverless::Function
         Properties:
