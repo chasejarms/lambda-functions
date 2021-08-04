@@ -647,6 +647,23 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/updateUserBoardRights
+    CreateUploadTicketImageSignedUrl:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /createUploadTicketImageSignedUrl
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.createUploadTicketImageSignedUrl
+            FunctionName: CreateUploadTicketImageSignedUrl
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/createUploadTicketImageSignedUrl
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:
@@ -679,6 +696,20 @@ Resources:
                         KeyType: "HASH"
                   Projection:
                       ProjectionType: "ALL"
+    TicketFilesS3Bucket:
+        Type: AWS::S3::Bucket
+        Properties:
+            AccessControl: "Private"
+            BucketName: "ticket-files-elastic-project-management-s3-bucket"
+            BucketEncryption:
+                ServerSideEncryptionConfiguration:
+                    - ServerSideEncryptionByDefault:
+                          SSEAlgorithm: "AES256"
+            PublicAccessBlockConfiguration:
+                BlockPublicAcls: true
+                BlockPublicPolicy: true
+                IgnorePublicAcls: true
+                RestrictPublicBuckets: true
 Outputs:
     ProdPubliclyAccessibleApi:
         Description: "Public API Gateway endpoint URL for Prod"
