@@ -125,6 +125,7 @@ export const signUpNewUser = async (
                 gsiSortKey: companyUserAlphabeticalSortKey,
                 isRootUser: true,
                 canManageCompanyUsers: true,
+                canCreateBoards: true,
                 boardRights: {},
                 name: name,
                 shortenedItemId: signUpResultFromCallback.userSub,

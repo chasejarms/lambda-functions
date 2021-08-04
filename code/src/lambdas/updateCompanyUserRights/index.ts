@@ -13,7 +13,7 @@ import { IUser } from "../../models/database/user";
 import { hasCanManageCompanyUsersRight } from "../../utils/hasCanManageCompanyUsersRight.ts";
 import { userSubFromEvent } from "../../utils/userSubFromEvent";
 
-export const updateCanManageCompanyUsers = async (
+export const updateCompanyUserRights = async (
     event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
     const bodyIsEmptyErrorResponse = bodyIsEmptyError(event);
@@ -64,7 +64,8 @@ export const updateCanManageCompanyUsers = async (
 
     const body = JSON.parse(event.body);
     const bodySchema = Joi.object({
-        canManageCompanyUsers: Joi.bool(),
+        canManageCompanyUsers: Joi.bool().required(),
+        canCreateBoards: Joi.bool().required(),
     });
 
     const { error } = bodySchema.validate(body);
@@ -73,8 +74,9 @@ export const updateCanManageCompanyUsers = async (
         return createErrorResponse(HttpStatusCode.BadRequest, error.message);
     }
 
-    const { canManageCompanyUsers } = body as {
+    const { canManageCompanyUsers, canCreateBoards } = body as {
         canManageCompanyUsers: boolean;
+        canCreateBoards: boolean;
     };
 
     const itemId = createUserKey(userToUpdateShortenedItemId);
@@ -84,6 +86,7 @@ export const updateCanManageCompanyUsers = async (
         belongsTo,
         {
             canManageCompanyUsers,
+            canCreateBoards,
         }
     );
 

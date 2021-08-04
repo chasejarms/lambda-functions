@@ -46,6 +46,7 @@ export const addUserToCompany = async (
         email: Joi.string().email().required(),
         name: Joi.string().required(),
         canManageCompanyUsers: Joi.bool().required(),
+        canCreateBoards: Joi.bool().required(),
     });
 
     const { error } = addUserRequestSchema.validate(body);
@@ -53,10 +54,11 @@ export const addUserToCompany = async (
         return createErrorResponse(HttpStatusCode.BadRequest, error.message);
     }
 
-    const { email, name, canManageCompanyUsers } = body as {
+    const { email, name, canManageCompanyUsers, canCreateBoards } = body as {
         email: string;
         name: string;
         canManageCompanyUsers: boolean;
+        canCreateBoards: boolean;
     };
 
     const cognitoIdentityServiceProvider = new AWS.CognitoIdentityServiceProvider();
@@ -141,6 +143,7 @@ export const addUserToCompany = async (
         name,
         gsiSortKey: companyUserAlphabeticalSortKey,
         canManageCompanyUsers,
+        canCreateBoards,
         isRootUser: false,
         boardRights: {},
         shortenedItemId: userSub,

@@ -577,23 +577,23 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/getAllUsersForCompany
-    UpdateCanManageCompanyUsers:
+    UpdateCompanyUserRights:
         Type: AWS::Serverless::Function
         Properties:
             Events:
                 ApiEvent:
                     Type: Api
                     Properties:
-                        Path: /updateCanManageCompanyUsers
+                        Path: /updateCompanyUserRights
                         Method: post
                         RestApiId:
                             Ref: ProdAuthenticatedOnlyApi
             Runtime: nodejs14.x
-            Handler: index.updateCanManageCompanyUsers
-            FunctionName: UpdateCanManageCompanyUsers
+            Handler: index.updateCompanyUserRights
+            FunctionName: UpdateCompanyUserRights
             Policies:
                 - AmazonDynamoDBFullAccess
-            CodeUri: code/built/updateCanManageCompanyUsers
+            CodeUri: code/built/updateCompanyUserRights
     AddUserToCompany:
         Type: AWS::Serverless::Function
         Properties:

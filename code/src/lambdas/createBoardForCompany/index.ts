@@ -6,7 +6,6 @@ import { createErrorResponse } from "../../utils/createErrorResponse";
 import { generateUniqueId } from "../../utils/generateUniqueId";
 import { IBoard } from "../../models/database/board";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
-import { isCompanyUser } from "../../utils/isCompanyUser";
 import { getUser } from "../../utils/getUser";
 import { createCompanyBoardsKey } from "../../keyGeneration/createCompanyBoardsKey";
 import { createCompanyBoardKey } from "../../keyGeneration/createCompanyBoardKey";
@@ -25,6 +24,7 @@ import { createAllBoardTicketTemplatesKey } from "../../keyGeneration/createAllB
 import { createBoardPriorityKey } from "../../keyGeneration/createBoardPriorityKey";
 import { IBoardPriorityList } from "../../models/database";
 import { TransactWriteItemType } from "../../dynamo/primaryTable/transactWrite";
+import { hasCanCreateBoardsRight } from "../../utils/hasCanCreateBoardsRight";
 
 export const createBoardForCompany = async (
     event: APIGatewayProxyEvent
@@ -54,7 +54,7 @@ export const createBoardForCompany = async (
         );
     }
 
-    const canCreateBoard = await isCompanyUser(event, companyId);
+    const canCreateBoard = await hasCanCreateBoardsRight(event, companyId);
 
     if (!canCreateBoard) {
         return createErrorResponse(
