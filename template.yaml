@@ -663,6 +663,7 @@ Resources:
             FunctionName: CreateUploadTicketImageSignedUrl
             Policies:
                 - AmazonDynamoDBFullAccess
+                - AmazonS3FullAccess
             CodeUri: code/built/createUploadTicketImageSignedUrl
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
