@@ -647,24 +647,24 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/updateUserBoardRights
-    CreateUploadTicketImageSignedUrl:
+    CreateUploadTicketImageSignedUrls:
         Type: AWS::Serverless::Function
         Properties:
             Events:
                 ApiEvent:
                     Type: Api
                     Properties:
-                        Path: /createUploadTicketImageSignedUrl
+                        Path: /createUploadTicketImageSignedUrls
                         Method: post
                         RestApiId:
                             Ref: ProdAuthenticatedOnlyApi
             Runtime: nodejs14.x
-            Handler: index.createUploadTicketImageSignedUrl
-            FunctionName: CreateUploadTicketImageSignedUrl
+            Handler: index.createUploadTicketImageSignedUrls
+            FunctionName: CreateUploadTicketImageSignedUrls
             Policies:
                 - AmazonDynamoDBFullAccess
                 - AmazonS3FullAccess
-            CodeUri: code/built/createUploadTicketImageSignedUrl
+            CodeUri: code/built/createUploadTicketImageSignedUrls
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:
