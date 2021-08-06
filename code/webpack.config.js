@@ -22,6 +22,10 @@ module.exports = {
                 use: "ts-loader",
                 exclude: /node_modules/,
             },
+            {
+                test: /\.node$/,
+                loader: "node-loader",
+            },
         ],
     },
     resolve: {
@@ -32,5 +36,6 @@ module.exports = {
     optimization: { minimize: false },
     externals: {
         "aws-sdk": "aws-sdk",
+        sharp: "sharp",
     },
 };

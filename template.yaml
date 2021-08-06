@@ -679,6 +679,20 @@ Resources:
                 BlockPublicPolicy: true
                 IgnorePublicAcls: true
                 RestrictPublicBuckets: true
+    CompanyThumbnailFileBucket:
+        Type: AWS::S3::Bucket
+        Properties:
+            AccessControl: "Private"
+            BucketName: "elastic-project-management-company-thumbnail-files"
+            BucketEncryption:
+                ServerSideEncryptionConfiguration:
+                    - ServerSideEncryptionByDefault:
+                          SSEAlgorithm: "AES256"
+            PublicAccessBlockConfiguration:
+                BlockPublicAcls: true
+                BlockPublicPolicy: true
+                IgnorePublicAcls: true
+                RestrictPublicBuckets: true
     OnUploadCompanySourceFile:
         Type: AWS::Serverless::Function
         Properties:
