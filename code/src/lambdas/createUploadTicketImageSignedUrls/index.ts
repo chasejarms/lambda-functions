@@ -9,7 +9,7 @@ import { createErrorResponse } from "../../utils/createErrorResponse";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { queryStringParametersError } from "../../utils/queryStringParametersError";
 import * as Joi from "joi";
-import { createTicketImageS3StorageKey } from "../../keyGeneration/createTicketImageS3StorageKey";
+import { createTicketSourceFileS3StorageKey } from "../../keyGeneration/createTicketSourceFileS3StorageKey";
 
 export const createUploadTicketImageSignedUrls = async (
     event: APIGatewayProxyEvent
@@ -71,17 +71,17 @@ export const createUploadTicketImageSignedUrls = async (
 
     const client = new S3Client({});
     const signedUrlPromises = body.files.map((file) => {
-        const Key = createTicketImageS3StorageKey(
+        const Key = createTicketSourceFileS3StorageKey(
             companyId,
             boardId,
             ticketId,
             file.name
         );
         const command = new PutObjectCommand({
-            Bucket: "ticket-files-elastic-project-management-s3-bucket",
+            Bucket: "elastic-project-management-company-source-files",
             Key,
         });
-        return getSignedUrl(client, command, { expiresIn: 3600 });
+        return getSignedUrl(client, command, { expiresIn: 300 });
     });
 
     try {
