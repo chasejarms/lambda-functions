@@ -1,20 +1,20 @@
 import { S3Handler } from "aws-lambda";
 import { createTicketFileDynamoItemId } from "../../keyGeneration/createTicketFileDynamoItemId";
-import { generateUniqueId } from "../../utils/generateUniqueId";
+// import { generateUniqueId } from "../../utils/generateUniqueId";
 import { createAllFilesForTicketKey } from "../../keyGeneration/createAllFilesForTicketKey";
 import { tryOverrideItemThreeTimes } from "../../dynamo/primaryTable/tryOverrideItemThreeTimes";
 import { IFileForTicket } from "../../models/database/fileForTicket";
-import * as AWS from "aws-sdk";
-import * as sharp from "sharp";
-import { PromiseResult } from "aws-sdk/lib/request";
-import { createTicketThumbnailFileS3StorageKey } from "../../keyGeneration/createTicketThumbnailFileS3Key";
+// import * as AWS from "aws-sdk";
+// import * as sharp from "sharp";
+// import { PromiseResult } from "aws-sdk/lib/request";
+// import { createTicketThumbnailFileS3StorageKey } from "../../keyGeneration/createTicketThumbnailFileS3Key";
 
 export const onUploadCompanySourceFile: S3Handler = async (event) => {
     const key = decodeURIComponent(
         event.Records[0].s3.object.key.replace(/\+/g, " ")
     );
     const size = event.Records[0].s3.object.size;
-    const bucket = event.Records[0].s3.bucket.name;
+    // const bucket = event.Records[0].s3.bucket.name;
 
     let companyId: string;
     let boardId: string;
@@ -46,12 +46,11 @@ export const onUploadCompanySourceFile: S3Handler = async (event) => {
     const isPngOrJpg = imageType === "jpg" || imageType === "png";
 
     const overrideWasSuccessful = await tryOverrideItemThreeTimes(() => {
-        const fileId = generateUniqueId(2);
         const itemId = createTicketFileDynamoItemId(
             companyId,
             boardId,
             ticketId,
-            fileId
+            fileName
         );
 
         const belongsTo = createAllFilesForTicketKey(
@@ -80,54 +79,55 @@ export const onUploadCompanySourceFile: S3Handler = async (event) => {
         return;
     }
 
-    if (!isPngOrJpg) {
-        console.log(
-            `unsupported image type for thumbnail creation: ${imageType}`
-        );
-        return;
-    }
+    // comment all of this back in once you start doing thumbnail images
+    // if (!isPngOrJpg) {
+    //     console.log(
+    //         `unsupported image type for thumbnail creation: ${imageType}`
+    //     );
+    //     return;
+    // }
 
-    const s3 = new AWS.S3();
+    // const s3 = new AWS.S3();
 
-    let originalImage: PromiseResult<AWS.S3.GetObjectOutput, AWS.AWSError>;
-    try {
-        const params = {
-            Bucket: bucket,
-            Key: key,
-        };
-        originalImage = await s3.getObject(params).promise();
-    } catch (error) {
-        console.log(error);
-        return;
-    }
+    // let originalImage: PromiseResult<AWS.S3.GetObjectOutput, AWS.AWSError>;
+    // try {
+    //     const params = {
+    //         Bucket: bucket,
+    //         Key: key,
+    //     };
+    //     originalImage = await s3.getObject(params).promise();
+    // } catch (error) {
+    //     console.log(error);
+    //     return;
+    // }
 
-    try {
-        const width = 400;
-        var buffer = await sharp(originalImage.Body.toString(), undefined)
-            .resize(width)
-            .toBuffer();
-    } catch (error) {
-        console.log(error);
-        return;
-    }
+    // try {
+    //     const width = 400;
+    //     var buffer = await sharp(originalImage.Body.toString(), undefined)
+    //         .resize(width)
+    //         .toBuffer();
+    // } catch (error) {
+    //     console.log(error);
+    //     return;
+    // }
 
-    try {
-        const destinationKey = createTicketThumbnailFileS3StorageKey(
-            companyId,
-            boardId,
-            ticketId,
-            fileName
-        );
-        const destparams = {
-            Bucket: "elastic-project-management-company-thumbnail-files",
-            Key: destinationKey,
-            Body: buffer,
-            ContentType: "image",
-        };
+    // try {
+    //     const destinationKey = createTicketThumbnailFileS3StorageKey(
+    //         companyId,
+    //         boardId,
+    //         ticketId,
+    //         fileName
+    //     );
+    //     const destparams = {
+    //         Bucket: "elastic-project-management-company-thumbnail-files",
+    //         Key: destinationKey,
+    //         Body: buffer,
+    //         ContentType: "image",
+    //     };
 
-        await s3.putObject(destparams).promise();
-    } catch (error) {
-        console.log(error);
-        return;
-    }
+    //     await s3.putObject(destparams).promise();
+    // } catch (error) {
+    //     console.log(error);
+    //     return;
+    // }
 };
