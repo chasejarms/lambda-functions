@@ -54,7 +54,9 @@ export const createUploadTicketImageSignedUrls = async (
     const requestSchema = Joi.object({
         files: Joi.array().items(
             Joi.object({
-                name: Joi.string().required(),
+                name: Joi.string()
+                    .required()
+                    .pattern(/\s/, { name: "spaces", invert: true }),
             })
         ),
     });
