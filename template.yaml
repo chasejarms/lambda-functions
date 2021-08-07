@@ -665,6 +665,24 @@ Resources:
                 - AmazonDynamoDBFullAccess
                 - AmazonS3FullAccess
             CodeUri: code/built/createUploadTicketImageSignedUrls
+    GetTicketFilesWithSignedUrls:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /getTicketFilesWithSignedUrls
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getTicketFilesWithSignedUrls
+            FunctionName: GetTicketFilesWithSignedUrls
+            Policies:
+                - AmazonDynamoDBFullAccess
+                - AmazonS3FullAccess
+            CodeUri: code/built/getTicketFilesWithSignedUrls
     CompanySourceFileBucket:
         Type: AWS::S3::Bucket
         Properties:
@@ -709,6 +727,22 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/onUploadCompanySourceFile
+    OnDeleteCompanySourceFile:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                S3Event:
+                    Type: S3
+                    Properties:
+                        Bucket:
+                            Ref: CompanySourceFileBucket
+                        Events: s3:ObjectRemoved:*
+            Runtime: nodejs14.x
+            Handler: index.onDeleteCompanySourceFile
+            FunctionName: OnDeleteCompanySourceFile
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/onDeleteCompanySourceFile
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:
