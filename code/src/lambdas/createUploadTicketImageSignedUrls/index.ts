@@ -55,18 +55,32 @@ export const createUploadTicketImageSignedUrls = async (
         );
     }
 
+    const fiveMegabytes = 5000000;
     const requestSchema = Joi.object({
         files: Joi.array().items(
             Joi.object({
                 name: Joi.string()
                     .required()
                     .pattern(/\s/, { name: "spaces", invert: true }),
+                size: Joi.number().required().min(0).max(fiveMegabytes),
+                contentType: Joi.string().required().valid([
+                    "image/gif",
+                    "image/jpeg",
+                    "image/png",
+                    "image/tiff",
+                    "image/vnd.microsoft.icon",
+                    "image/x-icon",
+                    "image/vnd.djvu",
+                    "image/svg+xml",
+                ])
             })
         ),
     });
     const body = JSON.parse(event.body) as {
         files: {
             name: string;
+            size: number;
+            contentType: string;
         }[];
     };
 
@@ -87,6 +101,8 @@ export const createUploadTicketImageSignedUrls = async (
         const putCommand = new PutObjectCommand({
             Bucket: "elastic-project-management-company-source-files",
             Key,
+            ContentLength: file.size,
+            ContentType: 
         });
         const putPromise = getSignedUrl(client, putCommand, { expiresIn: 300 });
         signedUrlPromises.push(putPromise);
