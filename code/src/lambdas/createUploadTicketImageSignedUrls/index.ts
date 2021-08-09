@@ -1,6 +1,10 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+    S3Client,
+    PutObjectCommand,
+    GetObjectCommand,
+} from "@aws-sdk/client-s3";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
 import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
@@ -72,23 +76,52 @@ export const createUploadTicketImageSignedUrls = async (
     }
 
     const client = new S3Client({});
-    const signedUrlPromises = body.files.map((file) => {
+    const signedUrlPromises: Promise<string>[] = [];
+    body.files.forEach((file) => {
         const Key = createTicketSourceFileS3StorageKey(
             companyId,
             boardId,
             ticketId,
             file.name
         );
-        const command = new PutObjectCommand({
+        const putCommand = new PutObjectCommand({
             Bucket: "elastic-project-management-company-source-files",
             Key,
         });
-        return getSignedUrl(client, command, { expiresIn: 300 });
+        const putPromise = getSignedUrl(client, putCommand, { expiresIn: 300 });
+        signedUrlPromises.push(putPromise);
+
+        const getCommand = new GetObjectCommand({
+            Bucket: "elastic-project-management-company-source-files",
+            Key,
+        });
+        const getPromise = getSignedUrl(client, getCommand, { expiresIn: 300 });
+        signedUrlPromises.push(getPromise);
     });
 
     try {
         const signedUrls = await Promise.all(signedUrlPromises);
-        return createSuccessResponse(signedUrls);
+
+        const response = body.files.reduce<{
+            [fileName: string]: {
+                fileName: string;
+                putSignedUrl: string;
+                getSignedUrl: string;
+            };
+        }>((mapping, file, currentIndex) => {
+            const fileName = file.name;
+            const putSignedUrl = signedUrls[currentIndex * 2];
+            const getSignedUrl = signedUrls[currentIndex * 2 + 1];
+            mapping[fileName] = {
+                fileName,
+                putSignedUrl,
+                getSignedUrl,
+            };
+
+            return mapping;
+        }, {});
+
+        return createSuccessResponse(response);
     } catch (error) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
