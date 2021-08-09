@@ -63,16 +63,18 @@ export const createUploadTicketImageSignedUrls = async (
                     .required()
                     .pattern(/\s/, { name: "spaces", invert: true }),
                 size: Joi.number().required().min(0).max(fiveMegabytes),
-                contentType: Joi.string().required().valid([
-                    "image/gif",
-                    "image/jpeg",
-                    "image/png",
-                    "image/tiff",
-                    "image/vnd.microsoft.icon",
-                    "image/x-icon",
-                    "image/vnd.djvu",
-                    "image/svg+xml",
-                ])
+                contentType: Joi.string()
+                    .required()
+                    .valid(
+                        "image/gif",
+                        "image/jpeg",
+                        "image/png",
+                        "image/tiff",
+                        "image/vnd.microsoft.icon",
+                        "image/x-icon",
+                        "image/vnd.djvu",
+                        "image/svg+xml"
+                    ),
             })
         ),
     });
@@ -102,7 +104,7 @@ export const createUploadTicketImageSignedUrls = async (
             Bucket: "elastic-project-management-company-source-files",
             Key,
             ContentLength: file.size,
-            ContentType: 
+            ContentType: file.contentType,
         });
         const putPromise = getSignedUrl(client, putCommand, { expiresIn: 300 });
         signedUrlPromises.push(putPromise);
