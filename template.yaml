@@ -729,38 +729,6 @@ Resources:
                 BlockPublicPolicy: true
                 IgnorePublicAcls: true
                 RestrictPublicBuckets: true
-    OnUploadCompanySourceFile:
-        Type: AWS::Serverless::Function
-        Properties:
-            Events:
-                S3Event:
-                    Type: S3
-                    Properties:
-                        Bucket:
-                            Ref: CompanySourceFileBucket
-                        Events: s3:ObjectCreated:*
-            Runtime: nodejs14.x
-            Handler: index.onUploadCompanySourceFile
-            FunctionName: OnUploadCompanySourceFile
-            Policies:
-                - AmazonDynamoDBFullAccess
-            CodeUri: code/built/onUploadCompanySourceFile
-    OnDeleteCompanySourceFile:
-        Type: AWS::Serverless::Function
-        Properties:
-            Events:
-                S3Event:
-                    Type: S3
-                    Properties:
-                        Bucket:
-                            Ref: CompanySourceFileBucket
-                        Events: s3:ObjectRemoved:*
-            Runtime: nodejs14.x
-            Handler: index.onDeleteCompanySourceFile
-            FunctionName: OnDeleteCompanySourceFile
-            Policies:
-                - AmazonDynamoDBFullAccess
-            CodeUri: code/built/onDeleteCompanySourceFile
     ProdDynamoDBTable:
         Type: AWS::DynamoDB::Table
         Properties:

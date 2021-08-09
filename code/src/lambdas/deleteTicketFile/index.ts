@@ -73,7 +73,7 @@ export const deleteTicketFile = async (
         Key,
     };
     try {
-        s3.deleteObject(object).promise();
+        await s3.deleteObject(object).promise();
         return createSuccessResponse({});
     } catch (error) {
         return createErrorResponse(
