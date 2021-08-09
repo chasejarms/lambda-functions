@@ -57,7 +57,7 @@ export const getDownloadFileSignedUrl = async (
     });
 
     try {
-        const signedUrlResponse = getSignedUrl(client, command, {
+        const signedUrlResponse = await getSignedUrl(client, command, {
             expiresIn: 300,
         });
         return createSuccessResponse(signedUrlResponse);

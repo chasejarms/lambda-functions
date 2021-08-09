@@ -709,7 +709,7 @@ Resources:
                     Type: Api
                     Properties:
                         Path: /getDownloadFileSignedUrl
-                        Method: post
+                        Method: get
                         RestApiId:
                             Ref: ProdAuthenticatedOnlyApi
             Runtime: nodejs14.x
