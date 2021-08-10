@@ -237,6 +237,23 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/deleteTicketTemplateForBoard
+    DeleteTagForBoard:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /deleteTagForBoard
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.deleteTagForBoard
+            FunctionName: DeleteTagForBoard
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/deleteTagForBoard
     CreateTagForBoard:
         Type: AWS::Serverless::Function
         Properties:
