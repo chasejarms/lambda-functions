@@ -3,5 +3,5 @@ export function createTicketSourceFileS3StorageFolderKey(
     boardId: string,
     ticketId: string
 ) {
-    return `COMPANIES-SOURCE-FILES/${companyId}/BOARDS/${boardId}/TICKETS/${ticketId}/`;
+    return `COMPANY-${companyId}-BOARD-${boardId}-TICKET-${ticketId}`;
 }
