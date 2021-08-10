@@ -736,6 +736,23 @@ Resources:
                 - AmazonDynamoDBFullAccess
                 - AmazonS3FullAccess
             CodeUri: code/built/getDownloadFileSignedUrl
+    UpdateTagColor:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /updateTagColor
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.updateTagColor
+            FunctionName: UpdateTagColor
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/updateTagColor
     CompanySourceFileBucket:
         Type: AWS::S3::Bucket
         Properties:
