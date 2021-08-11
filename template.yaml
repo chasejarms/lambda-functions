@@ -628,6 +628,23 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/updateCompanyUserRights
+    SetAssignedToTicketField:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /setAssignedToTicketField
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.setAssignedToTicketField
+            FunctionName: SetAssignedToTicketField
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/setAssignedToTicketField
     AddUserToCompany:
         Type: AWS::Serverless::Function
         Properties:
