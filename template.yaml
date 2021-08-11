@@ -77,8 +77,8 @@ Resources:
             ClientName: ElasticProjectManagementWebClient
             GenerateSecret: false
             UserPoolId: !Ref ProdCognitoUserPool
-            AccessTokenValidity: 3600
-            IdTokenValidity: 3600
+            AccessTokenValidity: 43200
+            IdTokenValidity: 43200
             RefreshTokenValidity: 2592000
             TokenValidityUnits:
                 AccessToken: seconds
@@ -594,6 +594,23 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/getAllUsersForCompany
+    GetAllUsersForBoard:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /getAllUsersForBoard
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getAllUsersForBoard
+            FunctionName: GetAllUsersForBoard
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: code/built/getAllUsersForBoard
     UpdateCompanyUserRights:
         Type: AWS::Serverless::Function
         Properties:
