@@ -47,17 +47,21 @@ export const setAssignedToTicketField = async (
         );
     }
 
-    const parsedBody = JSON.parse(event.body) as
-        | ""
-        | {
-              userId: string;
-              name: string;
-          };
+    const parsedBody = JSON.parse(event.body) as {
+        assignedTo:
+            | ""
+            | {
+                  userId: string;
+                  name: string;
+              };
+    };
 
-    if (parsedBody !== "") {
+    if (parsedBody.assignedTo !== "") {
         const requestSchema = Joi.object({
-            userId: Joi.string().required(),
-            name: Joi.string().required(),
+            assignedTo: Joi.object({
+                userId: Joi.string().required(),
+                name: Joi.string().required(),
+            }),
         });
 
         const { error } = requestSchema.validate(parsedBody);
@@ -82,7 +86,7 @@ export const setAssignedToTicketField = async (
         inProgressTicketKey,
         allInProgressTicketsKey,
         {
-            assignedTo: parsedBody,
+            assignedTo: parsedBody.assignedTo,
         }
     );
 
