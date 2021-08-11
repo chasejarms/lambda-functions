@@ -47,16 +47,14 @@ export const setAssignedToTicketField = async (
         );
     }
 
-    const parsedBody = JSON.parse(event.body) as {
-        assignedTo:
-            | ""
-            | {
-                  userId: string;
-                  name: string;
-              };
-    };
+    const parsedBody = JSON.parse(event.body) as
+        | ""
+        | {
+              userId: string;
+              name: string;
+          };
 
-    if (parsedBody.assignedTo !== "") {
+    if (parsedBody !== "") {
         const requestSchema = Joi.object({
             userId: Joi.string().required(),
             name: Joi.string().required(),
@@ -84,14 +82,14 @@ export const setAssignedToTicketField = async (
         inProgressTicketKey,
         allInProgressTicketsKey,
         {
-            assignedTo: parsedBody.assignedTo,
+            assignedTo: parsedBody,
         }
     );
 
     if (updatedTicket === null) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
-            "Error updating the ticket column"
+            "Error updating the ticket assigned to"
         );
     }
 
