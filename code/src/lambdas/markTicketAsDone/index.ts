@@ -95,6 +95,7 @@ export const markTicketAsDone = async (
                 itemId: doneTicketKey,
                 completedTimestamp: nowTimestamp,
                 lastModifiedTimestamp: nowTimestamp,
+                assignedTo: "",
             };
 
             const createTicketTransaction: ITransactWriteItemPutParameter = {

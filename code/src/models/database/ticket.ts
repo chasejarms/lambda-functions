@@ -25,8 +25,10 @@ export interface ITicket extends IDefaultPrimaryTableModel {
     };
     columnId: string;
     directAccessTicketId: string;
-    assignedTo?: {
-        userId: string;
-        name: string;
-    };
+    assignedTo?:
+        | ""
+        | {
+              userId: string;
+              name: string;
+          };
 }
