@@ -24,6 +24,23 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: code/built/signUpNewUser
+    CapturePublicFormData:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /capture-public-form-data
+                        Method: post
+                        RestApiId:
+                            Ref: ProdPubliclyAccessibleApi
+            Runtime: nodejs14.x
+            Handler: index.capturePublicFormData
+            FunctionName: CapturePublicFormData
+            Policies:
+                - AmazonSESFullAccess
+            CodeUri: code/built/capturePublicFormData
     ProdCognitoUserPool:
         Type: AWS::Cognito::UserPool
         Properties:
@@ -33,10 +50,10 @@ Resources:
                     EmailMessage: "Welcome to Elastic Project Management. Your username is {username} and temporary password is {####}. Visit elasticprojectmanagement.com/sign-in to sign in."
                     EmailSubject: "Elastic Project Management - Temporary Credentials"
             EmailConfiguration:
-                SourceArn: arn:aws:ses:us-east-1:454305280052:identity/chasejarms@gmail.com
+                SourceArn: arn:aws:ses:us-east-1:454305280052:identity/info@butterpm.com
                 EmailSendingAccount: DEVELOPER
-                From: chasejarms@gmail.com
-                ReplyToEmailAddress: chasejarms@gmail.com
+                From: info@butterpm.com
+                ReplyToEmailAddress: info@butterpm.com
             Policies:
                 PasswordPolicy:
                     MinimumLength: 8
