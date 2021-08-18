@@ -882,6 +882,33 @@ Resources:
                         KeyType: "HASH"
                   Projection:
                       ProjectionType: "ALL"
+    CustomResourceStack:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: ./stacks/custom-resource.yaml
+    AcmCertificateStack:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: ./stacks/acm-certificate.yaml
+            Parameters:
+                SubDomain: www
+                DomainName: butterpm.com
+                CFNCustomProvider: !GetAtt CustomResourceStack.Outputs.CFNCustomProvider
+                CreateApex: "no"
+    CloudFrontStack:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: ./stacks/cloudfront-site.yaml
+            Parameters:
+                CertificateArn: !GetAtt AcmCertificateStack.Outputs.CertificateArn
+                DomainName: butterpm.com
+                SubDomain: www
+                CreateApex: "no"
+                S3BucketRoot: !GetAtt CustomResourceStack.Outputs.S3BucketRoot
+                S3BucketRootName: !GetAtt CustomResourceStack.Outputs.S3BucketRootName
+                S3BucketRootArn: !GetAtt CustomResourceStack.Outputs.S3BucketRootArn
+                S3BucketLogs: !GetAtt CustomResourceStack.Outputs.S3BucketLogs
+                S3BucketLogsName: !GetAtt CustomResourceStack.Outputs.S3BucketLogsName
 Outputs:
     ProdPubliclyAccessibleApi:
         Description: "Public API Gateway endpoint URL for Prod"
