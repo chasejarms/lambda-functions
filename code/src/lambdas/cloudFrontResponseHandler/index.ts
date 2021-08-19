@@ -21,7 +21,7 @@ export const cloudFrontResponseHandler: CloudFrontResponseHandler = (
         {
             key: "Content-Security-Policy",
             value:
-                "default-src 'self'; style-src 'self' 'unsafe-inline' https://*; font-src 'self' https://*;",
+                "default-src 'self'; style-src 'self' 'unsafe-inline' https://*; font-src 'self' https://*; connect-src https://b2ouopcfb7.execute-api.us-east-1.amazonaws.com https://tnj4vxar72.execute-api.us-east-1.amazonaws.com;",
         },
     ];
     headers["x-xss-protection"] = [
