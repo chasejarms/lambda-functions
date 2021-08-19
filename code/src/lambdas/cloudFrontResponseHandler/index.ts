@@ -20,12 +20,13 @@ export const cloudFrontResponseHandler: CloudFrontResponseHandler = (
     headers["content-security-policy"] = [
         {
             key: "Content-Security-Policy",
-            value: "default-src 'self'",
+            value:
+                "default-src 'self'; style-src 'self' 'unsafe-inline' https://*; font-src 'self' https://*;",
         },
     ];
-    // headers["x-xss-protection"] = [
-    //     { key: "X-XSS-Protection", value: "1; mode=block" },
-    // ];
+    headers["x-xss-protection"] = [
+        { key: "X-XSS-Protection", value: "1; mode=block" },
+    ];
     headers["x-content-type-options"] = [
         { key: "X-Content-Type-Options", value: "nosniff" },
     ];
