@@ -20,7 +20,7 @@ export const cloudFrontResponseHandler: CloudFrontResponseHandler = (
     headers["content-security-policy"] = [
         {
             key: "Content-Security-Policy",
-            value: "default-src '*.com';",
+            value: "default-src 'self'",
         },
     ];
     // headers["x-xss-protection"] = [
