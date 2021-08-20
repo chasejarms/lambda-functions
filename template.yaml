@@ -143,8 +143,15 @@ Resources:
         Properties:
             StageName: Prod
             Name: Prod Authenticated Only Api
+            GatewayResponses:
+                DEFAULT_4xx:
+                    ResponseParameters:
+                        Headers:
+                            Access-Control-Allow-Headers: "'*'"
+                            Access-Control-Allow-Origin: "'*'"
             Auth:
                 DefaultAuthorizer: ProdCognitoUserPool
+                AddDefaultAuthorizerToCorsPreflight: false
                 Authorizers:
                     ProdCognitoUserPool:
                         Identity:
