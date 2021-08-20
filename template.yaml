@@ -80,8 +80,8 @@ Resources:
             AdminCreateUserConfig:
                 AllowAdminCreateUserOnly: false
                 InviteMessageTemplate:
-                    EmailMessage: "Welcome to Elastic Project Management. Your username is {username} and temporary password is {####}. Visit elasticprojectmanagement.com/sign-in to sign in."
-                    EmailSubject: "Elastic Project Management - Temporary Credentials"
+                    EmailMessage: "Welcome to Butter. Your username is {username} and temporary password is {####}. Visit butterpm.com/sign-in to sign in."
+                    EmailSubject: "Butter Project Management - Temporary Credentials"
             EmailConfiguration:
                 SourceArn: arn:aws:ses:us-east-1:454305280052:identity/info@butterpm.com
                 EmailSendingAccount: DEVELOPER
@@ -105,8 +105,8 @@ Resources:
                 - email
             VerificationMessageTemplate:
                 DefaultEmailOption: CONFIRM_WITH_LINK
-                EmailMessageByLink: "Welcome to Elastic Project Management. Please click the following link to verify your email: {##Verify Email##}"
-                EmailSubjectByLink: "Elastic Project Management - Verification Link"
+                EmailMessageByLink: "Welcome to Butter. Please click the following link to verify your email: {##Verify Email##}"
+                EmailSubjectByLink: "Butter Project Management - Verification Link"
             AutoVerifiedAttributes:
                 - email
             UserPoolName: ProdElasticProjectManagement
