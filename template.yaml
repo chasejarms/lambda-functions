@@ -1,6 +1,12 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: Functions for the elastic project management application.
+Globals:
+    Api:
+        Cors:
+            AllowMethods: "'*'"
+            AllowHeaders: "'*'"
+            AllowOrigin: "'*'"
 Resources:
     CustomResourceStack:
         Type: AWS::CloudFormation::Stack
@@ -34,7 +40,6 @@ Resources:
         Properties:
             StageName: Prod
             Name: Prod Publicly Accessible Api
-            Cors: "'www.butterpm.com'"
     SignUpNewUserFunction:
         Type: AWS::Serverless::Function
         Properties:

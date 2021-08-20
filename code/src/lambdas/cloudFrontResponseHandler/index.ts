@@ -16,12 +16,12 @@ export const cloudFrontResponseHandler: CloudFrontResponseHandler = (
             value: "max-age=63072000; includeSubdomains; preload",
         },
     ];
-    // TODO: Investigate adding this back in later
+    // TODO: Investigate adding this back in later on
     headers["content-security-policy"] = [
         {
             key: "Content-Security-Policy",
             value:
-                "default-src 'self'; style-src 'self' 'unsafe-inline' https://*; font-src 'self' https://*; connect-src https://b2ouopcfb7.execute-api.us-east-1.amazonaws.com https://tnj4vxar72.execute-api.us-east-1.amazonaws.com;",
+                "default-src 'self' https://b2ouopcfb7.execute-api.us-east-1.amazonaws.com https://tnj4vxar72.execute-api.us-east-1.amazonaws.com https://cognito-idp.us-east-1.amazonaws.com; style-src 'self' 'unsafe-inline' https://*; font-src 'self' https://*;",
         },
     ];
     headers["x-xss-protection"] = [
