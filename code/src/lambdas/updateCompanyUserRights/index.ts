@@ -65,7 +65,6 @@ export const updateCompanyUserRights = async (
     const body = JSON.parse(event.body);
     const bodySchema = Joi.object({
         canManageCompanyUsers: Joi.bool().required(),
-        canCreateBoards: Joi.bool().required(),
     });
 
     const { error } = bodySchema.validate(body);
@@ -74,9 +73,8 @@ export const updateCompanyUserRights = async (
         return createErrorResponse(HttpStatusCode.BadRequest, error.message);
     }
 
-    const { canManageCompanyUsers, canCreateBoards } = body as {
+    const { canManageCompanyUsers } = body as {
         canManageCompanyUsers: boolean;
-        canCreateBoards: boolean;
     };
 
     const itemId = createUserKey(userToUpdateShortenedItemId);
@@ -86,7 +84,6 @@ export const updateCompanyUserRights = async (
         belongsTo,
         {
             canManageCompanyUsers,
-            canCreateBoards,
         }
     );
 

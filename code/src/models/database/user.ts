@@ -4,7 +4,6 @@ export interface IUser extends IDefaultPrimaryTableModel {
     name: string;
     gsiSortKey: string;
     canManageCompanyUsers: boolean;
-    canCreateBoards: boolean;
     email: string;
     isRootUser: boolean;
     boardRights: {

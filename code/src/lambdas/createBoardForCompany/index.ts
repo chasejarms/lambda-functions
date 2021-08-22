@@ -24,7 +24,6 @@ import { createAllBoardTicketTemplatesKey } from "../../keyGeneration/createAllB
 import { createBoardPriorityKey } from "../../keyGeneration/createBoardPriorityKey";
 import { IBoardPriorityList } from "../../models/database";
 import { TransactWriteItemType } from "../../dynamo/primaryTable/transactWrite";
-import { hasCanCreateBoardsRight } from "../../utils/hasCanCreateBoardsRight";
 
 export const createBoardForCompany = async (
     event: APIGatewayProxyEvent
@@ -54,21 +53,12 @@ export const createBoardForCompany = async (
         );
     }
 
-    const canCreateBoard = await hasCanCreateBoardsRight(event, companyId);
-
-    if (!canCreateBoard) {
-        return createErrorResponse(
-            HttpStatusCode.BadRequest,
-            "Insufficient permissions to create board"
-        );
-    }
-
     const companyUser = await getUser(event, companyId);
 
     if (companyUser === null) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
-            "Unable to get the user on the company"
+            "Insufficient rights, must be a company user to create boards for this company"
         );
     }
 
