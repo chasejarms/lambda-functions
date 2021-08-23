@@ -10,7 +10,7 @@ import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { createUserKey } from "../../keyGeneration/createUserKey";
 import { createCompanyKey } from "../../keyGeneration/createCompanyKey";
 import { IUser } from "../../models/database/user";
-import { hasCanManageCompanyUsersRight } from "../../utils/hasCanManageCompanyUsersRight.ts";
+import { hasCanManageCompanyUsersRight } from "../../utils/hasCanManageCompanyUsersRight";
 import { userSubFromEvent } from "../../utils/userSubFromEvent";
 
 export const updateCompanyUserRights = async (

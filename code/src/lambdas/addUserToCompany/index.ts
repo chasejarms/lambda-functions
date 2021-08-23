@@ -6,7 +6,7 @@ import { createErrorResponse } from "../../utils/createErrorResponse";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import * as Joi from "joi";
 import * as AWS from "aws-sdk";
-import { hasCanManageCompanyUsersRight } from "../../utils/hasCanManageCompanyUsersRight.ts";
+import { hasCanManageCompanyUsersRight } from "../../utils/hasCanManageCompanyUsersRight";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { CognitoIdentityServiceProvider } from "aws-sdk";
 import { PromiseResult } from "aws-sdk/lib/request";
