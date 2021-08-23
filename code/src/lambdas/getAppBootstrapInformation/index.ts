@@ -11,6 +11,10 @@ import { createUserKey } from "../../keyGeneration/createUserKey";
 import { batchGetItemsInPrimaryTable } from "../../dynamo/primaryTable/batchGetItems";
 import { createCompanyInformationKey } from "../../keyGeneration/createCompanyInformationKey";
 import { createAllCompaniesKey } from "../../keyGeneration/createAllCompaniesKey";
+import { createInternalUserKey } from "../../keyGeneration/createInternalUserKey";
+import { IInternalUser } from "../../models/database/internalUser";
+import { getItemFromPrimaryTable } from "../../dynamo/primaryTable/getItem";
+import { createAllInternalUsersKey } from "../../keyGeneration/createAllInternalUsersKey";
 
 export const getAppBootstrapInformation = async (
     event: APIGatewayProxyEvent
@@ -24,9 +28,16 @@ export const getAppBootstrapInformation = async (
     }
 
     const userKey = createUserKey(userSub);
-    const companyUserItems = await queryAllItemsFromPartitionInPrimaryTable<
-        IUser
-    >(userKey);
+    const internalUserRightsKey = createInternalUserKey(userSub);
+    const allInternalUsersKey = createAllInternalUsersKey();
+
+    const [companyUserItems, internalUser] = await Promise.all([
+        queryAllItemsFromPartitionInPrimaryTable<IUser>(userKey),
+        getItemFromPrimaryTable<IInternalUser>(
+            internalUserRightsKey,
+            allInternalUsersKey
+        ),
+    ]);
 
     if (companyUserItems === null) {
         return createErrorResponse(
@@ -67,5 +78,6 @@ export const getAppBootstrapInformation = async (
     return createSuccessResponse({
         companyInformationItems: companyInformationResults,
         companyUserItems,
+        internalUser,
     });
 };
