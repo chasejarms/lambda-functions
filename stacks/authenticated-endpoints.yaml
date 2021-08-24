@@ -1,0 +1,758 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Authenticated Endpoints
+Transform: "AWS::Serverless-2016-10-31"
+Parameters:
+    ProdCognitoUserPoolArn:
+        Type: String
+Globals:
+    Api:
+        Cors:
+            AllowMethods: "'*'"
+            AllowHeaders: "'*'"
+            AllowOrigin: "'*'"
+Resources:
+    ProdAuthenticatedOnlyApi:
+        Type: AWS::Serverless::Api
+        Properties:
+            StageName: Prod
+            Name: Prod Authenticated Only Api
+            GatewayResponses:
+                DEFAULT_4xx:
+                    ResponseParameters:
+                        Headers:
+                            Access-Control-Allow-Headers: "'*'"
+                            Access-Control-Allow-Origin: "'*'"
+            Auth:
+                DefaultAuthorizer: ProdCognitoUserPool
+                AddDefaultAuthorizerToCorsPreflight: false
+                Authorizers:
+                    ProdCognitoUserPool:
+                        Identity:
+                            Header: AuthHeader
+                        UserPoolArn: !Sub "${ProdCognitoUserPoolArn}"
+    GetAppBootstrapInformation:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /getAppBootstrapInformation
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getAppBootstrapInformation
+            FunctionName: GetAppBootstrapInformation
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/getAppBootstrapInformation
+    CreateBoardForCompanyFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /board
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.createBoardForCompany
+            FunctionName: CreateBoardForCompany
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/createBoardForCompany
+    GetBoardsForCompanyFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /boards
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getBoardsForCompany
+            FunctionName: GetBoardsForCompany
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/getBoardsForCompany
+    UpdateBoardColumnInformation:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /updateBoardColumnInformation
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.updateBoardColumnInformation
+            FunctionName: UpdateBoardColumnInformation
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/updateBoardColumnInformation
+    GetBoardColumnInformation:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /getBoardColumnInformation
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getBoardColumnInformation
+            FunctionName: GetBoardColumnInformation
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/getBoardColumnInformation
+    GetTicketTemplatesForBoard:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /getTicketTemplatesForBoard
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getTicketTemplatesForBoard
+            FunctionName: GetTicketTemplatesForBoard
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/getTicketTemplatesForBoard
+    CreateTicketTemplateForBoard:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /createTicketTemplateForBoard
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.createTicketTemplateForBoard
+            FunctionName: CreateTicketTemplatesForBoard
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/createTicketTemplateForBoard
+    DeleteTicketTemplateForBoard:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /deleteTicketTemplateForBoard
+                        Method: delete
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.deleteTicketTemplateForBoard
+            FunctionName: DeleteTicketTemplatesForBoard
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/deleteTicketTemplateForBoard
+    DeleteTagForBoard:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /deleteTagForBoard
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.deleteTagForBoard
+            FunctionName: DeleteTagForBoard
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/deleteTagForBoard
+    CreateTagForBoard:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /createTagForBoard
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.createTagForBoard
+            FunctionName: CreateTagForBoard
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/createTagForBoard
+    GetAllTagsForBoard:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /getAllTagsForBoard
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getAllTagsForBoard
+            FunctionName: GetAllTagsForBoard
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/getAllTagsForBoard
+    GetPriorityListForBoard:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /getPriorityListForBoard
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getPriorityListForBoard
+            FunctionName: GetPriorityListForBoard
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/getPriorityListForBoard
+    UpdatePriorityListForBoard:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /updatePriorityListForBoard
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.updatePriorityListForBoard
+            FunctionName: UpdatePriorityListForBoard
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/updatePriorityListForBoard
+    CreateTicketForBoard:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /createTicketForBoard
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.createTicketForBoard
+            FunctionName: CreateTicketForBoard
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/createTicketForBoard
+    GetInProgressTicketsForBoard:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /getInProgressTicketsForBoard
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getInProgressTicketsForBoard
+            FunctionName: GetInProgressTicketsForBoard
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/getInProgressTicketsForBoard
+    GetBacklogTicketsForBoard:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /getBacklogTicketsForBoard
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getBacklogTicketsForBoard
+            FunctionName: GetBacklogTicketsForBoard
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/getBacklogTicketsForBoard
+    UpdateColumnOnTicket:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /updateColumnOnTicket
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.updateColumnOnTicket
+            FunctionName: UpdateColumnOnTicket
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/updateColumnOnTicket
+    DeleteTicket:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /deleteTicket
+                        Method: delete
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.deleteTicket
+            FunctionName: DeleteTicket
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/deleteTicket
+    MarkTicketAsDone:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /markTicketAsDone
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.markTicketAsDone
+            FunctionName: MarkTicketAsDone
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/markTicketAsDone
+    MoveNonInProgressTicketToInProgress:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /moveNonInProgressTicketToInProgress
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.moveNonInProgressTicketToInProgress
+            FunctionName: MoveNonInProgressTicketToInProgress
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/moveNonInProgressTicketToInProgress
+    MoveNonBacklogTicketToBacklog:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /moveNonBacklogTicketToBacklog
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.moveNonBacklogTicketToBacklog
+            FunctionName: MoveNonBacklogTicketToBacklog
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/moveNonBacklogTicketToBacklog
+    GetDoneTickets:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /getDoneTickets
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getDoneTickets
+            FunctionName: GetDoneTickets
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/getDoneTickets
+    GetTicketInformationById:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /getTicketInformationById
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getTicketInformationById
+            FunctionName: GetTicketInformationById
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/getTicketInformationById
+    UpdateTicketForBoard:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /updateTicketForBoard
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.updateTicketForBoard
+            FunctionName: UpdateTicketForBoard
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/updateTicketForBoard
+    DeleteBoardForCompany:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /deleteBoardForCompany
+                        Method: delete
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.deleteBoardForCompany
+            FunctionName: DeleteBoardForCompany
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/deleteBoardForCompany
+    GetBoardForCompany:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /getBoardForCompany
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getBoardForCompany
+            FunctionName: GetBoardForCompany
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/getBoardForCompany
+    GetTicketTemplateForBoard:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /getTicketTemplateForBoard
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getTicketTemplateForBoard
+            FunctionName: GetTicketTemplateForBoard
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/getTicketTemplateForBoard
+    UpdateTicketTemplateForBoard:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /updateTicketTemplateForBoard
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.updateTicketTemplateForBoard
+            FunctionName: UpdateTicketTemplateForBoard
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/updateTicketTemplateForBoard
+    GetAllUsersForCompany:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /getAllUsersForCompany
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getAllUsersForCompany
+            FunctionName: GetAllUsersForCompany
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/getAllUsersForCompany
+    GetAllUsersForBoard:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /getAllUsersForBoard
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getAllUsersForBoard
+            FunctionName: GetAllUsersForBoard
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/getAllUsersForBoard
+    UpdateCompanyUserRights:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /updateCompanyUserRights
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.updateCompanyUserRights
+            FunctionName: UpdateCompanyUserRights
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/updateCompanyUserRights
+    SetAssignedToTicketField:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /setAssignedToTicketField
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.setAssignedToTicketField
+            FunctionName: SetAssignedToTicketField
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/setAssignedToTicketField
+    AddUserToCompany:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /addUserToCompany
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.addUserToCompany
+            FunctionName: AddUserToCompany
+            Policies:
+                - AmazonDynamoDBFullAccess
+                - AmazonCognitoPowerUser
+            CodeUri: ../code/built/addUserToCompany
+    RemoveUserFromCompany:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /removeUserFromCompany
+                        Method: delete
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.removeUserFromCompany
+            FunctionName: RemoveUserFromCompany
+            Policies:
+                - AmazonDynamoDBFullAccess
+                - AmazonCognitoPowerUser
+            CodeUri: ../code/built/removeUserFromCompany
+    UpdateUserBoardRights:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /updateUserBoardRights
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.updateUserBoardRights
+            FunctionName: UpdateUserBoardRights
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/updateUserBoardRights
+    CreateUploadTicketImageSignedUrls:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /createUploadTicketImageSignedUrls
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.createUploadTicketImageSignedUrls
+            FunctionName: CreateUploadTicketImageSignedUrls
+            Policies:
+                - AmazonDynamoDBFullAccess
+                - AmazonS3FullAccess
+            CodeUri: ../code/built/createUploadTicketImageSignedUrls
+    GetTicketFilesWithSignedUrls:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /getTicketFilesWithSignedUrls
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getTicketFilesWithSignedUrls
+            FunctionName: GetTicketFilesWithSignedUrls
+            Policies:
+                - AmazonDynamoDBFullAccess
+                - AmazonS3FullAccess
+            CodeUri: ../code/built/getTicketFilesWithSignedUrls
+    DeleteTicketFile:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /deleteTicketFile
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.deleteTicketFile
+            FunctionName: DeleteTicketFile
+            Policies:
+                - AmazonDynamoDBFullAccess
+                - AmazonS3FullAccess
+            CodeUri: ../code/built/deleteTicketFile
+    GetDownloadFileSignedUrl:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /getDownloadFileSignedUrl
+                        Method: get
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.getDownloadFileSignedUrl
+            FunctionName: GetDownloadFileSignedUrl
+            Policies:
+                - AmazonDynamoDBFullAccess
+                - AmazonS3FullAccess
+            CodeUri: ../code/built/getDownloadFileSignedUrl
+    UpdateTagColor:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /updateTagColor
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.updateTagColor
+            FunctionName: UpdateTagColor
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/updateTagColor
+    AuthenticatedCreateNewCompany:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /authenticatedCreateNewCompany
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.authenticatedCreateNewCompany
+            FunctionName: AuthenticatedCreateNewCompany
+            Policies:
+                - AmazonDynamoDBFullAccess
+                - AmazonCognitoPowerUser
+            CodeUri: ../code/built/authenticatedCreateNewCompany
+    CreateUploadLearningVideoSignedUrl:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /createUploadLearningVideoSignedUrl
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.createUploadLearningVideoSignedUrl
+            FunctionName: CreateUploadLearningVideoSignedUrl
+            Policies:
+                - AmazonDynamoDBFullAccess
+                - AmazonS3FullAccess
+            CodeUri: ../code/built/createUploadLearningVideoSignedUrl
+Outputs:
+    ProdAuthenticatedOnlyApi:
+        Description: "Authenticated API Gateway Endpoint URL For Prod"
+        Value: !Sub "https://${ProdAuthenticatedOnlyApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"

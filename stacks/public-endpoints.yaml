@@ -1,0 +1,54 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Public Endpoints
+Transform: "AWS::Serverless-2016-10-31"
+Globals:
+    Api:
+        Cors:
+            AllowMethods: "'*'"
+            AllowHeaders: "'*'"
+            AllowOrigin: "'*'"
+Resources:
+    ProdPubliclyAccessibleApi:
+        Type: AWS::Serverless::Api
+        DeletionPolicy: Retain
+        Properties:
+            StageName: Prod
+            Name: Prod Publicly Accessible Api
+    SignUpNewUserFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /sign-up-new-user
+                        Method: post
+                        RestApiId:
+                            Ref: ProdPubliclyAccessibleApi
+            Runtime: nodejs14.x
+            Handler: index.signUpNewUser
+            FunctionName: SignUpNewUser
+            Policies:
+                - AmazonDynamoDBFullAccess
+            CodeUri: ../code/built/signUpNewUser
+    CapturePublicFormData:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /capture-public-form-data
+                        Method: post
+                        RestApiId:
+                            Ref: ProdPubliclyAccessibleApi
+            Runtime: nodejs14.x
+            Handler: index.capturePublicFormData
+            FunctionName: CapturePublicFormData
+            Policies:
+                - AmazonSESFullAccess
+            CodeUri: ../code/built/capturePublicFormData
+Outputs:
+    ProdPubliclyAccessibleApi:
+        Description: "Public API Gateway Endpoint URL For Prod"
+        Value: !Sub "https://${ProdPubliclyAccessibleApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
