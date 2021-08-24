@@ -16,7 +16,6 @@ export const cloudFrontResponseHandler: CloudFrontResponseHandler = (
             value: "max-age=63072000; includeSubdomains; preload",
         },
     ];
-    // TODO: Investigate adding this back in later on
     headers["content-security-policy"] = [
         {
             key: "Content-Security-Policy",

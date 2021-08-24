@@ -8,6 +8,10 @@ Globals:
             AllowHeaders: "'*'"
             AllowOrigin: "'*'"
 Resources:
+    LearningCenterStack:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: "./stacks/learning-center.yaml"
     CustomResourceStack:
         Type: AWS::CloudFormation::Stack
         Properties:
@@ -862,6 +866,24 @@ Resources:
                 - AmazonDynamoDBFullAccess
                 - AmazonCognitoPowerUser
             CodeUri: code/built/authenticatedCreateNewCompany
+    CreateUploadLearningVideoSignedUrl:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Path: /createUploadLearningVideoSignedUrl
+                        Method: post
+                        RestApiId:
+                            Ref: ProdAuthenticatedOnlyApi
+            Runtime: nodejs14.x
+            Handler: index.createUploadLearningVideoSignedUrl
+            FunctionName: CreateUploadLearningVideoSignedUrl
+            Policies:
+                - AmazonDynamoDBFullAccess
+                - AmazonS3FullAccess
+            CodeUri: code/built/createUploadLearningVideoSignedUrl
     CompanySourceFileBucket:
         Type: AWS::S3::Bucket
         Properties:
