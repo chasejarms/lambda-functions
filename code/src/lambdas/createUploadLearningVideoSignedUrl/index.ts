@@ -1,6 +1,10 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+    S3Client,
+    PutObjectCommand,
+    GetObjectCommand,
+} from "@aws-sdk/client-s3";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
 import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
@@ -36,7 +40,7 @@ export const createUploadLearningVideoSignedUrl = async (
         name: Joi.string()
             .required()
             .pattern(/\s/, { name: "spaces", invert: true }),
-        size: Joi.number().required().min(0).max(fiveMegabytes),
+        size: Joi.number().required().min(0),
         contentType: Joi.string().required().valid("video/mp4"),
     });
     const body = JSON.parse(event.body) as {
@@ -63,13 +67,24 @@ export const createUploadLearningVideoSignedUrl = async (
         ContentType: body.contentType,
     });
 
+    const getCommand = new GetObjectCommand({
+        Bucket: "learning-center-files",
+        Key: learningCenterS3Key,
+    });
+
     try {
-        const signedUrl = await getSignedUrl(client, putCommand, {
-            expiresIn: 300,
-        });
+        const [signedUrlPut, signedUrlGet] = await Promise.all([
+            getSignedUrl(client, putCommand, {
+                expiresIn: 300,
+            }),
+            getSignedUrl(client, getCommand, {
+                expiresIn: 300,
+            }),
+        ]);
 
         return createSuccessResponse({
-            signedUrl,
+            signedUrlPut,
+            signedUrlGet,
         });
     } catch (error) {
         return createErrorResponse(
