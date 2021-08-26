@@ -12,14 +12,8 @@ Parameters:
     SubDomain:
         Description: Subdomain
         Type: String
-    S3BucketLogs:
-        Description: Logging Bucket
-        Type: String
     S3BucketRoot:
         Description: Content Bucket
-        Type: String
-    S3BucketLogsName:
-        Description: Logging Bucket
         Type: String
     S3BucketRootName:
         Description: Content Bucket
@@ -55,16 +49,16 @@ Resources:
         Properties:
             Handler: index.cloudFrontResponseHandler
             Role: !GetAtt LambdaEdgeFunctionRole.Arn
-            CodeUri: ../code/built/cloudFrontResponseHandler
+            CodeUri: ../../code/built/cloudFrontResponseHandler
             FunctionName: CloudFrontResponseHandler
             Runtime: "nodejs14.x"
             Timeout: 25
 
-    LambdaVersion20:
+    LambdaVersion:
         Type: AWS::Lambda::Version
         Properties:
             FunctionName: !Ref LambdaEdgeFunction
-            Description: v20
+            Description: v1
 
     LambdaEdgeFunctionRole:
         Type: AWS::IAM::Role
@@ -103,7 +97,7 @@ Resources:
                     TargetOriginId: !Sub "S3-${AWS::StackName}-root"
                     LambdaFunctionAssociations:
                         - EventType: origin-response
-                          LambdaFunctionARN: !Ref LambdaVersion20
+                          LambdaFunctionARN: !Ref LambdaVersion
                     ViewerProtocolPolicy: "redirect-to-https"
                 CustomErrorResponses:
                     - ErrorCachingMinTTL: 60
@@ -118,10 +112,6 @@ Resources:
                 HttpVersion: "http2"
                 DefaultRootObject: "index.html"
                 IPV6Enabled: true
-                Logging:
-                    Bucket: !Ref "S3BucketLogsName"
-                    IncludeCookies: false
-                    Prefix: "cdn/"
                 Origins:
                     - DomainName: !Ref "S3BucketRootName"
                       Id: !Sub "S3-${AWS::StackName}-root"
@@ -175,7 +165,7 @@ Resources:
 Outputs:
     LambdaEdgeFunctionVersion:
         Description: Security Lambda version
-        Value: !Ref LambdaVersion20
+        Value: !Ref LambdaVersion
 
     CloudFrontDistribution:
         Description: CloudFront distribution

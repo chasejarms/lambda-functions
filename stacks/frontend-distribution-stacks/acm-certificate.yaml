@@ -20,7 +20,7 @@ Conditions:
         - "yes"
 
 Resources:
-    Certificate:
+    CertificateV2:
         Type: Custom::Certificate
         Properties:
             DomainName: !Sub "${SubDomain}.${DomainName}"
@@ -36,13 +36,13 @@ Resources:
     IssuedCertificate:
         Type: Custom::IssuedCertificate
         Properties:
-            CertificateArn: !Ref Certificate
+            CertificateArn: !Ref CertificateV2
             ServiceToken: !Ref "CFNCustomProvider"
 
     CertificateDNSRecord:
         Type: Custom::CertificateDNSRecord
         Properties:
-            CertificateArn: !Ref Certificate
+            CertificateArn: !Ref CertificateV2
             DomainName: !Sub "${SubDomain}.${DomainName}"
             ServiceToken: !Ref "CFNCustomProvider"
 
@@ -50,7 +50,7 @@ Resources:
         Type: Custom::CertificateDNSRecord
         Condition: CreateApexConfig
         Properties:
-            CertificateArn: !Ref Certificate
+            CertificateArn: !Ref CertificateV2
             DomainName: !Ref DomainName
             ServiceToken: !Ref "CFNCustomProvider"
 
@@ -63,7 +63,7 @@ Resources:
                   Type: !GetAtt CertificateDNSRecord.Type
                   TTL: 60
                   Weight: 1
-                  SetIdentifier: !Ref Certificate
+                  SetIdentifier: !Ref CertificateV2
                   ResourceRecords:
                       - !GetAtt CertificateDNSRecord.Value
 
@@ -77,7 +77,7 @@ Resources:
                   Type: !GetAtt apexCertificateDNSRecord.Type
                   TTL: 60
                   Weight: 1
-                  SetIdentifier: !Ref Certificate
+                  SetIdentifier: !Ref CertificateV2
                   ResourceRecords:
                       - !GetAtt apexCertificateDNSRecord.Value
 
@@ -88,4 +88,4 @@ Outputs:
 
     CertificateArn:
         Description: Issued certificate
-        Value: !Ref Certificate
+        Value: !Ref CertificateV2

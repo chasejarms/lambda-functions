@@ -1,0 +1,29 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Frontend Distribution (Cloudfront, Certificate, S3 Bucket)
+Transform: AWS::Serverless-2016-10-31
+Resources:
+    CustomResourceStack:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: ./frontend-distribution-stacks/custom-resource.yaml
+    AcmCertificateStack:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: ./frontend-distribution-stacks/acm-certificate.yaml
+            Parameters:
+                SubDomain: www
+                DomainName: butterpm.com
+                CFNCustomProvider: !GetAtt CustomResourceStack.Outputs.CFNCustomProvider
+                CreateApex: "yes"
+    CloudFrontStack:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: ./frontend-distribution-stacks/cloudfront-site.yaml
+            Parameters:
+                CertificateArn: !GetAtt AcmCertificateStack.Outputs.CertificateArn
+                DomainName: butterpm.com
+                SubDomain: www
+                CreateApex: "yes"
+                S3BucketRoot: !GetAtt CustomResourceStack.Outputs.S3BucketRoot
+                S3BucketRootName: !GetAtt CustomResourceStack.Outputs.S3BucketRootName
+                S3BucketRootArn: !GetAtt CustomResourceStack.Outputs.S3BucketRootArn

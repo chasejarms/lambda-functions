@@ -60,14 +60,6 @@ Resources:
             Timeout: 300
             Role: !GetAtt LambdaRole.Arn
             Runtime: python3.6
-    S3BucketLogs:
-        Type: AWS::S3::Bucket
-        Properties:
-            AccessControl: LogDeliveryWrite
-            BucketEncryption:
-                ServerSideEncryptionConfiguration:
-                    - ServerSideEncryptionByDefault:
-                          SSEAlgorithm: AES256
     S3BucketRoot:
         Type: AWS::S3::Bucket
         Properties:
@@ -75,9 +67,6 @@ Resources:
                 ServerSideEncryptionConfiguration:
                     - ServerSideEncryptionByDefault:
                           SSEAlgorithm: AES256
-            LoggingConfiguration:
-                DestinationBucketName: !Ref "S3BucketLogs"
-                LogFilePrefix: "origin/"
 Outputs:
     S3BucketRoot:
         Description: Website bucket
@@ -88,12 +77,6 @@ Outputs:
     S3BucketRootArn:
         Description: Website bucket locator
         Value: !GetAtt S3BucketRoot.Arn
-    S3BucketLogs:
-        Description: Logging bucket
-        Value: !Ref S3BucketLogs
-    S3BucketLogsName:
-        Description: Logging bucket Name
-        Value: !GetAtt S3BucketLogs.DomainName
     CFNCustomProvider:
         Description: ACM helper function
         Value: !GetAtt CFNCustomProvider.Arn
