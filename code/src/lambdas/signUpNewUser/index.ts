@@ -105,11 +105,13 @@ export const signUpNewUser = async (
                 uniqueCompanyId
             );
             const allCompaniesKey = createAllCompaniesKey();
+            const date = new Date();
             const companyInformationItem: ICompanyInformation = {
                 itemId: companyInformationKey,
                 belongsTo: allCompaniesKey,
                 name: companyName,
                 shortenedItemId: uniqueCompanyId,
+                created: date.toISOString(),
             };
 
             const userKey = createUserKey(signUpResultFromCallback.userSub);
