@@ -24,6 +24,7 @@ import { createAllBoardTicketTemplatesKey } from "../../keyGeneration/createAllB
 import { createBoardPriorityKey } from "../../keyGeneration/createBoardPriorityKey";
 import { IBoardPriorityList } from "../../models/database";
 import { TransactWriteItemType } from "../../dynamo/primaryTable/transactWrite";
+import { BoardPriorityType } from "../../models/database/boardPriorityType";
 
 export const createBoardForCompany = async (
     event: APIGatewayProxyEvent
@@ -38,18 +39,19 @@ export const createBoardForCompany = async (
         return bodyIsNotAnObjectErrorResponse;
     }
 
-    const { companyId, boardName, boardDescription } = JSON.parse(
+    const { companyId, boardName, boardDescription, priorityType } = JSON.parse(
         event.body
     ) as {
         companyId: string;
         boardName: string;
         boardDescription: string;
+        priorityType: BoardPriorityType;
     };
 
-    if (!companyId || !boardName || !boardDescription) {
+    if (!companyId || !boardName || !boardDescription || !priorityType) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
-            "companyId, boardName, and boardDescription are required fields."
+            "companyId, boardName, boardDescription, and priority type are required fields."
         );
     }
 
@@ -65,106 +67,217 @@ export const createBoardForCompany = async (
     let boardId: string;
     const writeWasSuccessful = await tryTransactWriteThreeTimesInPrimaryTable(
         () => {
-            boardId = generateUniqueId(1);
+            if (priorityType === BoardPriorityType.Weighted) {
+                boardId = generateUniqueId(1);
 
-            const companyBoardKey = createCompanyBoardKey(companyId, boardId);
-            const companyBoardsKey = createCompanyBoardsKey(companyId);
-            const boardItem: IBoard = {
-                shortenedItemId: boardId,
-                itemId: companyBoardKey,
-                belongsTo: companyBoardsKey,
-                name: boardName,
-                description: boardDescription,
-            };
+                const companyBoardKey = createCompanyBoardKey(
+                    companyId,
+                    boardId
+                );
+                const companyBoardsKey = createCompanyBoardsKey(companyId);
+                const boardItem: IBoard = {
+                    shortenedItemId: boardId,
+                    itemId: companyBoardKey,
+                    belongsTo: companyBoardsKey,
+                    name: boardName,
+                    description: boardDescription,
+                    priorityType: BoardPriorityType.Weighted,
+                };
 
-            const boardColumnInformationKey = createBoardColumnInformationKey(
-                companyId,
-                boardId
-            );
-            const boardColumnInformation: IBoardColumnInformation = {
-                itemId: boardColumnInformationKey,
-                belongsTo: boardColumnInformationKey,
-                columns: [
-                    defaultUncategorizedColumn,
-                    defaultInProgressColumn,
-                    defaultDoneColumn,
-                ],
-            };
+                const boardColumnInformationKey = createBoardColumnInformationKey(
+                    companyId,
+                    boardId
+                );
+                const boardColumnInformation: IBoardColumnInformation = {
+                    itemId: boardColumnInformationKey,
+                    belongsTo: boardColumnInformationKey,
+                    columns: [
+                        defaultUncategorizedColumn,
+                        defaultInProgressColumn,
+                        defaultDoneColumn,
+                    ],
+                };
 
-            const currentBoardRights = companyUser.boardRights;
-            const updatedUserItem: IUser = {
-                ...companyUser,
-                boardRights: {
-                    ...currentBoardRights,
-                    [boardId]: {
-                        isAdmin: true,
+                const currentBoardRights = companyUser.boardRights;
+                const updatedUserItem: IUser = {
+                    ...companyUser,
+                    boardRights: {
+                        ...currentBoardRights,
+                        [boardId]: {
+                            isAdmin: true,
+                        },
                     },
-                },
-            };
+                };
 
-            const boardTicketTemplateId = generateUniqueId(1);
-            const boardTicketTemplateKey = createBoardTicketTemplateKey(
-                companyId,
-                boardId,
-                boardTicketTemplateId
-            );
-            const allBoardTicketTemplatesKey = createAllBoardTicketTemplatesKey(
-                companyId,
-                boardId
-            );
-            const ticketTemplate: ITicketTemplate = {
-                itemId: boardTicketTemplateKey,
-                belongsTo: allBoardTicketTemplatesKey,
-                shortenedItemId: boardTicketTemplateId,
-                name: "Default",
-                description: "Default ticket template description.",
-                title: {
-                    label: "Ticket Title",
-                },
-                summary: {
-                    isRequired: false,
-                    label: "Ticket Summary",
-                },
-                sections: [],
-            };
+                const boardTicketTemplateId = generateUniqueId(1);
+                const boardTicketTemplateKey = createBoardTicketTemplateKey(
+                    companyId,
+                    boardId,
+                    boardTicketTemplateId
+                );
+                const allBoardTicketTemplatesKey = createAllBoardTicketTemplatesKey(
+                    companyId,
+                    boardId
+                );
+                const ticketTemplate: ITicketTemplate = {
+                    itemId: boardTicketTemplateKey,
+                    belongsTo: allBoardTicketTemplatesKey,
+                    shortenedItemId: boardTicketTemplateId,
+                    name: "Default",
+                    description: "Default ticket template description.",
+                    title: {
+                        label: "Ticket Title",
+                    },
+                    summary: {
+                        isRequired: false,
+                        label: "Ticket Summary",
+                    },
+                    sections: [],
+                };
 
-            const boardPriorityListKey = createBoardPriorityKey(
-                companyId,
-                boardId
-            );
-            const boardPriorityList: IBoardPriorityList = {
-                itemId: boardPriorityListKey,
-                belongsTo: boardPriorityListKey,
-                priorities: [],
-            };
+                const boardPriorityListKey = createBoardPriorityKey(
+                    companyId,
+                    boardId
+                );
+                const boardPriorityList: IBoardPriorityList = {
+                    itemId: boardPriorityListKey,
+                    belongsTo: boardPriorityListKey,
+                    priorities: [],
+                };
 
-            return [
-                {
-                    type: TransactWriteItemType.Put,
-                    item: boardItem,
-                    canOverrideExistingItem: false,
-                },
-                {
-                    type: TransactWriteItemType.Put,
-                    item: updatedUserItem,
-                    canOverrideExistingItem: true,
-                },
-                {
-                    type: TransactWriteItemType.Put,
-                    item: boardColumnInformation,
-                    canOverrideExistingItem: false,
-                },
-                {
-                    type: TransactWriteItemType.Put,
-                    item: ticketTemplate,
-                    canOverrideExistingItem: false,
-                },
-                {
-                    type: TransactWriteItemType.Put,
-                    item: boardPriorityList,
-                    canOverrideExistingItem: false,
-                },
-            ];
+                return [
+                    {
+                        type: TransactWriteItemType.Put,
+                        item: boardItem,
+                        canOverrideExistingItem: false,
+                    },
+                    {
+                        type: TransactWriteItemType.Put,
+                        item: updatedUserItem,
+                        canOverrideExistingItem: true,
+                    },
+                    {
+                        type: TransactWriteItemType.Put,
+                        item: boardColumnInformation,
+                        canOverrideExistingItem: false,
+                    },
+                    {
+                        type: TransactWriteItemType.Put,
+                        item: ticketTemplate,
+                        canOverrideExistingItem: false,
+                    },
+                    {
+                        type: TransactWriteItemType.Put,
+                        item: boardPriorityList,
+                        canOverrideExistingItem: false,
+                    },
+                ];
+            } else {
+                boardId = generateUniqueId(1);
+
+                const companyBoardKey = createCompanyBoardKey(
+                    companyId,
+                    boardId
+                );
+                const companyBoardsKey = createCompanyBoardsKey(companyId);
+                const boardItem: IBoard = {
+                    shortenedItemId: boardId,
+                    itemId: companyBoardKey,
+                    belongsTo: companyBoardsKey,
+                    name: boardName,
+                    description: boardDescription,
+                    priorityType: BoardPriorityType.TagBased,
+                };
+
+                const boardColumnInformationKey = createBoardColumnInformationKey(
+                    companyId,
+                    boardId
+                );
+                const boardColumnInformation: IBoardColumnInformation = {
+                    itemId: boardColumnInformationKey,
+                    belongsTo: boardColumnInformationKey,
+                    columns: [
+                        defaultUncategorizedColumn,
+                        defaultInProgressColumn,
+                        defaultDoneColumn,
+                    ],
+                };
+
+                const currentBoardRights = companyUser.boardRights;
+                const updatedUserItem: IUser = {
+                    ...companyUser,
+                    boardRights: {
+                        ...currentBoardRights,
+                        [boardId]: {
+                            isAdmin: true,
+                        },
+                    },
+                };
+
+                const boardTicketTemplateId = generateUniqueId(1);
+                const boardTicketTemplateKey = createBoardTicketTemplateKey(
+                    companyId,
+                    boardId,
+                    boardTicketTemplateId
+                );
+                const allBoardTicketTemplatesKey = createAllBoardTicketTemplatesKey(
+                    companyId,
+                    boardId
+                );
+                const ticketTemplate: ITicketTemplate = {
+                    itemId: boardTicketTemplateKey,
+                    belongsTo: allBoardTicketTemplatesKey,
+                    shortenedItemId: boardTicketTemplateId,
+                    name: "Default",
+                    description: "Default ticket template description.",
+                    title: {
+                        label: "Ticket Title",
+                    },
+                    summary: {
+                        isRequired: false,
+                        label: "Ticket Summary",
+                    },
+                    sections: [],
+                };
+
+                const boardPriorityListKey = createBoardPriorityKey(
+                    companyId,
+                    boardId
+                );
+                const boardPriorityList: IBoardPriorityList = {
+                    itemId: boardPriorityListKey,
+                    belongsTo: boardPriorityListKey,
+                    priorities: [],
+                };
+
+                return [
+                    {
+                        type: TransactWriteItemType.Put,
+                        item: boardItem,
+                        canOverrideExistingItem: false,
+                    },
+                    {
+                        type: TransactWriteItemType.Put,
+                        item: updatedUserItem,
+                        canOverrideExistingItem: true,
+                    },
+                    {
+                        type: TransactWriteItemType.Put,
+                        item: boardColumnInformation,
+                        canOverrideExistingItem: false,
+                    },
+                    {
+                        type: TransactWriteItemType.Put,
+                        item: ticketTemplate,
+                        canOverrideExistingItem: false,
+                    },
+                    {
+                        type: TransactWriteItemType.Put,
+                        item: boardPriorityList,
+                        canOverrideExistingItem: false,
+                    },
+                ];
+            }
         }
     );
     if (!writeWasSuccessful) {
