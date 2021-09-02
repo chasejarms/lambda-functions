@@ -6,12 +6,16 @@ import { createAllBoardTicketTemplatesKey } from "../../keyGeneration/createAllB
 import { ITicketTemplate } from "../../models/database/ticketTemplate";
 import { generateUniqueId } from "../../utils/generateUniqueId";
 import { createBoardTicketTemplateKey } from "../../keyGeneration/createBoardTicketTemplateKey";
-import { tryCreateNewItemThreeTimesInPrimaryTable } from "../../dynamo/primaryTable/tryCreateNewItemThreeTimes";
 import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
 import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
 import { ticketTemplateCreateRequestErrorMessage } from "../../dataValidation/ticketTemplateCreateRequestErrorMessage";
 import { ITicketTemplatePutRequest } from "../../models/requests/ticketTemplatePutRequest";
 import { isBoardAdmin } from "../../utils/isBoardAdmin";
+import { tryTransactWriteThreeTimesInPrimaryTable } from "../../dynamo/primaryTable/tryTransactWriteThreeTimes";
+import { TransactWriteItemType } from "../../dynamo/primaryTable/transactWrite";
+import { createAllBoardWeightingFunctionsKey } from "../../keyGeneration/createAllBoardWeightingFunctionsKey";
+import { IWeightingFunction } from "../../models/database/weightingFunction";
+import { createBoardWeightingFunctionKey } from "../../keyGeneration/createBoardWeightingFunctionKey";
 
 export const createTicketTemplateForBoard = async (
     event: APIGatewayProxyEvent
@@ -68,37 +72,102 @@ export const createTicketTemplateForBoard = async (
         );
     }
 
-    const createdTicketTemplate = await tryCreateNewItemThreeTimesInPrimaryTable(
+    const ticketTemplateLogicWasCreated = await tryTransactWriteThreeTimesInPrimaryTable(
         () => {
             const boardTicketTemplateId = generateUniqueId(1);
-            const boardTicketTemplateKey = createBoardTicketTemplateKey(
+            const boardTicketTemplateKeyV0 = createBoardTicketTemplateKey(
                 companyId,
                 boardId,
-                boardTicketTemplateId
+                boardTicketTemplateId,
+                0
+            );
+            const boardTicketTemplateKeyV1 = createBoardTicketTemplateKey(
+                companyId,
+                boardId,
+                boardTicketTemplateId,
+                1
             );
             const allBoardTicketTemplatesKey = createAllBoardTicketTemplatesKey(
                 companyId,
                 boardId
             );
-            const ticketTemplateDatabaseItem: ITicketTemplate = {
-                itemId: boardTicketTemplateKey,
+            const ticketTemplateV0: ITicketTemplate = {
+                itemId: boardTicketTemplateKeyV0,
                 belongsTo: allBoardTicketTemplatesKey,
                 shortenedItemId: boardTicketTemplateId,
                 ...ticketTemplate,
             };
 
-            return ticketTemplateDatabaseItem;
+            const ticketTemplateV1: ITicketTemplate = {
+                itemId: boardTicketTemplateKeyV1,
+                belongsTo: allBoardTicketTemplatesKey,
+                shortenedItemId: boardTicketTemplateId,
+                ...ticketTemplate,
+            };
+
+            const weightingFunctionId = generateUniqueId(2);
+            const boardWeightingFunctionKeyV0 = createBoardWeightingFunctionKey(
+                companyId,
+                boardId,
+                weightingFunctionId,
+                0
+            );
+
+            const boardWeightingFunctionKeyV1 = createBoardWeightingFunctionKey(
+                companyId,
+                boardId,
+                weightingFunctionId,
+                1
+            );
+
+            const allBoardWeightingFunctionsKey = createAllBoardWeightingFunctionsKey(
+                companyId,
+                boardId
+            );
+
+            const weightingFunctionV0: IWeightingFunction = {
+                itemId: boardWeightingFunctionKeyV0,
+                belongsTo: allBoardWeightingFunctionsKey,
+                function: "",
+            };
+
+            const weightingFunctionV1: IWeightingFunction = {
+                itemId: boardWeightingFunctionKeyV1,
+                belongsTo: allBoardWeightingFunctionsKey,
+                function: "",
+            };
+
+            return [
+                {
+                    type: TransactWriteItemType.Put,
+                    item: ticketTemplateV0,
+                    canOverrideExistingItem: false,
+                },
+                {
+                    type: TransactWriteItemType.Put,
+                    item: ticketTemplateV1,
+                    canOverrideExistingItem: false,
+                },
+                {
+                    type: TransactWriteItemType.Put,
+                    item: weightingFunctionV0,
+                    canOverrideExistingItem: false,
+                },
+                {
+                    type: TransactWriteItemType.Put,
+                    item: weightingFunctionV1,
+                    canOverrideExistingItem: false,
+                },
+            ];
         }
     );
 
-    if (createdTicketTemplate === null) {
+    if (ticketTemplateLogicWasCreated === null) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
             "Error creating the ticket template"
         );
     }
 
-    return createSuccessResponse({
-        ticketTemplate: createdTicketTemplate,
-    });
+    return createSuccessResponse({});
 };

@@ -151,8 +151,6 @@ export const createBoardForCompany = async (
                 sections: [],
             };
 
-            // create the function
-
             const weightingFunctionId = generateUniqueId(2);
             const boardWeightingFunctionKeyV0 = createBoardWeightingFunctionKey(
                 companyId,

@@ -48,6 +48,7 @@ export const getTicketTemplateForBoard = async (
         companyId,
         boardId,
         ticketTemplateId
+        0,
     );
 
     const allBoardTicketTemplatesKey = createAllBoardTicketTemplatesKey(

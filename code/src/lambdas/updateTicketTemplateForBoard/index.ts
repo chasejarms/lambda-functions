@@ -16,88 +16,88 @@ import { isBoardAdmin } from "../../utils/isBoardAdmin";
 export const updateTicketTemplateForBoard = async (
     event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
-    const bodyIsEmptyErrorResponse = bodyIsEmptyError(event);
-    if (bodyIsEmptyErrorResponse) {
-        return bodyIsEmptyErrorResponse;
-    }
+    // const bodyIsEmptyErrorResponse = bodyIsEmptyError(event);
+    // if (bodyIsEmptyErrorResponse) {
+    //     return bodyIsEmptyErrorResponse;
+    // }
 
-    const bodyIsNotAnObjectErrorResponse = bodyIsNotAnObjectError(event);
-    if (bodyIsNotAnObjectErrorResponse) {
-        return bodyIsNotAnObjectErrorResponse;
-    }
+    // const bodyIsNotAnObjectErrorResponse = bodyIsNotAnObjectError(event);
+    // if (bodyIsNotAnObjectErrorResponse) {
+    //     return bodyIsNotAnObjectErrorResponse;
+    // }
 
-    const queryStringParametersErrorMessage = queryStringParametersError(
-        event.queryStringParameters,
-        "companyId",
-        "boardId",
-        "ticketTemplateId"
-    );
-    if (queryStringParametersErrorMessage) {
-        return createErrorResponse(
-            HttpStatusCode.BadRequest,
-            queryStringParametersErrorMessage
-        );
-    }
+    // const queryStringParametersErrorMessage = queryStringParametersError(
+    //     event.queryStringParameters,
+    //     "companyId",
+    //     "boardId",
+    //     "ticketTemplateId"
+    // );
+    // if (queryStringParametersErrorMessage) {
+    //     return createErrorResponse(
+    //         HttpStatusCode.BadRequest,
+    //         queryStringParametersErrorMessage
+    //     );
+    // }
 
-    const {
-        companyId,
-        boardId,
-        ticketTemplateId,
-    } = event.queryStringParameters;
+    // const {
+    //     companyId,
+    //     boardId,
+    //     ticketTemplateId,
+    // } = event.queryStringParameters;
 
-    const { ticketTemplate } = JSON.parse(event.body) as {
-        ticketTemplate: ITicketTemplatePutRequest;
-    };
-    if (!ticketTemplate) {
-        return createErrorResponse(
-            HttpStatusCode.BadRequest,
-            "ticketTemplate is a required field"
-        );
-    }
+    // const { ticketTemplate } = JSON.parse(event.body) as {
+    //     ticketTemplate: ITicketTemplatePutRequest;
+    // };
+    // if (!ticketTemplate) {
+    //     return createErrorResponse(
+    //         HttpStatusCode.BadRequest,
+    //         "ticketTemplate is a required field"
+    //     );
+    // }
 
-    const errorMessageForTicketTemplate = ticketTemplateCreateRequestErrorMessage(
-        ticketTemplate
-    );
-    if (errorMessageForTicketTemplate) {
-        return createErrorResponse(
-            HttpStatusCode.BadRequest,
-            errorMessageForTicketTemplate
-        );
-    }
+    // const errorMessageForTicketTemplate = ticketTemplateCreateRequestErrorMessage(
+    //     ticketTemplate
+    // );
+    // if (errorMessageForTicketTemplate) {
+    //     return createErrorResponse(
+    //         HttpStatusCode.BadRequest,
+    //         errorMessageForTicketTemplate
+    //     );
+    // }
 
-    const canUpdateTicketTemplateForBoard = await isBoardAdmin(
-        event,
-        boardId,
-        companyId
-    );
+    // const canUpdateTicketTemplateForBoard = await isBoardAdmin(
+    //     event,
+    //     boardId,
+    //     companyId
+    // );
 
-    if (!canUpdateTicketTemplateForBoard) {
-        return createErrorResponse(
-            HttpStatusCode.Forbidden,
-            "must be a company admin or a board admin to create ticket templates"
-        );
-    }
+    // if (!canUpdateTicketTemplateForBoard) {
+    //     return createErrorResponse(
+    //         HttpStatusCode.Forbidden,
+    //         "must be a company admin or a board admin to create ticket templates"
+    //     );
+    // }
 
-    const boardTicketTemplateKey = createBoardTicketTemplateKey(
-        companyId,
-        boardId,
-        ticketTemplateId
-    );
-    const allBoardTicketTemplatesKey = createAllBoardTicketTemplatesKey(
-        companyId,
-        boardId
-    );
+    // const boardTicketTemplateKey = createBoardTicketTemplateKey(
+    //     companyId,
+    //     boardId,
+    //     ticketTemplateId
+    // );
+    // const allBoardTicketTemplatesKey = createAllBoardTicketTemplatesKey(
+    //     companyId,
+    //     boardId
+    // );
 
-    const updatedTicketTemplate = await overrideSpecificAttributesInPrimaryTable<
-        ITicketTemplate
-    >(boardTicketTemplateKey, allBoardTicketTemplatesKey, ticketTemplate);
+    // const updatedTicketTemplate = await overrideSpecificAttributesInPrimaryTable<
+    //     ITicketTemplate
+    // >(boardTicketTemplateKey, allBoardTicketTemplatesKey, ticketTemplate);
 
-    if (updatedTicketTemplate === null) {
-        return createErrorResponse(
-            HttpStatusCode.BadRequest,
-            "Error updating the ticket template"
-        );
-    }
+    // if (updatedTicketTemplate === null) {
+    //     return createErrorResponse(
+    //         HttpStatusCode.BadRequest,
+    //         "Error updating the ticket template"
+    //     );
+    // }
 
     return createSuccessResponse({});
 };

@@ -4,8 +4,8 @@ import { createErrorResponse } from "../../utils/createErrorResponse";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { createAllBoardTicketTemplatesKey } from "../../keyGeneration/createAllBoardTicketTemplatesKey";
 import { createBoardTicketTemplateKey } from "../../keyGeneration/createBoardTicketTemplateKey";
-import { deleteItemFromPrimaryTable } from "../../dynamo/primaryTable/deleteItem";
 import { isBoardAdmin } from "../../utils/isBoardAdmin";
+import { overrideSpecificAttributesInPrimaryTable } from "../../dynamo/primaryTable/overrideSpecificAttributes";
 
 export const deleteTicketTemplateForBoard = async (
     event: APIGatewayProxyEvent
@@ -39,18 +39,23 @@ export const deleteTicketTemplateForBoard = async (
     const boardTicketTemplateKey = createBoardTicketTemplateKey(
         companyId,
         boardId,
-        ticketTemplateId
+        ticketTemplateId,
+        0
     );
     const allBoardTicketTemplatesKey = createAllBoardTicketTemplatesKey(
         companyId,
         boardId
     );
-    const itemWasDeletedSuccessfully = await deleteItemFromPrimaryTable(
+
+    const newAttributes = await overrideSpecificAttributesInPrimaryTable(
         boardTicketTemplateKey,
-        allBoardTicketTemplatesKey
+        allBoardTicketTemplatesKey,
+        {
+            hasBeenDeleted: true,
+        }
     );
 
-    if (itemWasDeletedSuccessfully === null) {
+    if (newAttributes === null) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
             "Error deleting the ticket template"
