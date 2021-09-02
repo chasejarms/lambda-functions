@@ -7,7 +7,6 @@ export interface ITicketTemplatePutRequest {
         label: string;
     };
     summary: {
-        isRequired: boolean;
         label: string;
     };
     sections: Section[];
