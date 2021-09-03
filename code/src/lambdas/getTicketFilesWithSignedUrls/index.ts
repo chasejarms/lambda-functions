@@ -2,13 +2,13 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { queryStringParametersError } from "../../utils/queryStringParametersError";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
-import { isBoardUser } from "../../utils/isBoardUser";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import * as AWS from "aws-sdk";
 import { S3 } from "aws-sdk";
 import { createTicketSourceFileS3StorageFolderKey } from "../../keyGeneration/createTicketSourceFileS3StorageFolderKey";
+import { isCompanyUser } from "../../utils/isCompanyUser";
 
 export const getTicketFilesWithSignedUrls = async (
     event: APIGatewayProxyEvent
@@ -30,11 +30,7 @@ export const getTicketFilesWithSignedUrls = async (
         companyId: string;
         ticketId: string;
     };
-    const canGetTicketFileSignedUrls = await isBoardUser(
-        event,
-        boardId,
-        companyId
-    );
+    const canGetTicketFileSignedUrls = await isCompanyUser(event, companyId);
     if (!canGetTicketFileSignedUrls) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,

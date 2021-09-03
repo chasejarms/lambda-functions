@@ -12,7 +12,7 @@ import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { getItemFromPrimaryTable } from "../../dynamo/primaryTable/getItem";
 import { ticketErrorMessageFromTicketTemplate } from "../../utils/ticketErrorMessageFromTicketTemplate";
 import { ticketSectionsError } from "../../utils/ticketSectionsError";
-import { isBoardUser } from "../../utils/isBoardUser";
+import { isCompanyUser } from "../../utils/isCompanyUser";
 
 export const updateTicketForBoard = async (
     event: APIGatewayProxyEvent
@@ -45,11 +45,7 @@ export const updateTicketForBoard = async (
     const companyId = companyPortion.replace("COMPANY.", "");
     const boardId = boardPortion.replace("BOARD.", "");
 
-    const canUpdateTicketForBoard = await isBoardUser(
-        event,
-        boardId,
-        companyId
-    );
+    const canUpdateTicketForBoard = await isCompanyUser(event, companyId);
     if (!canUpdateTicketForBoard) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,

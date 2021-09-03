@@ -4,12 +4,12 @@ import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
 import { queryStringParametersError } from "../../utils/queryStringParametersError";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
-import { isBoardUser } from "../../utils/isBoardUser";
 import * as Joi from "joi";
 import { createInProgressTicketKey } from "../../keyGeneration/createInProgressTicketKey";
 import { createAllInProgressTicketsKey } from "../../keyGeneration/createAllInProgressTicketsKey";
 import { overrideSpecificAttributesInPrimaryTable } from "../../dynamo/primaryTable/overrideSpecificAttributes";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
+import { isCompanyUser } from "../../utils/isCompanyUser";
 
 export const setAssignedToTicketField = async (
     event: APIGatewayProxyEvent
@@ -39,7 +39,7 @@ export const setAssignedToTicketField = async (
 
     const { companyId, boardId, ticketId } = event.queryStringParameters;
 
-    const canAssignTicket = await isBoardUser(event, boardId, companyId);
+    const canAssignTicket = await isCompanyUser(event, companyId);
     if (!canAssignTicket) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,

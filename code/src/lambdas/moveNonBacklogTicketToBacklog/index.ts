@@ -14,7 +14,7 @@ import {
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { createAllBacklogTicketsKey } from "../../keyGeneration/createAllBacklogTicketsKey";
 import { createBacklogTicketKey } from "../../keyGeneration/createBacklogTicketKey";
-import { isBoardUser } from "../../utils/isBoardUser";
+import { isCompanyUser } from "../../utils/isCompanyUser";
 
 export const moveNonBacklogTicketToBacklog = async (
     event: APIGatewayProxyEvent
@@ -35,7 +35,7 @@ export const moveNonBacklogTicketToBacklog = async (
 
     const { companyId, boardId, ticketId } = event.queryStringParameters;
 
-    const canMoveTicketToBacklog = await isBoardUser(event, boardId, companyId);
+    const canMoveTicketToBacklog = await isCompanyUser(event, companyId);
     if (!canMoveTicketToBacklog) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,

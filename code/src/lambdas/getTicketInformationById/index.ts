@@ -6,7 +6,7 @@ import { getItemFromDirectAccessTicketIdIndex } from "../../dynamo/directAccessT
 import { ITicket } from "../../models/database/ticket";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { createDirectAccessTicketIdKey } from "../../keyGeneration/createDirectAccessTicketIdKey";
-import { isBoardUser } from "../../utils/isBoardUser";
+import { isCompanyUser } from "../../utils/isCompanyUser";
 
 export const getTicketInformationById = async (
     event: APIGatewayProxyEvent
@@ -34,7 +34,7 @@ export const getTicketInformationById = async (
         );
     }
 
-    const canGetTicketForBoard = await isBoardUser(event, boardId, companyId);
+    const canGetTicketForBoard = await isCompanyUser(event, companyId);
     if (!canGetTicketForBoard) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,

@@ -18,7 +18,7 @@ import {
 } from "../../dynamo/primaryTable/transactWrite";
 import { createDoneTicketKey } from "../../keyGeneration/createDoneTicketKey";
 import { createAllDoneTicketsKey } from "../../keyGeneration/createAllDoneTicketsKey";
-import { isBoardUser } from "../../utils/isBoardUser";
+import { isCompanyUser } from "../../utils/isCompanyUser";
 
 export const markTicketAsDone = async (
     event: APIGatewayProxyEvent
@@ -45,7 +45,7 @@ export const markTicketAsDone = async (
         ticketType,
     } = event.queryStringParameters;
 
-    const canMarkTicketAsDone = await isBoardUser(event, boardId, companyId);
+    const canMarkTicketAsDone = await isCompanyUser(event, companyId);
     if (!canMarkTicketAsDone) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,

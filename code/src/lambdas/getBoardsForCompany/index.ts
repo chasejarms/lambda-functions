@@ -3,7 +3,6 @@ import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { IBoard } from "../../models/database/board";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
-import { isCompanyUser } from "../../utils/isCompanyUser";
 import { queryParentToChildIndexBeginsWith } from "../../dynamo/parentToChildIndex/queryBeginsWith";
 import { createCompanyBoardsKey } from "../../keyGeneration/createCompanyBoardsKey";
 import { createStartOfBoardKey } from "../../keyGeneration/createStartOfBoardKey";
@@ -45,11 +44,6 @@ export const getBoardsForCompany = async (
     }
 
     return createSuccessResponse({
-        items: boardItems.filter((board) => {
-            const userHasAccessToBoard = !!user.boardRights[
-                board.shortenedItemId
-            ];
-            return userHasAccessToBoard && !board.hasBeenDeleted;
-        }),
+        items: boardItems,
     });
 };

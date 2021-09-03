@@ -7,7 +7,7 @@ import { ITicketTemplate } from "../../models/database/ticketTemplate";
 import { queryStringParametersError } from "../../utils/queryStringParametersError";
 import { createBoardTicketTemplateKey } from "../../keyGeneration/createBoardTicketTemplateKey";
 import { getItemFromPrimaryTable } from "../../dynamo/primaryTable/getItem";
-import { isBoardUser } from "../../utils/isBoardUser";
+import { isCompanyUser } from "../../utils/isCompanyUser";
 
 export const getTicketTemplateForBoard = async (
     event: APIGatewayProxyEvent
@@ -31,11 +31,7 @@ export const getTicketTemplateForBoard = async (
         ticketTemplateId,
     } = event.queryStringParameters;
 
-    const canGetTicketTemplateForBoard = await isBoardUser(
-        event,
-        boardId,
-        companyId
-    );
+    const canGetTicketTemplateForBoard = await isCompanyUser(event, companyId);
 
     if (!canGetTicketTemplateForBoard) {
         return createErrorResponse(

@@ -18,7 +18,7 @@ import { createDirectAccessTicketIdKey } from "../../keyGeneration/createDirectA
 import { getItemFromDirectAccessTicketIdIndex } from "../../dynamo/directAccessTicketIdIndex/getItem";
 import { ticketErrorMessageFromTicketTemplate } from "../../utils/ticketErrorMessageFromTicketTemplate";
 import { ticketSectionsError } from "../../utils/ticketSectionsError";
-import { isBoardUser } from "../../utils/isBoardUser";
+import { isCompanyUser } from "../../utils/isCompanyUser";
 
 export const createTicketForBoard = async (
     event: APIGatewayProxyEvent
@@ -50,11 +50,7 @@ export const createTicketForBoard = async (
         companyId: string;
     };
 
-    const canCreateTicketForBoard = await isBoardUser(
-        event,
-        boardId,
-        companyId
-    );
+    const canCreateTicketForBoard = await isCompanyUser(event, companyId);
 
     if (!canCreateTicketForBoard) {
         return createErrorResponse(

@@ -5,7 +5,7 @@ import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { getItemFromPrimaryTable } from "../../dynamo/primaryTable/getItem";
 import { createBoardColumnInformationKey } from "../../keyGeneration/createBoardColumnInformationKey";
 import { IBoardColumnInformation } from "../../models/database/boardColumnInformation";
-import { isBoardUser } from "../../utils/isBoardUser";
+import { isCompanyUser } from "../../utils/isCompanyUser";
 
 export const getBoardColumnInformation = async (
     event: APIGatewayProxyEvent
@@ -19,7 +19,7 @@ export const getBoardColumnInformation = async (
         );
     }
 
-    const hasSufficientRights = await isBoardUser(event, boardId, companyId);
+    const hasSufficientRights = await isCompanyUser(event, companyId);
     if (!hasSufficientRights) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,

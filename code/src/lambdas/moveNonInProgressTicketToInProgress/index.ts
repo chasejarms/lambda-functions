@@ -14,7 +14,7 @@ import {
 import { createInProgressTicketKey } from "../../keyGeneration/createInProgressTicketKey";
 import { createAllInProgressTicketsKey } from "../../keyGeneration/createAllInProgressTicketsKey";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
-import { isBoardUser } from "../../utils/isBoardUser";
+import { isCompanyUser } from "../../utils/isCompanyUser";
 
 export const moveNonInProgressTicketToInProgress = async (
     event: APIGatewayProxyEvent
@@ -41,11 +41,7 @@ export const moveNonInProgressTicketToInProgress = async (
         columnId,
     } = event.queryStringParameters;
 
-    const canMoveTicketToInProgress = await isBoardUser(
-        event,
-        boardId,
-        companyId
-    );
+    const canMoveTicketToInProgress = await isCompanyUser(event, companyId);
     if (!canMoveTicketToInProgress) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,

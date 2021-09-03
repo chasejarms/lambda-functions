@@ -6,7 +6,7 @@ import { queryParentToChildIndexBeginsWith } from "../../dynamo/parentToChildInd
 import { ITicket } from "../../models/database/ticket";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { createAllBacklogTicketsKey } from "../../keyGeneration/createAllBacklogTicketsKey";
-import { isBoardUser } from "../../utils/isBoardUser";
+import { isCompanyUser } from "../../utils/isCompanyUser";
 
 export const getBacklogTicketsForBoard = async (
     event: APIGatewayProxyEvent
@@ -25,11 +25,7 @@ export const getBacklogTicketsForBoard = async (
 
     const { companyId, boardId } = event.queryStringParameters;
 
-    const canGetBacklogTicketsForBoard = await isBoardUser(
-        event,
-        boardId,
-        companyId
-    );
+    const canGetBacklogTicketsForBoard = await isCompanyUser(event, companyId);
     if (!canGetBacklogTicketsForBoard) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,

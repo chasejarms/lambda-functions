@@ -9,7 +9,7 @@ import { createInProgressTicketKey } from "../../keyGeneration/createInProgressT
 import { createAllInProgressTicketsKey } from "../../keyGeneration/createAllInProgressTicketsKey";
 import { overrideSpecificAttributesInPrimaryTable } from "../../dynamo/primaryTable/overrideSpecificAttributes";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
-import { isBoardUser } from "../../utils/isBoardUser";
+import { isCompanyUser } from "../../utils/isCompanyUser";
 
 export const updateColumnOnTicket = async (
     event: APIGatewayProxyEvent
@@ -49,11 +49,7 @@ export const updateColumnOnTicket = async (
         );
     }
 
-    const canUpdateTicketForBoard = await isBoardUser(
-        event,
-        boardId,
-        companyId
-    );
+    const canUpdateTicketForBoard = await isCompanyUser(event, companyId);
     if (!canUpdateTicketForBoard) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,

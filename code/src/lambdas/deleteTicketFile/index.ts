@@ -2,7 +2,6 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
 import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
-import { isBoardUser } from "../../utils/isBoardUser";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { queryStringParametersError } from "../../utils/queryStringParametersError";
@@ -10,6 +9,7 @@ import * as Joi from "joi";
 import { createTicketSourceFileS3StorageKey } from "../../keyGeneration/createTicketSourceFileS3StorageKey";
 import * as AWS from "aws-sdk";
 import { S3 } from "aws-sdk";
+import { isCompanyUser } from "../../utils/isCompanyUser";
 
 export const deleteTicketFile = async (
     event: APIGatewayProxyEvent
@@ -39,7 +39,7 @@ export const deleteTicketFile = async (
         companyId: string;
         ticketId: string;
     };
-    const canDeleteTicketImage = await isBoardUser(event, boardId, companyId);
+    const canDeleteTicketImage = await isCompanyUser(event, companyId);
     if (!canDeleteTicketImage) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,

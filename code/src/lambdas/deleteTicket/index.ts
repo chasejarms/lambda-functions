@@ -12,7 +12,7 @@ import { createAllBacklogTicketsKey } from "../../keyGeneration/createAllBacklog
 import { getItemFromDirectAccessTicketIdIndex } from "../../dynamo/directAccessTicketIdIndex/getItem";
 import { createDirectAccessTicketIdKey } from "../../keyGeneration/createDirectAccessTicketIdKey";
 import { ITicket } from "../../models/database/ticket";
-import { isBoardUser } from "../../utils/isBoardUser";
+import { isCompanyUser } from "../../utils/isCompanyUser";
 
 export const deleteTicket = async (
     event: APIGatewayProxyEvent
@@ -43,11 +43,7 @@ export const deleteTicket = async (
         ticketType: TicketType;
     };
 
-    const canDeleteTicketFromBoard = await isBoardUser(
-        event,
-        boardId,
-        companyId
-    );
+    const canDeleteTicketFromBoard = await isCompanyUser(event, companyId);
     if (!canDeleteTicketFromBoard) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,

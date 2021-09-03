@@ -5,7 +5,7 @@ import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { queryParentToChildIndexBeginsWithPaginated } from "../../dynamo/parentToChildIndex/queryBeginsWithPaginated";
 import { createAllDoneTicketsKey } from "../../keyGeneration/createAllDoneTicketsKey";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
-import { isBoardUser } from "../../utils/isBoardUser";
+import { isCompanyUser } from "../../utils/isCompanyUser";
 
 export const getDoneTickets = async (
     event: APIGatewayProxyEvent
@@ -37,11 +37,7 @@ export const getDoneTickets = async (
         lastEvaluatedBelongsTo?: string;
     };
 
-    const canGetDoneTicketsForBoard = await isBoardUser(
-        event,
-        boardId,
-        companyId
-    );
+    const canGetDoneTicketsForBoard = await isCompanyUser(event, companyId);
 
     if (!canGetDoneTicketsForBoard) {
         return createErrorResponse(

@@ -6,7 +6,7 @@ import { queryParentToChildIndexBeginsWith } from "../../dynamo/parentToChildInd
 import { createAllBoardTicketTemplatesKey } from "../../keyGeneration/createAllBoardTicketTemplatesKey";
 import { createStartOfTicketTemplateKey } from "../../keyGeneration/createStartOfTicketTemplateKey";
 import { ITicketTemplate } from "../../models/database/ticketTemplate";
-import { isBoardUser } from "../../utils/isBoardUser";
+import { isCompanyUser } from "../../utils/isCompanyUser";
 
 export const getTicketTemplatesForBoard = async (
     event: APIGatewayProxyEvent
@@ -20,11 +20,7 @@ export const getTicketTemplatesForBoard = async (
         );
     }
 
-    const canGetTicketTemplatesForBoard = await isBoardUser(
-        event,
-        boardId,
-        companyId
-    );
+    const canGetTicketTemplatesForBoard = await isCompanyUser(event, companyId);
 
     if (!canGetTicketTemplatesForBoard) {
         return createErrorResponse(

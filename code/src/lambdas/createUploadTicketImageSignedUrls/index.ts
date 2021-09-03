@@ -8,12 +8,12 @@ import {
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
 import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
-import { isBoardUser } from "../../utils/isBoardUser";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { queryStringParametersError } from "../../utils/queryStringParametersError";
 import * as Joi from "joi";
 import { createTicketSourceFileS3StorageKey } from "../../keyGeneration/createTicketSourceFileS3StorageKey";
+import { isCompanyUser } from "../../utils/isCompanyUser";
 
 export const createUploadTicketImageSignedUrls = async (
     event: APIGatewayProxyEvent
@@ -43,11 +43,7 @@ export const createUploadTicketImageSignedUrls = async (
         companyId: string;
         ticketId: string;
     };
-    const canUploadImagesForBoard = await isBoardUser(
-        event,
-        boardId,
-        companyId
-    );
+    const canUploadImagesForBoard = await isCompanyUser(event, companyId);
     if (!canUploadImagesForBoard) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,

@@ -506,23 +506,6 @@ Resources:
             Policies:
                 - AmazonDynamoDBFullAccess
             CodeUri: ../code/built/getAllUsersForCompany
-    GetAllUsersForBoard:
-        Type: AWS::Serverless::Function
-        Properties:
-            Events:
-                ApiEvent:
-                    Type: Api
-                    Properties:
-                        Path: /getAllUsersForBoard
-                        Method: get
-                        RestApiId:
-                            Ref: ProdAuthenticatedOnlyApi
-            Runtime: nodejs14.x
-            Handler: index.getAllUsersForBoard
-            FunctionName: GetAllUsersForBoard
-            Policies:
-                - AmazonDynamoDBFullAccess
-            CodeUri: ../code/built/getAllUsersForBoard
     UpdateCompanyUserRights:
         Type: AWS::Serverless::Function
         Properties:
@@ -593,23 +576,6 @@ Resources:
                 - AmazonDynamoDBFullAccess
                 - AmazonCognitoPowerUser
             CodeUri: ../code/built/removeUserFromCompany
-    UpdateUserBoardRights:
-        Type: AWS::Serverless::Function
-        Properties:
-            Events:
-                ApiEvent:
-                    Type: Api
-                    Properties:
-                        Path: /updateUserBoardRights
-                        Method: post
-                        RestApiId:
-                            Ref: ProdAuthenticatedOnlyApi
-            Runtime: nodejs14.x
-            Handler: index.updateUserBoardRights
-            FunctionName: UpdateUserBoardRights
-            Policies:
-                - AmazonDynamoDBFullAccess
-            CodeUri: ../code/built/updateUserBoardRights
     CreateUploadTicketImageSignedUrls:
         Type: AWS::Serverless::Function
         Properties:

@@ -6,7 +6,7 @@ import { createAllInProgressTicketsKey } from "../../keyGeneration/createAllInPr
 import { queryParentToChildIndexBeginsWith } from "../../dynamo/parentToChildIndex/queryBeginsWith";
 import { ITicket } from "../../models/database/ticket";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
-import { isBoardUser } from "../../utils/isBoardUser";
+import { isCompanyUser } from "../../utils/isCompanyUser";
 
 export const getInProgressTicketsForBoard = async (
     event: APIGatewayProxyEvent
@@ -25,9 +25,8 @@ export const getInProgressTicketsForBoard = async (
 
     const { companyId, boardId } = event.queryStringParameters;
 
-    const canGetInProgressTicketsForBoard = await isBoardUser(
+    const canGetInProgressTicketsForBoard = await isCompanyUser(
         event,
-        boardId,
         companyId
     );
     if (!canGetInProgressTicketsForBoard) {

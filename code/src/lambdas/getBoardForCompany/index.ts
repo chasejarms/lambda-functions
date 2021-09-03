@@ -7,7 +7,7 @@ import { createCompanyBoardsKey } from "../../keyGeneration/createCompanyBoardsK
 import { getItemFromPrimaryTable } from "../../dynamo/primaryTable/getItem";
 import { IBoard } from "../../models/database/board";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
-import { isBoardUser } from "../../utils/isBoardUser";
+import { isCompanyUser } from "../../utils/isCompanyUser";
 
 export const getBoardForCompany = async (
     event: APIGatewayProxyEvent
@@ -26,7 +26,7 @@ export const getBoardForCompany = async (
 
     const { companyId, boardId } = event.queryStringParameters;
 
-    const canGetBoardForCompany = await isBoardUser(event, boardId, companyId);
+    const canGetBoardForCompany = await isCompanyUser(event, companyId);
     if (!canGetBoardForCompany) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,

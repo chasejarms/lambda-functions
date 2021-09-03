@@ -5,7 +5,7 @@ import { createAllTagsKey } from "../../keyGeneration/createAllTagsKey";
 import { ITag } from "../../models/database/tag";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { queryParentToChildIndexBeginsWith } from "../../dynamo/parentToChildIndex/queryBeginsWith";
-import { isBoardUser } from "../../utils/isBoardUser";
+import { isCompanyUser } from "../../utils/isCompanyUser";
 
 export const getAllTagsForBoard = async (
     event: APIGatewayProxyEvent
@@ -19,7 +19,7 @@ export const getAllTagsForBoard = async (
         );
     }
 
-    const canGetTagsForBoard = await isBoardUser(event, boardId, companyId);
+    const canGetTagsForBoard = await isCompanyUser(event, companyId);
     if (!canGetTagsForBoard) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,
