@@ -10,4 +10,5 @@ export interface ITicketTemplatePutRequest {
         label: string;
     };
     sections: Section[];
+    priorityWeightingCalculation: string;
 }

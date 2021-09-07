@@ -12,15 +12,25 @@ export function ticketTemplateCreateRequestErrorMessage(
         }),
         summary: Joi.object({
             label: Joi.string().required(),
-            isRequired: Joi.bool().required(),
         }),
         sections: Joi.array().items(
             Joi.object({
                 type: Joi.string().required().valid("text"),
                 label: Joi.string().required(),
                 multiline: Joi.bool().required(),
+                required: Joi.bool().required(),
+            }),
+            Joi.object({
+                type: Joi.string().required().valid("number"),
+                label: Joi.string().required(),
+                required: Joi.bool().required(),
+                minValue: Joi.number(),
+                maxValue: Joi.number(),
+                allowOnlyIntegers: Joi.bool().required(),
+                alias: Joi.string(),
             })
         ),
+        priorityWeightingCalculation: Joi.string().required(),
     });
 
     const { error } = ticketTemplateSchema.validate(ticketTemplate);

@@ -1,8 +1,6 @@
 export function createStartOfTicketTemplateKey(
     companyId: string,
-    boardId: string,
-    version?: number
+    boardId: string
 ) {
-    const endOfKey = version === undefined ? "" : version;
-    return `COMPANY.${companyId}_BOARD.${boardId}_TICKETTEMPLATEVERSION.V${endOfKey}`;
+    return `COMPANY.${companyId}_BOARD.${boardId}_TICKETTEMPLATE.`;
 }

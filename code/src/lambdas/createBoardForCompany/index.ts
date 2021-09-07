@@ -22,9 +22,6 @@ import { createBoardTicketTemplateKey } from "../../keyGeneration/createBoardTic
 import { ITicketTemplate } from "../../models/database/ticketTemplate";
 import { createAllBoardTicketTemplatesKey } from "../../keyGeneration/createAllBoardTicketTemplatesKey";
 import { TransactWriteItemType } from "../../dynamo/primaryTable/transactWrite";
-import { IWeightingFunction } from "../../models/database/weightingFunction";
-import { createBoardWeightingFunctionKey } from "../../keyGeneration/createBoardWeightingFunctionKey";
-import { createAllBoardWeightingFunctionsKey } from "../../keyGeneration/createAllBoardWeightingFunctionsKey";
 
 export const createBoardForCompany = async (
     event: APIGatewayProxyEvent
@@ -104,25 +101,19 @@ export const createBoardForCompany = async (
             };
 
             const boardTicketTemplateId = generateUniqueId(1);
-            const boardTicketTemplateKeyV0 = createBoardTicketTemplateKey(
+            const boardTicketTemplateKey = createBoardTicketTemplateKey(
                 companyId,
                 boardId,
-                boardTicketTemplateId,
-                0
+                boardTicketTemplateId
             );
-            const boardTicketTemplateKeyV1 = createBoardTicketTemplateKey(
-                companyId,
-                boardId,
-                boardTicketTemplateId,
-                1
-            );
+
             const allBoardTicketTemplatesKey = createAllBoardTicketTemplatesKey(
                 companyId,
                 boardId
             );
 
-            const ticketTemplateV0: ITicketTemplate = {
-                itemId: boardTicketTemplateKeyV0,
+            const ticketTemplate: ITicketTemplate = {
+                itemId: boardTicketTemplateKey,
                 belongsTo: allBoardTicketTemplatesKey,
                 shortenedItemId: boardTicketTemplateId,
                 name: "Default",
@@ -134,53 +125,7 @@ export const createBoardForCompany = async (
                     label: "Ticket Summary",
                 },
                 sections: [],
-            };
-
-            const ticketTemplateV1: ITicketTemplate = {
-                itemId: boardTicketTemplateKeyV1,
-                belongsTo: allBoardTicketTemplatesKey,
-                shortenedItemId: boardTicketTemplateId,
-                name: "Default",
-                description: "Default ticket template description.",
-                title: {
-                    label: "Ticket Title",
-                },
-                summary: {
-                    label: "Ticket Summary",
-                },
-                sections: [],
-            };
-
-            const weightingFunctionId = generateUniqueId(2);
-            const boardWeightingFunctionKeyV0 = createBoardWeightingFunctionKey(
-                companyId,
-                boardId,
-                weightingFunctionId,
-                0
-            );
-
-            const boardWeightingFunctionKeyV1 = createBoardWeightingFunctionKey(
-                companyId,
-                boardId,
-                weightingFunctionId,
-                1
-            );
-
-            const allBoardWeightingFunctionsKey = createAllBoardWeightingFunctionsKey(
-                companyId,
-                boardId
-            );
-
-            const weightingFunctionV0: IWeightingFunction = {
-                itemId: boardWeightingFunctionKeyV0,
-                belongsTo: allBoardWeightingFunctionsKey,
-                function: "",
-            };
-
-            const weightingFunctionV1: IWeightingFunction = {
-                itemId: boardWeightingFunctionKeyV1,
-                belongsTo: allBoardWeightingFunctionsKey,
-                function: "",
+                priorityWeightingCalculation: "",
             };
 
             return [
@@ -201,22 +146,7 @@ export const createBoardForCompany = async (
                 },
                 {
                     type: TransactWriteItemType.Put,
-                    item: ticketTemplateV0,
-                    canOverrideExistingItem: false,
-                },
-                {
-                    type: TransactWriteItemType.Put,
-                    item: ticketTemplateV1,
-                    canOverrideExistingItem: false,
-                },
-                {
-                    type: TransactWriteItemType.Put,
-                    item: weightingFunctionV0,
-                    canOverrideExistingItem: false,
-                },
-                {
-                    type: TransactWriteItemType.Put,
-                    item: weightingFunctionV1,
+                    item: ticketTemplate,
                     canOverrideExistingItem: false,
                 },
             ];

@@ -1,8 +1,7 @@
 export function createBoardTicketTemplateKey(
     companyId: string,
     boardId: string,
-    ticketTemplateId: string,
-    versionNumber: number
+    ticketTemplateId: string
 ) {
-    return `COMPANY.${companyId}_BOARD.${boardId}_TICKETTEMPLATEVERSION.V${versionNumber}_TICKETTEMPLATE.${ticketTemplateId}`;
+    return `COMPANY.${companyId}_BOARD.${boardId}_TICKETTEMPLATE.${ticketTemplateId}`;
 }
