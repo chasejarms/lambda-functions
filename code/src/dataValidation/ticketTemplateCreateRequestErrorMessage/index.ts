@@ -27,10 +27,10 @@ export function ticketTemplateCreateRequestErrorMessage(
                 minValue: Joi.number(),
                 maxValue: Joi.number(),
                 allowOnlyIntegers: Joi.bool().required(),
-                alias: Joi.string(),
+                alias: Joi.string().allow(""),
             })
         ),
-        priorityWeightingCalculation: Joi.string().required(),
+        priorityWeightingCalculation: Joi.string().allow(""),
     });
 
     const { error } = ticketTemplateSchema.validate(ticketTemplate);
