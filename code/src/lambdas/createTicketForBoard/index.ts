@@ -16,9 +16,13 @@ import { ITicket } from "../../models/database/ticket";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { createDirectAccessTicketIdKey } from "../../keyGeneration/createDirectAccessTicketIdKey";
 import { getItemFromDirectAccessTicketIdIndex } from "../../dynamo/directAccessTicketIdIndex/getItem";
-import { ticketErrorMessageFromTicketTemplate } from "../../utils/ticketErrorMessageFromTicketTemplate";
+import { validateTicketTitleAndSummary } from "../../utils/validateTicketTitleAndSummary";
 import { ticketSectionsError } from "../../utils/ticketSectionsError";
 import { isCompanyUser } from "../../utils/isCompanyUser";
+import { getItemFromPrimaryTable } from "../../dynamo/primaryTable/getItem";
+import { createBoardTicketTemplateKey } from "../../keyGeneration/createBoardTicketTemplateKey";
+import { createAllBoardTicketTemplatesKey } from "../../keyGeneration/createAllBoardTicketTemplatesKey";
+import { ITicketTemplate } from "../../models/database/ticketTemplate";
 
 export const createTicketForBoard = async (
     event: APIGatewayProxyEvent
@@ -67,22 +71,7 @@ export const createTicketForBoard = async (
         title: Joi.string().required(),
         summary: Joi.string().allow(""),
         sections: Joi.array(),
-        tags: Joi.array().items(
-            Joi.object({
-                name: Joi.string(),
-                color: Joi.string(),
-            })
-        ),
-        simplifiedTicketTemplate: Joi.object({
-            title: Joi.object({
-                label: Joi.string().required(),
-            }).required(),
-            summary: Joi.object({
-                isRequired: Joi.boolean().required(),
-                label: Joi.string().required(),
-            }),
-            sections: Joi.array(),
-        }).required(),
+        ticketTemplateShortenedItemId: Joi.string().required(),
         startingColumnId: Joi.string().allow(""),
     });
 
@@ -91,9 +80,30 @@ export const createTicketForBoard = async (
         return createErrorResponse(HttpStatusCode.BadRequest, error.message);
     }
 
+    const boardTicketTemplateKey = createBoardTicketTemplateKey(
+        companyId,
+        boardId,
+        ticket.ticketTemplateShortenedItemId
+    );
+    const allBoardTicketTemplatesKey = createAllBoardTicketTemplatesKey(
+        companyId,
+        boardId
+    );
+    const ticketTemplate = await getItemFromPrimaryTable<ITicketTemplate>(
+        boardTicketTemplateKey,
+        allBoardTicketTemplatesKey
+    );
+
+    if (ticketTemplate === null) {
+        return createErrorResponse(
+            HttpStatusCode.BadRequest,
+            "There was an error retrieving the ticket template for the ticket"
+        );
+    }
+
     const errorFromTicketSections = ticketSectionsError(
         ticket.sections,
-        ticket.simplifiedTicketTemplate.sections
+        ticketTemplate.sections
     );
     if (errorFromTicketSections) {
         return createErrorResponse(
@@ -102,10 +112,9 @@ export const createTicketForBoard = async (
         );
     }
 
-    const ticketErrorMessage = ticketErrorMessageFromTicketTemplate(
+    const ticketErrorMessage = validateTicketTitleAndSummary(
         ticket.title,
-        ticket.summary,
-        ticket.simplifiedTicketTemplate
+        ticket.summary
     );
     if (ticketErrorMessage) {
         return createErrorResponse(
@@ -157,8 +166,7 @@ export const createTicketForBoard = async (
             title: ticket.title,
             summary: ticket.summary,
             sections: ticket.sections,
-            tags: ticket.tags,
-            simplifiedTicketTemplate: ticket.simplifiedTicketTemplate,
+            ticketTemplateShortenedItemId: ticket.ticketTemplateShortenedItemId,
             createdTimestamp: nowTimestamp,
             lastModifiedTimestamp: nowTimestamp,
             completedTimestamp: "",

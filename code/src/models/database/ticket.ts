@@ -6,23 +6,10 @@ export interface ITicket extends IDefaultPrimaryTableModel {
     title: string;
     summary: string;
     sections: any[];
+    ticketTemplateShortenedItemId: string;
     createdTimestamp: string;
     lastModifiedTimestamp: string;
     completedTimestamp: string;
-    tags: {
-        name: string;
-        color: string;
-    }[];
-    simplifiedTicketTemplate: {
-        title: {
-            label: string;
-        };
-        summary: {
-            isRequired: boolean;
-            label: string;
-        };
-        sections: Section[];
-    };
     columnId: string;
     directAccessTicketId: string;
     assignedTo?:

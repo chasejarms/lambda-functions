@@ -10,7 +10,7 @@ import { overrideSpecificAttributesInPrimaryTable } from "../../dynamo/primaryTa
 import { ITicket } from "../../models/database/ticket";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { getItemFromPrimaryTable } from "../../dynamo/primaryTable/getItem";
-import { ticketErrorMessageFromTicketTemplate } from "../../utils/ticketErrorMessageFromTicketTemplate";
+import { ticketErrorMessageFromTicketTemplate } from "../../utils/validateTicketTitleAndSummary";
 import { ticketSectionsError } from "../../utils/ticketSectionsError";
 import { isCompanyUser } from "../../utils/isCompanyUser";
 

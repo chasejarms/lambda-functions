@@ -14,6 +14,8 @@ export function ticketSectionsError(sectionValues: any[], sections: Section[]) {
             const error = textSectionError(value, section);
             if (error) return error;
         }
+
+        // TODO: Add in the number validation later
     }
 
     return "";
@@ -33,3 +35,6 @@ function textSectionError(value: any, section: ITextSection) {
 
     return "";
 }
+
+// TODO: Add in the number section soon
+function numberSectionError() {}
