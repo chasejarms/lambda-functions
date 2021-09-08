@@ -1,8 +1,8 @@
-import { ITicketTemplatePutRequest } from "../../models/requests/ticketTemplatePutRequest";
+import { ITicketTemplateCreateRequest } from "../../models/requests/ticketTemplateCreateRequest";
 import * as Joi from "joi";
 
 export function ticketTemplateCreateRequestErrorMessage(
-    ticketTemplate: ITicketTemplatePutRequest
+    ticketTemplate: ITicketTemplateCreateRequest
 ): string {
     const ticketTemplateSchema = Joi.object({
         name: Joi.string().required(),

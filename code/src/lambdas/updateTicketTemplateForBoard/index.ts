@@ -7,11 +7,11 @@ import { ITicketTemplate } from "../../models/database/ticketTemplate";
 import { createBoardTicketTemplateKey } from "../../keyGeneration/createBoardTicketTemplateKey";
 import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
 import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
-import { ITicketTemplatePutRequest } from "../../models/requests/ticketTemplatePutRequest";
 import { queryStringParametersError } from "../../utils/queryStringParametersError";
 import { overrideSpecificAttributesInPrimaryTable } from "../../dynamo/primaryTable/overrideSpecificAttributes";
 import { isBoardAdmin } from "../../utils/isBoardAdmin";
 import * as Joi from "joi";
+import { ITicketTemplatePutRequest } from "../../models/requests/ticketTemplatePutRequest";
 
 export const updateTicketTemplateForBoard = async (
     event: APIGatewayProxyEvent
@@ -45,21 +45,12 @@ export const updateTicketTemplateForBoard = async (
         ticketTemplateId,
     } = event.queryStringParameters;
 
-    const { ticketTemplate } = JSON.parse(event.body) as {
-        ticketTemplate: ITicketTemplatePutRequest;
-    };
-    if (!ticketTemplate) {
-        return createErrorResponse(
-            HttpStatusCode.BadRequest,
-            "ticketTemplate is a required field"
-        );
-    }
+    const request = JSON.parse(event.body) as ITicketTemplatePutRequest;
 
-    const body = JSON.parse(event.body);
     const requestBodySchema = Joi.object({
         priorityWeightingCalculation: Joi.string().allow(""),
     });
-    const { error } = requestBodySchema.validate(body);
+    const { error } = requestBodySchema.validate(request);
     if (error) {
         return createErrorResponse(HttpStatusCode.BadRequest, error.message);
     }
@@ -90,7 +81,7 @@ export const updateTicketTemplateForBoard = async (
     const updatedTicketTemplate = await overrideSpecificAttributesInPrimaryTable<
         ITicketTemplate
     >(boardTicketTemplateKey, allBoardTicketTemplatesKey, {
-        priorityWeightingCalculation: body.priorityWeightingCalculation,
+        priorityWeightingCalculation: request.priorityWeightingCalculation,
     });
 
     if (updatedTicketTemplate === null) {

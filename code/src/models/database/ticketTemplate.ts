@@ -1,8 +1,8 @@
 import { IDefaultPrimaryTableModel } from "./defaultPrimaryTableModel";
-import { ITicketTemplatePutRequest } from "../requests/ticketTemplatePutRequest";
+import { ITicketTemplateCreateRequest } from "../requests/ticketTemplateCreateRequest";
 
 export type ITicketTemplate = IDefaultPrimaryTableModel &
-    ITicketTemplatePutRequest & {
+    ITicketTemplateCreateRequest & {
         shortenedItemId: string;
         hasBeenDeleted?: boolean;
     };

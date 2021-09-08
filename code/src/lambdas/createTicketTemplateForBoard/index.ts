@@ -9,7 +9,7 @@ import { createBoardTicketTemplateKey } from "../../keyGeneration/createBoardTic
 import { bodyIsEmptyError } from "../../utils/bodyIsEmptyError";
 import { bodyIsNotAnObjectError } from "../../utils/bodyIsNotAnObjectError";
 import { ticketTemplateCreateRequestErrorMessage } from "../../dataValidation/ticketTemplateCreateRequestErrorMessage";
-import { ITicketTemplatePutRequest } from "../../models/requests/ticketTemplatePutRequest";
+import { ITicketTemplateCreateRequest } from "../../models/requests/ticketTemplateCreateRequest";
 import { isBoardAdmin } from "../../utils/isBoardAdmin";
 import { tryTransactWriteThreeTimesInPrimaryTable } from "../../dynamo/primaryTable/tryTransactWriteThreeTimes";
 import { TransactWriteItemType } from "../../dynamo/primaryTable/transactWrite";
@@ -37,7 +37,7 @@ export const createTicketTemplateForBoard = async (
     }
 
     const { ticketTemplate } = JSON.parse(event.body) as {
-        ticketTemplate: ITicketTemplatePutRequest;
+        ticketTemplate: ITicketTemplateCreateRequest;
     };
     if (!ticketTemplate) {
         return createErrorResponse(
