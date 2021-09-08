@@ -7,6 +7,10 @@ import { ITicket } from "../../models/database/ticket";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { createDirectAccessTicketIdKey } from "../../keyGeneration/createDirectAccessTicketIdKey";
 import { isCompanyUser } from "../../utils/isCompanyUser";
+import { getItemFromPrimaryTable } from "../../dynamo/primaryTable/getItem";
+import { createBoardTicketTemplateKey } from "../../keyGeneration/createBoardTicketTemplateKey";
+import { createAllBoardTicketTemplatesKey } from "../../keyGeneration/createAllBoardTicketTemplatesKey";
+import { ITicketTemplate } from "../../models/database/ticketTemplate";
 
 export const getTicketInformationById = async (
     event: APIGatewayProxyEvent
@@ -57,5 +61,29 @@ export const getTicketInformationById = async (
         );
     }
 
-    return createSuccessResponse(ticket);
+    const boardTicketTemplateKey = createBoardTicketTemplateKey(
+        companyId,
+        boardId,
+        ticket.ticketTemplateShortenedItemId
+    );
+    const allBoardTicketTemplatesKey = createAllBoardTicketTemplatesKey(
+        companyId,
+        boardId
+    );
+    const ticketTemplate = await getItemFromPrimaryTable<ITicketTemplate>(
+        boardTicketTemplateKey,
+        allBoardTicketTemplatesKey
+    );
+
+    if (ticketTemplate === null) {
+        return createErrorResponse(
+            HttpStatusCode.BadRequest,
+            "Failed to retrieve the ticket template for the ticket"
+        );
+    }
+
+    return createSuccessResponse({
+        ticket,
+        ticketTemplate,
+    });
 };

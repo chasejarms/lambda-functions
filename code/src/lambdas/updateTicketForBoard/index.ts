@@ -10,9 +10,11 @@ import { overrideSpecificAttributesInPrimaryTable } from "../../dynamo/primaryTa
 import { ITicket } from "../../models/database/ticket";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
 import { getItemFromPrimaryTable } from "../../dynamo/primaryTable/getItem";
-import { ticketErrorMessageFromTicketTemplate } from "../../utils/validateTicketTitleAndSummary";
+import { validateTicketTitleAndSummary } from "../../utils/validateTicketTitleAndSummary";
 import { ticketSectionsError } from "../../utils/ticketSectionsError";
 import { isCompanyUser } from "../../utils/isCompanyUser";
+import { createBoardTicketTemplateKey } from "../../keyGeneration/createBoardTicketTemplateKey";
+import { createAllBoardTicketTemplatesKey } from "../../keyGeneration/createAllBoardTicketTemplatesKey";
 
 export const updateTicketForBoard = async (
     event: APIGatewayProxyEvent
@@ -58,12 +60,6 @@ export const updateTicketForBoard = async (
     const requestSchema = Joi.object({
         title: Joi.string().required(),
         summary: Joi.string().allow(""),
-        tags: Joi.array().items(
-            Joi.object({
-                name: Joi.string(),
-                color: Joi.string(),
-            })
-        ),
         sections: Joi.array(),
     });
 
@@ -78,10 +74,30 @@ export const updateTicketForBoard = async (
         );
     }
 
-    const ticketErrorMessage = ticketErrorMessageFromTicketTemplate(
+    const boardTicketTemplateKey = createBoardTicketTemplateKey(
+        companyId,
+        boardId,
+        originalTicket.ticketTemplateShortenedItemId
+    );
+    const allBoardTicketTemplatesKey = createAllBoardTicketTemplatesKey(
+        companyId,
+        boardId
+    );
+    const originalTicketTemplate = await getItemFromPrimaryTable<ITicket>(
+        boardTicketTemplateKey,
+        allBoardTicketTemplatesKey
+    );
+
+    if (originalTicketTemplate === null) {
+        return createErrorResponse(
+            HttpStatusCode.BadRequest,
+            "There was an error retrieving the original ticket template"
+        );
+    }
+
+    const ticketErrorMessage = validateTicketTitleAndSummary(
         parsedBody.title,
-        parsedBody.summary,
-        originalTicket.simplifiedTicketTemplate
+        parsedBody.summary
     );
     if (ticketErrorMessage) {
         return createErrorResponse(
@@ -97,7 +113,7 @@ export const updateTicketForBoard = async (
 
     const errorFromTicketSections = ticketSectionsError(
         parsedBody.sections,
-        originalTicket.simplifiedTicketTemplate.sections
+        originalTicketTemplate.sections
     );
     if (errorFromTicketSections) {
         return createErrorResponse(
@@ -109,7 +125,6 @@ export const updateTicketForBoard = async (
     const updatedTicket = await overrideSpecificAttributesInPrimaryTable<
         ITicket
     >(itemId, belongsTo, {
-        tags: parsedBody.tags,
         summary: parsedBody.summary,
         title: parsedBody.title,
         sections: parsedBody.sections,
