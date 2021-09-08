@@ -49,6 +49,8 @@ export const getTicketTemplatesForBoard = async (
     }
 
     return createSuccessResponse({
-        items: ticketTemplates,
+        items: ticketTemplates.filter((template) => {
+            return !template.hasBeenDeleted;
+        }),
     });
 };
