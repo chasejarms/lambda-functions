@@ -18,9 +18,6 @@ import {
     defaultInProgressColumn,
     defaultDoneColumn,
 } from "../../constants/reservedBoardColumnData";
-import { createBoardTicketTemplateKey } from "../../keyGeneration/createBoardTicketTemplateKey";
-import { ITicketTemplate } from "../../models/database/ticketTemplate";
-import { createAllBoardTicketTemplatesKey } from "../../keyGeneration/createAllBoardTicketTemplatesKey";
 import { TransactWriteItemType } from "../../dynamo/primaryTable/transactWrite";
 
 export const createBoardForCompany = async (
@@ -100,34 +97,6 @@ export const createBoardForCompany = async (
                 },
             };
 
-            const boardTicketTemplateId = generateUniqueId(1);
-            const boardTicketTemplateKey = createBoardTicketTemplateKey(
-                companyId,
-                boardId,
-                boardTicketTemplateId
-            );
-
-            const allBoardTicketTemplatesKey = createAllBoardTicketTemplatesKey(
-                companyId,
-                boardId
-            );
-
-            const ticketTemplate: ITicketTemplate = {
-                itemId: boardTicketTemplateKey,
-                belongsTo: allBoardTicketTemplatesKey,
-                shortenedItemId: boardTicketTemplateId,
-                name: "Default",
-                description: "Default ticket template description.",
-                title: {
-                    label: "Ticket Title",
-                },
-                summary: {
-                    label: "Ticket Summary",
-                },
-                sections: [],
-                priorityWeightingCalculation: "",
-            };
-
             return [
                 {
                     type: TransactWriteItemType.Put,
@@ -142,11 +111,6 @@ export const createBoardForCompany = async (
                 {
                     type: TransactWriteItemType.Put,
                     item: boardColumnInformation,
-                    canOverrideExistingItem: false,
-                },
-                {
-                    type: TransactWriteItemType.Put,
-                    item: ticketTemplate,
                     canOverrideExistingItem: false,
                 },
             ];
