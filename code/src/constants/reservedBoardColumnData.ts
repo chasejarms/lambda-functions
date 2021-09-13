@@ -12,13 +12,29 @@ export const defaultUncategorizedColumn: IBoardColumn = {
 };
 
 export const defaultDoneColumn: IBoardColumn = {
-    name: "Done",
+    name: "Archived",
     id: doneColumnReservedId,
     canBeModified: false,
 };
 
-export const defaultInProgressColumn: IBoardColumn = {
-    name: "In Progress",
-    id: generateUniqueId(1),
-    canBeModified: true,
-};
+export function generateDefaultColumns(): IBoardColumn[] {
+    const toDo = {
+        name: "To Do",
+        id: generateUniqueId(4),
+        canBeModified: true,
+    };
+
+    const doing = {
+        name: "Doing",
+        id: generateUniqueId(4),
+        canBeModified: true,
+    };
+
+    const done = {
+        name: "Done",
+        id: generateUniqueId(4),
+        canBeModified: true,
+    };
+
+    return [toDo, doing, done];
+}

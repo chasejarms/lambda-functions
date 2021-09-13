@@ -15,7 +15,7 @@ import { createBoardColumnInformationKey } from "../../keyGeneration/createBoard
 import { IBoardColumnInformation } from "../../models/database/boardColumnInformation";
 import {
     defaultUncategorizedColumn,
-    defaultInProgressColumn,
+    generateDefaultColumns,
     defaultDoneColumn,
 } from "../../constants/reservedBoardColumnData";
 import { TransactWriteItemType } from "../../dynamo/primaryTable/transactWrite";
@@ -81,7 +81,7 @@ export const createBoardForCompany = async (
                 belongsTo: boardColumnInformationKey,
                 columns: [
                     defaultUncategorizedColumn,
-                    defaultInProgressColumn,
+                    ...generateDefaultColumns(),
                     defaultDoneColumn,
                 ],
             };
