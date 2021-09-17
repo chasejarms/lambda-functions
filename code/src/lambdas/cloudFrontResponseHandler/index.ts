@@ -20,7 +20,7 @@ export const cloudFrontResponseHandler: CloudFrontResponseHandler = (
         {
             key: "Content-Security-Policy",
             value:
-                "default-src 'self' https://mzfc9fiigj.execute-api.us-east-1.amazonaws.com https://ec366txftb.execute-api.us-east-1.amazonaws.com https://cognito-idp.us-east-1.amazonaws.com; style-src 'self' 'unsafe-inline' https://*; font-src 'self' https://*;",
+                "default-src 'self' https://mzfc9fiigj.execute-api.us-east-1.amazonaws.com https://ec366txftb.execute-api.us-east-1.amazonaws.com https://cognito-idp.us-east-1.amazonaws.com https://elastic-project-management-company-source-files.s3.us-east-1.amazonaws.com; style-src 'self' 'unsafe-inline' https://*; font-src 'self' https://*;",
         },
     ];
     headers["x-xss-protection"] = [
