@@ -16,7 +16,6 @@ import { IBoardColumnInformation } from "../../models/database/boardColumnInform
 import {
     defaultUncategorizedColumn,
     generateDefaultColumns,
-    defaultDoneColumn,
 } from "../../constants/reservedBoardColumnData";
 import { TransactWriteItemType } from "../../dynamo/primaryTable/transactWrite";
 
