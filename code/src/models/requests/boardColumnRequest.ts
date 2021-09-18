@@ -1,5 +1,5 @@
 export interface IBoardColumnRequest {
     name: string;
-    id?: string;
+    id: string;
     canBeModified: boolean;
 }

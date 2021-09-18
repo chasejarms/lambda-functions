@@ -2,25 +2,30 @@ import { IBoardColumnRequest } from "../../models/requests/boardColumnRequest";
 import { isEqual } from "lodash";
 import {
     defaultUncategorizedColumn,
-    defaultDoneColumn,
     reservedColumnIdStart,
 } from "../../constants/reservedBoardColumnData";
 
+export const columnDataErrorMessageLessThanTwoColumns =
+    "Must have at least one custom column";
+export const columnDataErrorMessageUncategorizedColumnChanged =
+    "The uncategorized column cannot be changed";
+export const columnDataErrorMessageOtherColumnsAreInvalid =
+    "Added column eithers starts with INTERNAL for the id or has had its modified property updated to be false.";
+export const columnDataErrorMessageColumnsMustHaveId =
+    "All columns must have an id";
+export const columnDataErrorMessageDuplicateIds =
+    "Each column must have a unique id";
+
 export function columnDataErrorMessage(columns: IBoardColumnRequest[]) {
-    if (columns.length === 2) {
-        return "Must have at least one custom column";
+    if (columns.length < 2) {
+        return columnDataErrorMessageLessThanTwoColumns;
     }
 
     const uncategorizedColumn = columns[0];
-    const doneColumn = columns[columns.length - 1];
-    const otherColumns = columns.slice(1, columns.length - 1);
+    const otherColumns = columns.slice(1);
 
     if (!isEqual(uncategorizedColumn, defaultUncategorizedColumn)) {
-        return "The uncategorized column cannot be changed";
-    }
-
-    if (!isEqual(doneColumn, defaultDoneColumn)) {
-        return "The done column cannot be changed";
+        return columnDataErrorMessageUncategorizedColumnChanged;
     }
 
     const otherColumnsAreInvalid = otherColumns.some((column) => {
@@ -31,7 +36,7 @@ export function columnDataErrorMessage(columns: IBoardColumnRequest[]) {
     });
 
     if (otherColumnsAreInvalid) {
-        return "Added column eithers starts with INTERNAL for the id or has had its modified property updated to be false.";
+        return columnDataErrorMessageOtherColumnsAreInvalid;
     }
 
     const allColumnsHaveId = columns.every((column) => {
@@ -39,7 +44,20 @@ export function columnDataErrorMessage(columns: IBoardColumnRequest[]) {
     });
 
     if (!allColumnsHaveId) {
-        return "All columns must have an id";
+        return columnDataErrorMessageColumnsMustHaveId;
+    }
+
+    const idsMapping: {
+        [id: string]: boolean;
+    } = {};
+
+    for (let i = 0; i < columns.length; i++) {
+        const { id } = columns[i];
+        const idAlreadyExists = !!idsMapping[id];
+        if (idAlreadyExists) {
+            return columnDataErrorMessageDuplicateIds;
+        }
+        idsMapping[id] = true;
     }
 
     return "";
