@@ -82,7 +82,6 @@ export const createBoardForCompany = async (
                 columns: [
                     defaultUncategorizedColumn,
                     ...generateDefaultColumns(),
-                    defaultDoneColumn,
                 ],
             };
 
