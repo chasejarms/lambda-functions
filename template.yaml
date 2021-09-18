@@ -88,6 +88,18 @@ Resources:
         Type: AWS::S3::Bucket
         Properties:
             AccessControl: "Private"
+            CorsConfiguration:
+                CorsRules:
+                    - AllowedHeaders:
+                          - "*"
+                      AllowedMethods:
+                          - GET
+                          - PUT
+                          - HEAD
+                          - POST
+                          - DELETE
+                      AllowedOrigins:
+                          - "*"
             BucketName: "elastic-project-management-company-source-files"
             BucketEncryption:
                 ServerSideEncryptionConfiguration:

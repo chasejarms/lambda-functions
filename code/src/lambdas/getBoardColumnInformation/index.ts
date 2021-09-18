@@ -6,24 +6,36 @@ import { getItemFromPrimaryTable } from "../../dynamo/primaryTable/getItem";
 import { createBoardColumnInformationKey } from "../../keyGeneration/createBoardColumnInformationKey";
 import { IBoardColumnInformation } from "../../models/database/boardColumnInformation";
 import { isCompanyUser } from "../../utils/isCompanyUser";
+import { doneColumnReservedId } from "../../constants/reservedBoardColumnData";
+import { queryStringParametersError } from "../../utils/queryStringParametersError";
+
+export const getBoardColumnInformationInsufficentRights =
+    "insufficient rights to access this board information";
+export const getBoardColumnInformationCouldNotFindBoard =
+    "could not find board column information for the given board";
 
 export const getBoardColumnInformation = async (
     event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
-    const { boardId, companyId } = event.queryStringParameters;
-
-    if (!companyId || !boardId) {
+    const queryStringParametersErrorMessage = queryStringParametersError(
+        event.queryStringParameters,
+        "companyId",
+        "boardId"
+    );
+    if (queryStringParametersErrorMessage) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
-            "companyId and boardId are required query parameters"
+            queryStringParametersErrorMessage
         );
     }
+
+    const { boardId, companyId } = event.queryStringParameters;
 
     const hasSufficientRights = await isCompanyUser(event, companyId);
     if (!hasSufficientRights) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,
-            "insufficient rights to access this board information"
+            getBoardColumnInformationInsufficentRights
         );
     }
 
@@ -38,11 +50,18 @@ export const getBoardColumnInformation = async (
     if (boardColumnInformation === null) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
-            "could not find board column information for the given board"
+            getBoardColumnInformationCouldNotFindBoard
         );
     }
 
+    // this is to account for a legacy value which has been removed on new columns
+    const columnsWithoutDoneColumn = boardColumnInformation.columns.filter(
+        (column) => {
+            return column.id !== doneColumnReservedId;
+        }
+    );
+
     return createSuccessResponse({
-        columns: boardColumnInformation.columns,
+        columns: columnsWithoutDoneColumn,
     });
 };

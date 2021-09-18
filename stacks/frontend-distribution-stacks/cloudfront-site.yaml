@@ -54,11 +54,11 @@ Resources:
             Runtime: "nodejs14.x"
             Timeout: 25
 
-    LambdaVersion2:
+    LambdaVersion3:
         Type: AWS::Lambda::Version
         Properties:
             FunctionName: !Ref LambdaEdgeFunction
-            Description: v2
+            Description: v3
 
     LambdaEdgeFunctionRole:
         Type: AWS::IAM::Role
@@ -97,7 +97,7 @@ Resources:
                     TargetOriginId: !Sub "S3-${AWS::StackName}-root"
                     LambdaFunctionAssociations:
                         - EventType: origin-response
-                          LambdaFunctionARN: !Ref LambdaVersion2
+                          LambdaFunctionARN: !Ref LambdaVersion3
                     ViewerProtocolPolicy: "redirect-to-https"
                 CustomErrorResponses:
                     - ErrorCachingMinTTL: 60
@@ -165,7 +165,7 @@ Resources:
 Outputs:
     LambdaEdgeFunctionVersion:
         Description: Security Lambda version
-        Value: !Ref LambdaVersion2
+        Value: !Ref LambdaVersion3
 
     CloudFrontDistribution:
         Description: CloudFront distribution
