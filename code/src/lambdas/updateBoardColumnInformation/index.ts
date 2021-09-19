@@ -9,6 +9,14 @@ import { columnDataErrorMessage } from "../../dataValidation/columnDataErrorMess
 import { createBoardColumnInformationKey } from "../../keyGeneration/createBoardColumnInformationKey";
 import { overrideItemInPrimaryTable } from "../../dynamo/primaryTable/overrideItem";
 import { isBoardAdmin } from "../../utils/isBoardAdmin";
+import { queryStringParametersError } from "../../utils/queryStringParametersError";
+
+export const updateBoardColumnInformationErrors = {
+    columnsRequiredOnRequestBody:
+        "columns is a required field on the request body",
+    insufficientPermissions:
+        "Insufficient permissions to modify board column information",
+};
 
 export const updateBoardColumnInformation = async (
     event: APIGatewayProxyEvent
@@ -23,15 +31,27 @@ export const updateBoardColumnInformation = async (
         return bodyIsNotAnObjectErrorResponse;
     }
 
+    const queryStringParametersErrorMessage = queryStringParametersError(
+        event.queryStringParameters,
+        "boardId",
+        "companyId"
+    );
+    if (queryStringParametersErrorMessage) {
+        return createErrorResponse(
+            HttpStatusCode.BadRequest,
+            queryStringParametersErrorMessage
+        );
+    }
+
     const { boardId, companyId } = event.queryStringParameters;
     const { columns } = JSON.parse(
         event.body
     ) as IBoardColumnInformationRequest;
 
-    if (!columns || !boardId || !companyId) {
+    if (!columns) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
-            "columns, boardId, and companyId are required fields"
+            updateBoardColumnInformationErrors.columnsRequiredOnRequestBody
         );
     }
 
@@ -43,7 +63,7 @@ export const updateBoardColumnInformation = async (
     if (!canUpdateBoardColumnInformation) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,
-            "Insufficient permissions to modify board column information"
+            updateBoardColumnInformationErrors.insufficientPermissions
         );
     }
 
