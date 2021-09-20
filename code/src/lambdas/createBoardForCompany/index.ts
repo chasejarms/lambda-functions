@@ -24,6 +24,9 @@ export const createBoardForCompanyErrors = {
     insufficientRights:
         "Must be a company user to create boards for this company",
     dynamoError: "Failed to update database",
+    companyIdIsRequired: "A company id is required",
+    boardNameIsRequired: "A board name is required",
+    boardDescriptionIsRequired: "A board description is required",
 };
 
 export const createBoardForCompany = async (
@@ -41,11 +44,19 @@ export const createBoardForCompany = async (
 
     const parsedBody = JSON.parse(event.body);
     const bodySchema = Joi.object({
-        companyId: Joi.string().required().label("A company id is required"),
-        boardName: Joi.string().required().label("A board name is required"),
+        companyId: Joi.string()
+            .required()
+            .error(new Error(createBoardForCompanyErrors.companyIdIsRequired)),
+        boardName: Joi.string()
+            .required()
+            .error(new Error(createBoardForCompanyErrors.boardNameIsRequired)),
         boardDescription: Joi.string()
             .required()
-            .label("A board description is required"),
+            .error(
+                new Error(
+                    createBoardForCompanyErrors.boardDescriptionIsRequired
+                )
+            ),
     });
 
     const { error } = bodySchema.validate(parsedBody);
@@ -64,7 +75,7 @@ export const createBoardForCompany = async (
         );
     }
 
-    let boardId: string;
+    let boardId: string = "";
     const writeWasSuccessful = await tryTransactWriteThreeTimesInPrimaryTable(
         () => {
             boardId = generateUniqueId(2);
