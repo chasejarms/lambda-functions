@@ -207,7 +207,7 @@ describe("updateBoardColumnInformation", () => {
                                     overrideItemInPrimaryTableModule,
                                     "overrideItemInPrimaryTable"
                                 ).mockImplementation(() => {
-                                    return null;
+                                    return Promise.resolve(null);
                                 });
 
                                 const response = await updateBoardColumnInformation(
@@ -241,7 +241,7 @@ describe("updateBoardColumnInformation", () => {
                                     overrideItemInPrimaryTableModule,
                                     "overrideItemInPrimaryTable"
                                 ).mockImplementation(() => {
-                                    return true;
+                                    return Promise.resolve(true);
                                 });
 
                                 const columns: IBoardColumnRequest[] = [
