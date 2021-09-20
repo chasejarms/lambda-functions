@@ -16,6 +16,7 @@ export const updateBoardColumnInformationErrors = {
         "columns is a required field on the request body",
     insufficientPermissions:
         "Insufficient permissions to modify board column information",
+    dynamoError: "Error updating the board column information",
 };
 
 export const updateBoardColumnInformation = async (
@@ -92,7 +93,7 @@ export const updateBoardColumnInformation = async (
     if (!wasUpdated) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
-            "Error updating the board column information"
+            updateBoardColumnInformationErrors.dynamoError
         );
     }
 

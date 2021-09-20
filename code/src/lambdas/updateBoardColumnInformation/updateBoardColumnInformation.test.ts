@@ -3,6 +3,7 @@ import * as bodyIsNotAnObjectErrorModule from "../../utils/bodyIsNotAnObjectErro
 import * as queryStringParametersErrorModule from "../../utils/queryStringParametersError";
 import * as isBoardAdminModule from "../../utils/isBoardAdmin";
 import * as columnDataErrorMessageModule from "../../dataValidation/columnDataErrorMessage";
+import * as overrideItemInPrimaryTableModule from "../../dynamo/primaryTable/overrideItem";
 import { createErrorResponse } from "../../utils/createErrorResponse";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import {
@@ -10,6 +11,7 @@ import {
     updateBoardColumnInformationErrors,
 } from ".";
 import { isEqual } from "lodash";
+import { IBoardColumnRequest } from "../../models/requests/boardColumnRequest";
 
 describe("updateBoardColumnInformation", () => {
     describe("the bodyIsEmptyError function returned an error", () => {
@@ -189,7 +191,91 @@ describe("updateBoardColumnInformation", () => {
                         });
                     });
 
-                    describe("columnDataErrorMessage retured an empty string", () => {});
+                    describe("columnDataErrorMessage retured an empty string", () => {
+                        beforeEach(() => {
+                            jest.spyOn(
+                                columnDataErrorMessageModule,
+                                "columnDataErrorMessage"
+                            ).mockImplementation(() => {
+                                return "" as any;
+                            });
+                        });
+
+                        describe("overrideItemInPrimaryTable returned a falsy response", () => {
+                            it("should return the correct error", async () => {
+                                jest.spyOn(
+                                    overrideItemInPrimaryTableModule,
+                                    "overrideItemInPrimaryTable"
+                                ).mockImplementation(() => {
+                                    return null;
+                                });
+
+                                const response = await updateBoardColumnInformation(
+                                    {
+                                        queryStringParameters: {
+                                            boardId: "123",
+                                            companyId: "456",
+                                        },
+                                        body: JSON.stringify({
+                                            columns: [],
+                                        }),
+                                    } as any
+                                );
+                                expect(response.statusCode).toBe(
+                                    HttpStatusCode.BadRequest
+                                );
+                                const parsedBody = JSON.parse(
+                                    response.body
+                                ) as {
+                                    message: string;
+                                };
+                                expect(parsedBody.message).toBe(
+                                    updateBoardColumnInformationErrors.dynamoError
+                                );
+                            });
+                        });
+
+                        describe("overrideItemInPrimaryTable returned a truthy response", () => {
+                            it("should return the columns back to the client", async () => {
+                                jest.spyOn(
+                                    overrideItemInPrimaryTableModule,
+                                    "overrideItemInPrimaryTable"
+                                ).mockImplementation(() => {
+                                    return true;
+                                });
+
+                                const columns: IBoardColumnRequest[] = [
+                                    {
+                                        name: "To Do",
+                                        id: "1",
+                                        canBeModified: false,
+                                    },
+                                ];
+                                const response = await updateBoardColumnInformation(
+                                    {
+                                        queryStringParameters: {
+                                            boardId: "123",
+                                            companyId: "456",
+                                        },
+                                        body: JSON.stringify({
+                                            columns,
+                                        }),
+                                    } as any
+                                );
+                                expect(response.statusCode).toBe(
+                                    HttpStatusCode.Ok
+                                );
+                                const parsedBody = JSON.parse(
+                                    response.body
+                                ) as {
+                                    columns: IBoardColumnRequest[];
+                                };
+                                expect(
+                                    isEqual(parsedBody.columns, columns)
+                                ).toBe(true);
+                            });
+                        });
+                    });
                 });
             });
         });
