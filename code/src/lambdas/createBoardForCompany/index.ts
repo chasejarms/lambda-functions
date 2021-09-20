@@ -18,6 +18,13 @@ import {
     generateDefaultColumns,
 } from "../../constants/reservedBoardColumnData";
 import { TransactWriteItemType } from "../../dynamo/primaryTable/transactWrite";
+import * as Joi from "joi";
+
+export const createBoardForCompanyErrors = {
+    insufficientRights:
+        "Must be a company user to create boards for this company",
+    dynamoError: "Failed to update database",
+};
 
 export const createBoardForCompany = async (
     event: APIGatewayProxyEvent
@@ -32,27 +39,28 @@ export const createBoardForCompany = async (
         return bodyIsNotAnObjectErrorResponse;
     }
 
-    const { companyId, boardName, boardDescription } = JSON.parse(
-        event.body
-    ) as {
-        companyId: string;
-        boardName: string;
-        boardDescription: string;
-    };
+    const parsedBody = JSON.parse(event.body);
+    const bodySchema = Joi.object({
+        companyId: Joi.string().required().label("A company id is required"),
+        boardName: Joi.string().required().label("A board name is required"),
+        boardDescription: Joi.string()
+            .required()
+            .label("A board description is required"),
+    });
 
-    if (!companyId || !boardName || !boardDescription) {
-        return createErrorResponse(
-            HttpStatusCode.BadRequest,
-            "companyId, boardName, boardDescription, and priority type are required fields."
-        );
+    const { error } = bodySchema.validate(parsedBody);
+    if (error) {
+        return createErrorResponse(HttpStatusCode.BadRequest, error.message);
     }
+
+    const { companyId, boardName, boardDescription } = parsedBody;
 
     const companyUser = await getUser(event, companyId);
 
     if (companyUser === null) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
-            "Insufficient rights, must be a company user to create boards for this company"
+            createBoardForCompanyErrors.insufficientRights
         );
     }
 
@@ -117,7 +125,7 @@ export const createBoardForCompany = async (
     if (!writeWasSuccessful) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
-            "Unable to create the board and user"
+            createBoardForCompanyErrors.dynamoError
         );
     }
 
