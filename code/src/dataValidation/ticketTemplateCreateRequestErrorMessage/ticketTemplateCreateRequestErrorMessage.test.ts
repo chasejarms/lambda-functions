@@ -122,8 +122,221 @@ describe("ticketTemplateCreateRequestErrorMessage", () => {
                 },
             } as any);
             expect(errorMessage).toBe(
-                ticketTemplateCreateRequestErrorMessageMapping.sectionsIsRequired
+                ticketTemplateCreateRequestErrorMessageMapping.sectionsIsInvalid
             );
+        });
+    });
+
+    describe("the section is an invalid type", () => {
+        it("should return the correct error message", () => {
+            const errorMessage = ticketTemplateCreateRequestErrorMessage({
+                name: "Development",
+                description: "This is the description",
+                title: {
+                    label: "Title",
+                },
+                summary: {
+                    label: "Summary",
+                },
+                sections: [
+                    {
+                        type: "not-valid",
+                    },
+                ],
+            } as any);
+            expect(errorMessage).toBe(
+                ticketTemplateCreateRequestErrorMessageMapping.sectionsIsInvalid
+            );
+        });
+    });
+
+    describe("text section", () => {
+        describe("a label is not provided", () => {
+            it("should return the correct error message", () => {
+                const errorMessage = ticketTemplateCreateRequestErrorMessage({
+                    name: "Development",
+                    description: "This is the description",
+                    title: {
+                        label: "Title",
+                    },
+                    summary: {
+                        label: "Summary",
+                    },
+                    sections: [
+                        {
+                            type: "text",
+                            multiline: false,
+                            required: false,
+                        },
+                    ],
+                } as any);
+                expect(errorMessage).toBe(
+                    ticketTemplateCreateRequestErrorMessageMapping.sectionsIsInvalid
+                );
+            });
+        });
+
+        describe("the label is an empty string", () => {
+            it("should return the correct error message", () => {
+                const errorMessage = ticketTemplateCreateRequestErrorMessage({
+                    name: "Development",
+                    description: "This is the description",
+                    title: {
+                        label: "Title",
+                    },
+                    summary: {
+                        label: "Summary",
+                    },
+                    sections: [
+                        {
+                            type: "text",
+                            label: "",
+                            multiline: false,
+                            required: false,
+                        },
+                    ],
+                } as any);
+                expect(errorMessage).toBe(
+                    ticketTemplateCreateRequestErrorMessageMapping.sectionsIsInvalid
+                );
+            });
+        });
+
+        describe("multiline is not provided", () => {
+            it("should return the correct error message", () => {
+                const errorMessage = ticketTemplateCreateRequestErrorMessage({
+                    name: "Development",
+                    description: "This is the description",
+                    title: {
+                        label: "Title",
+                    },
+                    summary: {
+                        label: "Summary",
+                    },
+                    sections: [
+                        {
+                            type: "text",
+                            label: "Label",
+                            required: false,
+                        },
+                    ],
+                } as any);
+                expect(errorMessage).toBe(
+                    ticketTemplateCreateRequestErrorMessageMapping.sectionsIsInvalid
+                );
+            });
+        });
+
+        describe("required is not provided", () => {
+            it("should return the correct error message", () => {
+                const errorMessage = ticketTemplateCreateRequestErrorMessage({
+                    name: "Development",
+                    description: "This is the description",
+                    title: {
+                        label: "Title",
+                    },
+                    summary: {
+                        label: "Summary",
+                    },
+                    sections: [
+                        {
+                            type: "text",
+                            label: "Label",
+                            multiline: false,
+                        },
+                    ],
+                } as any);
+                expect(errorMessage).toBe(
+                    ticketTemplateCreateRequestErrorMessageMapping.sectionsIsInvalid
+                );
+            });
+        });
+    });
+
+    describe("text section", () => {
+        describe("a label is not provided", () => {
+            it("should return the correct error message", () => {
+                const errorMessage = ticketTemplateCreateRequestErrorMessage({
+                    name: "Development",
+                    description: "This is the description",
+                    title: {
+                        label: "Title",
+                    },
+                    summary: {
+                        label: "Summary",
+                    },
+                    sections: [
+                        {
+                            type: "number",
+                            required: true,
+                            minValue: 0,
+                            maxValue: 1,
+                            allowOnlyIntegers: false,
+                            alias: "hello",
+                        },
+                    ],
+                } as any);
+                expect(errorMessage).toBe(
+                    ticketTemplateCreateRequestErrorMessageMapping.sectionsIsInvalid
+                );
+            });
+        });
+
+        describe("the label is an empty string", () => {
+            it("should return the correct error message", () => {
+                const errorMessage = ticketTemplateCreateRequestErrorMessage({
+                    name: "Development",
+                    description: "This is the description",
+                    title: {
+                        label: "Title",
+                    },
+                    summary: {
+                        label: "Summary",
+                    },
+                    sections: [
+                        {
+                            type: "number",
+                            label: "",
+                            required: true,
+                            minValue: 0,
+                            maxValue: 1,
+                            allowOnlyIntegers: false,
+                            alias: "hello",
+                        },
+                    ],
+                } as any);
+                expect(errorMessage).toBe(
+                    ticketTemplateCreateRequestErrorMessageMapping.sectionsIsInvalid
+                );
+            });
+        });
+
+        describe("required is not provided", () => {
+            it("should return the correct error message", () => {
+                const errorMessage = ticketTemplateCreateRequestErrorMessage({
+                    name: "Development",
+                    description: "This is the description",
+                    title: {
+                        label: "Title",
+                    },
+                    summary: {
+                        label: "Summary",
+                    },
+                    sections: [
+                        {
+                            type: "number",
+                            label: "Label",
+                            minValue: 0,
+                            maxValue: 1,
+                            allowOnlyIntegers: false,
+                            alias: "hello",
+                        },
+                    ],
+                } as any);
+                expect(errorMessage).toBe(
+                    ticketTemplateCreateRequestErrorMessageMapping.sectionsIsInvalid
+                );
+            });
         });
     });
 });

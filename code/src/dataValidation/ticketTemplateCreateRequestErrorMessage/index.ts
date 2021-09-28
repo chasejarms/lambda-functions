@@ -7,7 +7,7 @@ export const ticketTemplateCreateRequestErrorMessageMapping = {
     descriptionIsRequired: "The ticket template description is required",
     titleIsRequired: "A label for the ticket template title is required",
     summaryIsRequired: "A label for the ticket template summary is required",
-    sectionsIsRequired: "The sections list is required",
+    sectionsIsInvalid: "The sections list is invalid",
 };
 
 export function ticketTemplateCreateRequestErrorMessage(
@@ -79,7 +79,7 @@ export function ticketTemplateCreateRequestErrorMessage(
             .required()
             .error(
                 new Error(
-                    ticketTemplateCreateRequestErrorMessageMapping.sectionsIsRequired
+                    ticketTemplateCreateRequestErrorMessageMapping.sectionsIsInvalid
                 )
             ),
         priorityWeightingCalculation: Joi.string().allow(""),
