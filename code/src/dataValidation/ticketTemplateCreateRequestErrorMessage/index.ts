@@ -10,6 +10,7 @@ export const ticketTemplateCreateRequestErrorMessageMapping = {
     sectionsIsInvalid: "The sections list is invalid",
     priorityWeightingCalculation:
         "There was an error with the priority weighting calculation",
+    colorError: "An invalid color was provided",
 };
 
 export function ticketTemplateCreateRequestErrorMessage(
@@ -105,7 +106,12 @@ export function ticketTemplateCreateRequestErrorMessage(
             ),
         color: Joi.string()
             .valid(...colors)
-            .optional(),
+            .optional()
+            .error(
+                new Error(
+                    ticketTemplateCreateRequestErrorMessageMapping.colorError
+                )
+            ),
     });
 
     const { error } = ticketTemplateSchema.validate(ticketTemplate);

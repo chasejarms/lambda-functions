@@ -2,6 +2,7 @@ import {
     ticketTemplateCreateRequestErrorMessage,
     ticketTemplateCreateRequestErrorMessageMapping,
 } from ".";
+import { Color } from "../../models/database/color";
 
 describe("ticketTemplateCreateRequestErrorMessage", () => {
     describe("the name is not provided", () => {
@@ -566,6 +567,96 @@ describe("ticketTemplateCreateRequestErrorMessage", () => {
                 expect(errorMessage).toBe(
                     ticketTemplateCreateRequestErrorMessageMapping.priorityWeightingCalculation
                 );
+            });
+        });
+    });
+
+    describe("color", () => {
+        describe("a color is not provided", () => {
+            it("should return an empty string", () => {
+                const errorMessage = ticketTemplateCreateRequestErrorMessage({
+                    name: "Development",
+                    description: "This is the description",
+                    title: {
+                        label: "Title",
+                    },
+                    summary: {
+                        label: "Summary",
+                    },
+                    sections: [
+                        {
+                            type: "number",
+                            label: "Label",
+                            allowOnlyIntegers: true,
+                            required: false,
+                            minValue: 0,
+                            maxValue: 1,
+                            alias: "",
+                        },
+                    ],
+                    priorityWeightingCalculation: "",
+                } as any);
+                expect(errorMessage).toBe("");
+            });
+        });
+
+        describe("an invalid color is provided", () => {
+            it("should return the correct error message", () => {
+                const errorMessage = ticketTemplateCreateRequestErrorMessage({
+                    name: "Development",
+                    description: "This is the description",
+                    title: {
+                        label: "Title",
+                    },
+                    summary: {
+                        label: "Summary",
+                    },
+                    sections: [
+                        {
+                            type: "number",
+                            label: "Label",
+                            allowOnlyIntegers: true,
+                            required: false,
+                            minValue: 0,
+                            maxValue: 1,
+                            alias: "",
+                        },
+                    ],
+                    priorityWeightingCalculation: "",
+                    color: "not-a-color",
+                } as any);
+                expect(errorMessage).toBe(
+                    ticketTemplateCreateRequestErrorMessageMapping.colorError
+                );
+            });
+        });
+
+        describe("a valid color is provided", () => {
+            it("should return an empty string", () => {
+                const errorMessage = ticketTemplateCreateRequestErrorMessage({
+                    name: "Development",
+                    description: "This is the description",
+                    title: {
+                        label: "Title",
+                    },
+                    summary: {
+                        label: "Summary",
+                    },
+                    sections: [
+                        {
+                            type: "number",
+                            label: "Label",
+                            allowOnlyIntegers: true,
+                            required: false,
+                            minValue: 0,
+                            maxValue: 1,
+                            alias: "",
+                        },
+                    ],
+                    priorityWeightingCalculation: "",
+                    color: Color.Blue,
+                } as any);
+                expect(errorMessage).toBe("");
             });
         });
     });
