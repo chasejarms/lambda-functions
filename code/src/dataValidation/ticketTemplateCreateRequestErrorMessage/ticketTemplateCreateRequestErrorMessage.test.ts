@@ -691,36 +691,107 @@ describe("ticketTemplateCreateRequestErrorMessage", () => {
         });
     });
 
-    // describe("aliases & priority weighting calculation", () => {
-    //     describe("an alias uses an invalid character", () => {
-    //         it("should return the correct error message", () => {
-    //             const errorMessage = ticketTemplateCreateRequestErrorMessage({
-    //                 name: "Development",
-    //                 description: "This is the description",
-    //                 title: {
-    //                     label: "Title",
-    //                 },
-    //                 summary: {
-    //                     label: "Summary",
-    //                 },
-    //                 sections: [
-    //                     {
-    //                         type: "number",
-    //                         label: "Label",
-    //                         allowOnlyIntegers: true,
-    //                         required: false,
-    //                         minValue: 0,
-    //                         maxValue: 1,
-    //                         alias: "abd1",
-    //                     },
-    //                 ],
-    //                 priorityWeightingCalculation: "",
-    //                 color: Color.Blue,
-    //             } as any);
-    //             expect(errorMessage).toBe(
-    //                 ticketTemplateCreateRequestErrorMessageMapping.providedAliasNotValid
-    //             );
-    //         });
-    //     });
-    // });
+    describe("aliases & priority weighting calculation", () => {
+        describe("the priority weighting calculation uses an invalid alias", () => {
+            it("should return the correct error message", () => {
+                const errorMessage = ticketTemplateCreateRequestErrorMessage({
+                    name: "Development",
+                    description: "This is the description",
+                    title: {
+                        label: "Title",
+                    },
+                    summary: {
+                        label: "Summary",
+                    },
+                    sections: [
+                        {
+                            type: "number",
+                            label: "Label",
+                            allowOnlyIntegers: true,
+                            required: false,
+                            minValue: 0,
+                            maxValue: 1,
+                            alias: "abc",
+                        },
+                    ],
+                    priorityWeightingCalculation: "abcd",
+                    color: Color.Blue,
+                } as any);
+                expect(errorMessage).toBe(
+                    ticketTemplateCreateRequestErrorMessageMapping.calculationError
+                );
+            });
+        });
+
+        describe("an alias is duplicated", () => {
+            it("should return the correct error message", () => {
+                const errorMessage = ticketTemplateCreateRequestErrorMessage({
+                    name: "Development",
+                    description: "This is the description",
+                    title: {
+                        label: "Title",
+                    },
+                    summary: {
+                        label: "Summary",
+                    },
+                    sections: [
+                        {
+                            type: "number",
+                            label: "Label",
+                            allowOnlyIntegers: true,
+                            required: false,
+                            minValue: 0,
+                            maxValue: 1,
+                            alias: "abc",
+                        },
+                        {
+                            type: "number",
+                            label: "Label",
+                            allowOnlyIntegers: true,
+                            required: false,
+                            minValue: 0,
+                            maxValue: 1,
+                            alias: "abc",
+                        },
+                    ],
+                    priorityWeightingCalculation: "",
+                    color: Color.Blue,
+                } as any);
+                expect(errorMessage).toBe(
+                    ticketTemplateCreateRequestErrorMessageMapping.duplicateAlias
+                );
+            });
+        });
+
+        describe("the calculation function is not set up correctly", () => {
+            it("should return the correct error message", () => {
+                const errorMessage = ticketTemplateCreateRequestErrorMessage({
+                    name: "Development",
+                    description: "This is the description",
+                    title: {
+                        label: "Title",
+                    },
+                    summary: {
+                        label: "Summary",
+                    },
+                    sections: [
+                        {
+                            type: "number",
+                            label: "Label",
+                            allowOnlyIntegers: true,
+                            required: false,
+                            minValue: 0,
+                            maxValue: 1,
+                            alias: "abc",
+                        },
+                    ],
+                    priorityWeightingCalculation: "abc * abc *",
+                    color: Color.Blue,
+                } as any);
+                expect(errorMessage).toBe(
+                    ticketTemplateCreateRequestErrorMessageMapping.calculationError
+                );
+            });
+        });
+    });
 });

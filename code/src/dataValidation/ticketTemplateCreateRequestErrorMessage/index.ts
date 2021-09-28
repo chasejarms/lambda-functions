@@ -13,7 +13,6 @@ export const ticketTemplateCreateRequestErrorMessageMapping = {
     priorityWeightingCalculation:
         "There was an error with the priority weighting calculation",
     colorError: "An invalid color was provided",
-    providedAliasNotValid: "The provided aliases are not valid.",
     calculationError: "There was an error running a test calculation",
     duplicateAlias: "An alias was used more than once",
 };
@@ -123,20 +122,6 @@ export function ticketTemplateCreateRequestErrorMessage(
 
     const { error } = ticketTemplateSchema.validate(ticketTemplate);
     if (error) return error.message;
-
-    const aliasesFromCalculation = ticketTemplate.priorityWeightingCalculation.match(
-        /\b[a-zA-Z]+/g
-    );
-
-    const aliasesAreValid = aliasesFromCalculation
-        ? aliasesFromCalculation.every((trimmedWord) => {
-              return trimmedWord.match(/^$|^[a-zA-Z]+$/);
-          })
-        : true;
-
-    if (!aliasesAreValid) {
-        return ticketTemplateCreateRequestErrorMessageMapping.providedAliasNotValid;
-    }
 
     const sectionsWithAliases = ticketTemplate.sections.filter((section) => {
         return section.type === "number" && !!section.alias;
