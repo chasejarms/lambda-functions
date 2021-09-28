@@ -1,7 +1,7 @@
 import { IDefaultPrimaryTableModel } from "./defaultPrimaryTableModel";
-import { TagColor } from "./tagColor";
+import { Color } from "./color";
 
 export interface ITag extends IDefaultPrimaryTableModel {
     name: string;
-    color: TagColor;
+    color: Color;
 }

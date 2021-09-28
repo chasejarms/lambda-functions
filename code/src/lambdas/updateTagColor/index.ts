@@ -6,7 +6,7 @@ import { createErrorResponse } from "../../utils/createErrorResponse";
 import { HttpStatusCode } from "../../models/shared/httpStatusCode";
 import { isBoardAdmin } from "../../utils/isBoardAdmin";
 import * as Joi from "joi";
-import { TagColor } from "../../models/database/tagColor";
+import { Color } from "../../models/database/color";
 import { createTagKey } from "../../keyGeneration/createTagKey";
 import { createAllTagsKey } from "../../keyGeneration/createAllTagsKey";
 import { createSuccessResponse } from "../../utils/createSuccessResponse";
@@ -49,7 +49,7 @@ export const updateTagColor = async (
 
     const parsedBody = JSON.parse(event.body) as {
         name: string;
-        color: TagColor;
+        color: Color;
     };
 
     const requestSchema = Joi.object({
@@ -57,11 +57,11 @@ export const updateTagColor = async (
         color: Joi.string()
             .required()
             .valid(
-                TagColor.Blue,
-                TagColor.Green,
-                TagColor.Grey,
-                TagColor.Red,
-                TagColor.Yellow
+                Color.Blue,
+                Color.Green,
+                Color.Grey,
+                Color.Red,
+                Color.Yellow
             ),
     });
 

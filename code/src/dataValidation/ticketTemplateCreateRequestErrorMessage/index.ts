@@ -1,5 +1,6 @@
 import { ITicketTemplateCreateRequest } from "../../models/requests/ticketTemplateCreateRequest";
 import * as Joi from "joi";
+import { colors } from "../../models/database/color";
 
 export function ticketTemplateCreateRequestErrorMessage(
     ticketTemplate: ITicketTemplateCreateRequest
@@ -31,6 +32,9 @@ export function ticketTemplateCreateRequestErrorMessage(
             })
         ),
         priorityWeightingCalculation: Joi.string().allow(""),
+        color: Joi.string()
+            .valid(...colors)
+            .optional(),
     });
 
     const { error } = ticketTemplateSchema.validate(ticketTemplate);
