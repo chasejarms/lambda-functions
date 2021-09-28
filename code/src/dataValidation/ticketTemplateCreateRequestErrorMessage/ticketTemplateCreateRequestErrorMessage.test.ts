@@ -338,5 +338,235 @@ describe("ticketTemplateCreateRequestErrorMessage", () => {
                 );
             });
         });
+
+        describe("allowOnlyIntegers is not provided", () => {
+            it("should return the correct error message", () => {
+                const errorMessage = ticketTemplateCreateRequestErrorMessage({
+                    name: "Development",
+                    description: "This is the description",
+                    title: {
+                        label: "Title",
+                    },
+                    summary: {
+                        label: "Summary",
+                    },
+                    sections: [
+                        {
+                            type: "number",
+                            label: "Label",
+                            required: false,
+                            minValue: 0,
+                            maxValue: 1,
+                            alias: "hello",
+                        },
+                    ],
+                } as any);
+                expect(errorMessage).toBe(
+                    ticketTemplateCreateRequestErrorMessageMapping.sectionsIsInvalid
+                );
+            });
+        });
+
+        describe("the min is greater than the max", () => {
+            it("should return the correct error message", () => {
+                const errorMessage = ticketTemplateCreateRequestErrorMessage({
+                    name: "Development",
+                    description: "This is the description",
+                    title: {
+                        label: "Title",
+                    },
+                    summary: {
+                        label: "Summary",
+                    },
+                    sections: [
+                        {
+                            type: "number",
+                            label: "Label",
+                            allowOnlyIntegers: true,
+                            required: false,
+                            minValue: 1,
+                            maxValue: 0,
+                            alias: "hello",
+                        },
+                    ],
+                } as any);
+                expect(errorMessage).toBe(
+                    ticketTemplateCreateRequestErrorMessageMapping.sectionsIsInvalid
+                );
+            });
+        });
+
+        describe("the minValue is undefined but the max value is set", () => {
+            it("should return an empty string", () => {
+                const errorMessage = ticketTemplateCreateRequestErrorMessage({
+                    name: "Development",
+                    description: "This is the description",
+                    title: {
+                        label: "Title",
+                    },
+                    summary: {
+                        label: "Summary",
+                    },
+                    sections: [
+                        {
+                            type: "number",
+                            label: "Label",
+                            allowOnlyIntegers: true,
+                            required: false,
+                            minValue: undefined,
+                            maxValue: 0,
+                            alias: "hello",
+                        },
+                    ],
+                    priorityWeightingCalculation: "",
+                } as any);
+                expect(errorMessage).toBe("");
+            });
+        });
+
+        describe("the maxValue is undefined but the min value is set", () => {
+            it("should return an empty string", () => {
+                const errorMessage = ticketTemplateCreateRequestErrorMessage({
+                    name: "Development",
+                    description: "This is the description",
+                    title: {
+                        label: "Title",
+                    },
+                    summary: {
+                        label: "Summary",
+                    },
+                    sections: [
+                        {
+                            type: "number",
+                            label: "Label",
+                            allowOnlyIntegers: true,
+                            required: false,
+                            minValue: 0,
+                            maxValue: undefined,
+                            alias: "hello",
+                        },
+                    ],
+                    priorityWeightingCalculation: "",
+                } as any);
+                expect(errorMessage).toBe("");
+            });
+        });
+
+        describe("the minValue is less than the maxValue", () => {
+            it("should return an empty string", () => {
+                const errorMessage = ticketTemplateCreateRequestErrorMessage({
+                    name: "Development",
+                    description: "This is the description",
+                    title: {
+                        label: "Title",
+                    },
+                    summary: {
+                        label: "Summary",
+                    },
+                    sections: [
+                        {
+                            type: "number",
+                            label: "Label",
+                            allowOnlyIntegers: true,
+                            required: false,
+                            minValue: 0,
+                            maxValue: 1,
+                            alias: "hello",
+                        },
+                    ],
+                    priorityWeightingCalculation: "",
+                } as any);
+                expect(errorMessage).toBe("");
+            });
+        });
+    });
+
+    describe("priorityWeightingCalculation", () => {
+        describe("the calculation is not provided", () => {
+            it("should return the correct error message", () => {
+                const errorMessage = ticketTemplateCreateRequestErrorMessage({
+                    name: "Development",
+                    description: "This is the description",
+                    title: {
+                        label: "Title",
+                    },
+                    summary: {
+                        label: "Summary",
+                    },
+                    sections: [
+                        {
+                            type: "number",
+                            label: "Label",
+                            allowOnlyIntegers: true,
+                            required: false,
+                            minValue: 0,
+                            maxValue: 1,
+                            alias: "hello",
+                        },
+                    ],
+                } as any);
+                expect(errorMessage).toBe(
+                    ticketTemplateCreateRequestErrorMessageMapping.priorityWeightingCalculation
+                );
+            });
+        });
+
+        describe("the calculation is an empty string", () => {
+            it("should return an empty string", () => {
+                const errorMessage = ticketTemplateCreateRequestErrorMessage({
+                    name: "Development",
+                    description: "This is the description",
+                    title: {
+                        label: "Title",
+                    },
+                    summary: {
+                        label: "Summary",
+                    },
+                    sections: [
+                        {
+                            type: "number",
+                            label: "Label",
+                            allowOnlyIntegers: true,
+                            required: false,
+                            minValue: 0,
+                            maxValue: 1,
+                            alias: "hello",
+                        },
+                    ],
+                    priorityWeightingCalculation: "",
+                } as any);
+                expect(errorMessage).toBe("");
+            });
+        });
+
+        describe("the calculation has invalid characters", () => {
+            it("should return an empty string", () => {
+                const errorMessage = ticketTemplateCreateRequestErrorMessage({
+                    name: "Development",
+                    description: "This is the description",
+                    title: {
+                        label: "Title",
+                    },
+                    summary: {
+                        label: "Summary",
+                    },
+                    sections: [
+                        {
+                            type: "number",
+                            label: "Label",
+                            allowOnlyIntegers: true,
+                            required: false,
+                            minValue: 0,
+                            maxValue: 1,
+                            alias: "",
+                        },
+                    ],
+                    priorityWeightingCalculation: "hello % goodbye",
+                } as any);
+                expect(errorMessage).toBe(
+                    ticketTemplateCreateRequestErrorMessageMapping.priorityWeightingCalculation
+                );
+            });
+        });
     });
 });

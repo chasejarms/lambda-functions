@@ -8,6 +8,8 @@ export const ticketTemplateCreateRequestErrorMessageMapping = {
     titleIsRequired: "A label for the ticket template title is required",
     summaryIsRequired: "A label for the ticket template summary is required",
     sectionsIsInvalid: "The sections list is invalid",
+    priorityWeightingCalculation:
+        "There was an error with the priority weighting calculation",
 };
 
 export function ticketTemplateCreateRequestErrorMessage(
@@ -70,7 +72,17 @@ export function ticketTemplateCreateRequestErrorMessage(
                     type: Joi.string().required().valid("number"),
                     label: Joi.string().required(),
                     required: Joi.bool().required(),
-                    minValue: Joi.number(),
+                    minValue: Joi.number().max(
+                        Joi.ref("maxValue", {
+                            adjust: (value) => {
+                                if (value === undefined) {
+                                    return Infinity;
+                                } else {
+                                    return value;
+                                }
+                            },
+                        })
+                    ),
                     maxValue: Joi.number(),
                     allowOnlyIntegers: Joi.bool().required(),
                     alias: Joi.string().allow(""),
@@ -82,7 +94,15 @@ export function ticketTemplateCreateRequestErrorMessage(
                     ticketTemplateCreateRequestErrorMessageMapping.sectionsIsInvalid
                 )
             ),
-        priorityWeightingCalculation: Joi.string().allow(""),
+        priorityWeightingCalculation: Joi.string()
+            .pattern(new RegExp(/^$|^[a-zA-Z0-9\.\+\-\*\/() ]+$/))
+            .allow("")
+            .required()
+            .error(
+                new Error(
+                    ticketTemplateCreateRequestErrorMessageMapping.priorityWeightingCalculation
+                )
+            ),
         color: Joi.string()
             .valid(...colors)
             .optional(),
