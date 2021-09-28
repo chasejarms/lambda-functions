@@ -254,7 +254,7 @@ describe("ticketTemplateCreateRequestErrorMessage", () => {
         });
     });
 
-    describe("text section", () => {
+    describe("number section", () => {
         describe("a label is not provided", () => {
             it("should return the correct error message", () => {
                 const errorMessage = ticketTemplateCreateRequestErrorMessage({
@@ -480,6 +480,36 @@ describe("ticketTemplateCreateRequestErrorMessage", () => {
                 expect(errorMessage).toBe("");
             });
         });
+
+        describe("the alias uses invalid characters", () => {
+            it("should return the correct error", () => {
+                const errorMessage = ticketTemplateCreateRequestErrorMessage({
+                    name: "Development",
+                    description: "This is the description",
+                    title: {
+                        label: "Title",
+                    },
+                    summary: {
+                        label: "Summary",
+                    },
+                    sections: [
+                        {
+                            type: "number",
+                            label: "Label",
+                            allowOnlyIntegers: true,
+                            required: false,
+                            minValue: 0,
+                            maxValue: 1,
+                            alias: "abc1",
+                        },
+                    ],
+                    priorityWeightingCalculation: "",
+                } as any);
+                expect(errorMessage).toBe(
+                    ticketTemplateCreateRequestErrorMessageMapping.sectionsIsInvalid
+                );
+            });
+        });
     });
 
     describe("priorityWeightingCalculation", () => {
@@ -660,4 +690,37 @@ describe("ticketTemplateCreateRequestErrorMessage", () => {
             });
         });
     });
+
+    // describe("aliases & priority weighting calculation", () => {
+    //     describe("an alias uses an invalid character", () => {
+    //         it("should return the correct error message", () => {
+    //             const errorMessage = ticketTemplateCreateRequestErrorMessage({
+    //                 name: "Development",
+    //                 description: "This is the description",
+    //                 title: {
+    //                     label: "Title",
+    //                 },
+    //                 summary: {
+    //                     label: "Summary",
+    //                 },
+    //                 sections: [
+    //                     {
+    //                         type: "number",
+    //                         label: "Label",
+    //                         allowOnlyIntegers: true,
+    //                         required: false,
+    //                         minValue: 0,
+    //                         maxValue: 1,
+    //                         alias: "abd1",
+    //                     },
+    //                 ],
+    //                 priorityWeightingCalculation: "",
+    //                 color: Color.Blue,
+    //             } as any);
+    //             expect(errorMessage).toBe(
+    //                 ticketTemplateCreateRequestErrorMessageMapping.providedAliasNotValid
+    //             );
+    //         });
+    //     });
+    // });
 });

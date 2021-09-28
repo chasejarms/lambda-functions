@@ -91,7 +91,9 @@ export function ticketTemplateCreateRequestErrorMessage(
                     ),
                     maxValue: Joi.number(),
                     allowOnlyIntegers: Joi.bool().required(),
-                    alias: Joi.string().allow(""),
+                    alias: Joi.string()
+                        .allow("")
+                        .pattern(new RegExp(/^[a-zA-Z]+$/)),
                 })
             )
             .required()
