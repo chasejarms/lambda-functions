@@ -1,6 +1,8 @@
 import { ITicketTemplateCreateRequest } from "../../models/requests/ticketTemplateCreateRequest";
 import * as Joi from "joi";
 import { colors } from "../../models/database/color";
+import { INumberSection } from "../../models/database/sections/numberSection";
+import mathEvaluator from "math-expression-evaluator";
 
 export const ticketTemplateCreateRequestErrorMessageMapping = {
     nameIsRequired: "The ticket template name is required",
@@ -11,6 +13,9 @@ export const ticketTemplateCreateRequestErrorMessageMapping = {
     priorityWeightingCalculation:
         "There was an error with the priority weighting calculation",
     colorError: "An invalid color was provided",
+    providedAliasNotValid: "The provided aliases are not valid.",
+    calculationError: "There was an error running a test calculation",
+    duplicateAlias: "An alias was used more than once",
 };
 
 export function ticketTemplateCreateRequestErrorMessage(
@@ -115,5 +120,51 @@ export function ticketTemplateCreateRequestErrorMessage(
     });
 
     const { error } = ticketTemplateSchema.validate(ticketTemplate);
-    return error ? error.message : "";
+    if (error) return error.message;
+
+    const aliasesFromCalculation = ticketTemplate.priorityWeightingCalculation.match(
+        /\b[a-zA-Z]+/g
+    );
+
+    const aliasesAreValid = aliasesFromCalculation
+        ? aliasesFromCalculation.every((trimmedWord) => {
+              return trimmedWord.match(/^$|^[a-zA-Z]+$/);
+          })
+        : true;
+
+    if (!aliasesAreValid) {
+        return ticketTemplateCreateRequestErrorMessageMapping.providedAliasNotValid;
+    }
+
+    const sectionsWithAliases = ticketTemplate.sections.filter((section) => {
+        return section.type === "number" && !!section.alias;
+    });
+    const validAliasMapping = sectionsWithAliases.reduce<{
+        [aliasName: string]: true;
+    }>((mapping, section) => {
+        const alias = (section as INumberSection).alias;
+        mapping[alias] = true;
+        return mapping;
+    }, {});
+
+    if (sectionsWithAliases.length !== Object.keys(validAliasMapping).length) {
+        return ticketTemplateCreateRequestErrorMessageMapping.duplicateAlias;
+    }
+
+    try {
+        let expressionToEvaluate = ticketTemplate.priorityWeightingCalculation;
+        if (expressionToEvaluate !== "") {
+            Object.keys(validAliasMapping).forEach((key) => {
+                expressionToEvaluate = expressionToEvaluate.replace(
+                    new RegExp(key, "g"),
+                    "1"
+                );
+            });
+            mathEvaluator.eval(expressionToEvaluate);
+        }
+    } catch (e) {
+        return ticketTemplateCreateRequestErrorMessageMapping.calculationError;
+    }
+
+    return "";
 }

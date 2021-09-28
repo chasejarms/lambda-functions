@@ -6,7 +6,8 @@
         "preserveConstEnums": true,
         "outDir": "./built",
         "sourceMap": false,
-        "moduleResolution": "node"
+        "moduleResolution": "node",
+        "esModuleInterop": true
     },
     "include": ["src/**/*"],
     "exclude": ["node_modules", "**/*.spec.ts"]
