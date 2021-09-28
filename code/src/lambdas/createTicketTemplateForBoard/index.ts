@@ -13,6 +13,13 @@ import { ITicketTemplateCreateRequest } from "../../models/requests/ticketTempla
 import { isBoardAdmin } from "../../utils/isBoardAdmin";
 import { tryTransactWriteThreeTimesInPrimaryTable } from "../../dynamo/primaryTable/tryTransactWriteThreeTimes";
 import { TransactWriteItemType } from "../../dynamo/primaryTable/transactWrite";
+import { queryStringParametersError } from "../../utils/queryStringParametersError";
+
+export const createTicketTemplateForBoardErrors = {
+    ticketTemplateIsRequiredField: "ticketTemplate is a required field",
+    insufficientRights: "must be a board admin to create ticket templates",
+    errorCreatingTemplate: "Error creating the ticket template",
+};
 
 export const createTicketTemplateForBoard = async (
     event: APIGatewayProxyEvent
@@ -27,14 +34,16 @@ export const createTicketTemplateForBoard = async (
         return bodyIsNotAnObjectErrorResponse;
     }
 
-    const { companyId, boardId } = event.queryStringParameters;
-
-    if (!companyId || !boardId) {
-        return createErrorResponse(
-            HttpStatusCode.BadRequest,
-            "companyId and boardId are required query parameter"
-        );
+    const error = queryStringParametersError(
+        event.queryStringParameters,
+        "companyId",
+        "boardId"
+    );
+    if (error) {
+        return createErrorResponse(HttpStatusCode.BadRequest, error);
     }
+
+    const { companyId, boardId } = event.queryStringParameters;
 
     const { ticketTemplate } = JSON.parse(event.body) as {
         ticketTemplate: ITicketTemplateCreateRequest;
@@ -42,7 +51,7 @@ export const createTicketTemplateForBoard = async (
     if (!ticketTemplate) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
-            "ticketTemplate is a required field"
+            createTicketTemplateForBoardErrors.ticketTemplateIsRequiredField
         );
     }
 
@@ -65,7 +74,7 @@ export const createTicketTemplateForBoard = async (
     if (!canCreateTicketTemplateForBoard) {
         return createErrorResponse(
             HttpStatusCode.Forbidden,
-            "must be a company admin or a board admin to create ticket templates"
+            createTicketTemplateForBoardErrors.insufficientRights
         );
     }
 
@@ -102,7 +111,7 @@ export const createTicketTemplateForBoard = async (
     if (ticketTemplateLogicWasCreated === null) {
         return createErrorResponse(
             HttpStatusCode.BadRequest,
-            "Error creating the ticket template"
+            createTicketTemplateForBoardErrors.errorCreatingTemplate
         );
     }
 
